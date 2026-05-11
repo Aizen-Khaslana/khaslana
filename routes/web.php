@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CommunityController;
@@ -8,13 +9,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UmkmController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Fortify\Features;
 
-Route::get('/', function () {
-    return Inertia::render('welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/about', function() {
     return Inertia::render('user/about');
@@ -49,6 +45,8 @@ Route::controller(CommunityController::class)->group(function() {
 
 Route::controller(UmkmController::class)->group(function() {
     Route::get('/umkm', 'index')->name('umkm');
+    Route::get('/umkm/detail', 'detail')->name('umkm.detail');
+    Route::get('/umkm/products', 'umkmProducts')->name('umkm.products');
 });
 
 require __DIR__.'/settings.php';
