@@ -230,6 +230,10 @@
 }
 
 @media (max-width: 900px) {
+    .navbar {
+        padding: 20px 25px;
+    }
+
     .navbar-toggle {
         display: block;
     }
@@ -259,7 +263,11 @@
     }
 
     .navbar-right ul {
+        display: flex;
         flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
         padding: 25px;
         gap: 20px;
         font-size: 13px;
@@ -275,7 +283,11 @@
     }
 
     .navbar-right ul.navbar-mobile-auth li:not(.navbar-profile-item) {
-        width: fit-content;
+        width: max-content;
+    }
+    
+    .not-auth {
+        background-color: #99FF33;
     }
 
     .navbar-right ul.navbar-mobile-auth .navbar-profile-item {
