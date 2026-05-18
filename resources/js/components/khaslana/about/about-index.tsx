@@ -27,7 +27,7 @@ export default function AboutIndex() {
                 </div>
             </div>
 
-            <div className="visi-misi-section min-h-screen h-auto flex justify-between items-center pb-5 text-white gap-17.5 max-md:gap-2 flex-col lg:flex-row max-md:mb-15">
+            <div className="visi-misi-section min-h-screen md:min-h-[80vh] md:mb-10 h-auto flex justify-between items-center pb-5 text-white gap-17.5 max-md:gap-2 flex-col md:flex-row max-md:mb-15">
                 <div className="visi-left flex justify-start">
                     <img src={VisiMisi} alt="" className="h-auto flex justify-start w-200" />
                 </div>
