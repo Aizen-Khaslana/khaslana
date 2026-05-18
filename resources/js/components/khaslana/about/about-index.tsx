@@ -41,7 +41,7 @@ export default function AboutIndex() {
                         <h2 className="text-white font-medium text-2xl">
                             Menjadi platform ekosistem UMKM terpercaya yang menghubungkan produk lokal Indonesia ke pasar yang lebih luas.
                         </h2>
-                        <p className="text-[#ADAAAA] text-xl">
+                        <p className="text-[#ADAAAA] text-md">
                             Kami percaya bahwa setiap warung, bengkel, dan pengrajin lokal berhak mendapatkan akses untuk menjangkau pasar tanpa kehilangan identitas mereka.
                         </p>
                     </div>
@@ -53,21 +53,21 @@ export default function AboutIndex() {
 
                         <div className="misi flex gap-5 items-center">
                             <img src={Misi} alt="" className="shrink-0" />
-                            <p className="misi-text text-white text-lg">
+                            <p className="misi-text text-white text-md">
                                 Memperluas akses UMKM ke pembeli, mitra, dan sumber daya yang sebelumnya sulit dijangkau.
                             </p>
                         </div>
 
                         <div className="misi flex gap-5 items-center">
                             <img src={Misi} alt="" className="shrink-0" />
-                            <p className="misi-text text-white text-lg">
+                            <p className="misi-text text-white text-md">
                                 Menyediakan platform yang memudahkan UMKM mengelola usaha, mulai dari pencatatan hingga pemasaran digital.
                             </p>
                         </div>
 
                         <div className="misi flex gap-5 items-center">
                             <img src={Misi} alt="" className="shrink-0" />
-                            <p className="misi-text text-white text-lg">
+                            <p className="misi-text text-white text-md">
                                 Mendampingi UMKM dalam adopsi teknologi secara bertahap sesuai kebutuhan dan kapasitas mereka.
                             </p>
                         </div>

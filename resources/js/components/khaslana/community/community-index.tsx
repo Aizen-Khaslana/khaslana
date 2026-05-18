@@ -6,7 +6,7 @@ export default function CommunityIndex() {
                 <p className="text-[#adaaaa] font-light text-[16.5px] max-md:text-md">Bagikan perjalanan bisnismu, temukan solusi bersama, dan tumbuh lebih kuat dalam ekosistem komunitas Khaslana</p>
             </section>
             
-            <div className="community-container flex flex-wrap justify-between gap-5 h-auto min-h-screen py-5 border-box">
+            <div className="community-container flex flex-wrap justify-between gap-5 h-auto min-h-screen py-5 mb-10 border-box">
                 <div className="posts w-full flex flex-col gap-5">
                     <div className="create-post flex flex-col bg-[#222] p-5 gap-10 rounded-[15px]">
                         <div className="post-top flex items-center gap-3.75">
