@@ -127,7 +127,8 @@ export default function Navbar() {
                 <ul className={`
                     ${user ? "navbar-authenticated" : ""}
                     ${user ? "navbar-mobile-auth" : ""}
-                    mb-7`}>
+                    max-lg:mb-7 
+                    lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:flex lg:flex-row lg:items-center lg:gap-8`}>
                     {menus.map((menu) => (
                         <li key={menu.name}>
                             <Link
