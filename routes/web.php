@@ -36,7 +36,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // store management
     Route::controller(StoreController::class)->group(function() {
-        Route::get('/store', 'index')->name('store');
+        Route::get('/store-management', 'index')->name('storeManagement');
+        Route::post('/store-management/store', 'store')->name('storeManagement.store');
     });
 });
 

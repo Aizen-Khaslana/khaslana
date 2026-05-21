@@ -1,5 +1,6 @@
 import { Link } from "@inertiajs/react"
 import { Store, ArrowRight } from "lucide-react"
+import { storeManagement } from "@/routes"
 
 export default function CtaCard() {
     return (
@@ -50,7 +51,7 @@ export default function CtaCard() {
                     </div>
 
                     <Link
-                        href="/umkm/create"
+                        href={storeManagement().url}
                         className="mt-8 inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition hover:opacity-90"
                     >
                         Lengkapi Sekarang
