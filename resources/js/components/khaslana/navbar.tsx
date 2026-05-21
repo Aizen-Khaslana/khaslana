@@ -45,7 +45,6 @@ export default function Navbar() {
     const profileRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
-            // Close profile dropdown if click is outside profile section
             if (
                 profileRef.current &&
                 !profileRef.current.contains(event.target as Node)
@@ -53,7 +52,6 @@ export default function Navbar() {
                 setProfileOpen(false);
             }
             
-            // Close mobile menu if click is outside the entire navbar
             if (
                 navRef.current &&
                 !navRef.current.contains(event.target as Node)
