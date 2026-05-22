@@ -53,6 +53,19 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        Schema::create('umkm_locations', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('umkm_id')->constrained('umkm')->onDelete('cascade');
+            $table->decimal('latitude')->nullable();
+            $table->decimal('longitude')->nullable();
+            $table->boolean('is_active')->default(false);
+            $table->enum('status', [
+                'TUTUP',
+                'MANGKAL',
+                'KELILING',
+            ])->nullable(); // khusus pedagang keliling
+        });
+
         // umkm routes on going schema
     }
 
