@@ -52,6 +52,10 @@ class Umkm extends Model
         return $this->hasMany(UmkmImmage::class);
     }
 
+    public function umkmLocations() {
+        return $this->hasMany(UmkmLocation::class);
+    }
+
     // from other table
     public function promos() {
         return $this->hasMany(Promo::class);
