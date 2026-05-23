@@ -97,5 +97,6 @@ return new class extends Migration
         Schema::dropIfExists('umkms');
         Schema::dropIfExists('umkm_datas');
         Schema::dropIfExists('umkm_images');
+        Schema::dropIfExists('umkm_locations');
     }
 };
