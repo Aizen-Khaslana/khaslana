@@ -3,45 +3,48 @@ import type { PropsWithChildren } from 'react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { useAuth } from '@/hooks/use-auth';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn, toUrl } from '@/lib/utils';
 // import { edit as editAppearance } from '@/routes/appearance';
-import { store } from '@/routes';
+import { storeManagement } from '@/routes';
 import { edit } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
 import { edit as editPassword } from '@/routes/user-password';
 import type { NavItem } from '@/types';
 
-const sidebarNavItems: NavItem[] = [
-    {
-        title: 'Profile',
-        href: edit(),
-        icon: null,
-    },
-    {
-        title: 'Kelola Toko',
-        href: store(),
-        icon: null,
-    },
-    {
-        title: 'Password',
-        href: editPassword(),
-        icon: null,
-    },
-    {
-        title: 'Two-Factor Auth',
-        href: show(),
-        icon: null,
-    },
-];
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const { isCurrentUrl } = useCurrentUrl();
+    const { user } = useAuth();
 
     // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {
         return null;
     }
+
+    const sidebarNavItems: NavItem[] = [
+        {
+            title: 'Profile',
+            href: edit(),
+            icon: null,
+        },
+        {
+            title: user.is_umkm ? 'Kelola Toko' : 'Data UMKM',
+            href: storeManagement(),
+            icon: null,
+        },
+        {
+            title: 'Password',
+            href: editPassword(),
+            icon: null,
+        },
+        {
+            title: 'Two-Factor Auth',
+            href: show(),
+            icon: null,
+        },
+    ];
 
     return (
         <div className="px-4 py-6">
@@ -79,8 +82,8 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
                 <Separator className="my-6 lg:hidden" />
 
-                <div className="flex-1 md:max-w-2xl">
-                    <section className="max-w-xl space-y-12">
+                <div className="flex-1 w-full">
+                    <section className="w-full space-y-12">
                         {children}
                     </section>
                 </div>

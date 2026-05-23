@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { LayoutGrid, Package } from 'lucide-react';
+import BackToHomepage from '@/components/back-to-homepage';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -48,6 +49,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
+                <BackToHomepage />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

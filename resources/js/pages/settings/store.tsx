@@ -1,29 +1,35 @@
 import { Head } from "@inertiajs/react"
-import Heading from '@/components/heading';
+import StoreIndex from "@/components/khaslana/settings/store/store-index";
+import { useAuth } from "@/hooks/use-auth";
 import AppLayout from "@/layouts/app-layout";
 import SettingsLayout from "@/layouts/settings/layout";
-import { store } from "@/routes";
+import { storeManagement } from "@/routes";
 import type { BreadcrumbItem } from "@/types"
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Kelola Toko',
-        href: store().url,
-    },
-];
+interface Props {
+    provinces: {
+        code: string;
+        name: string;
+    }[];
+}
 
-export default function Store() {
+export default function Store({
+    provinces,
+}: Props) {
+    const { user } =  useAuth();
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: user.is_umkm ? 'Kelola Toko' : 'Data UMKM',
+            href: storeManagement().url,
+        },
+    ];
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Kelola Toko" />
+
             <SettingsLayout>
-                <div className="space-y-6">
-                    <Heading
-                        variant="small"
-                        title="Kelola Toko"
-                        description="kelola toko nya disini bang"
-                    />
-                </div>
+                <StoreIndex provinces={provinces} />
             </SettingsLayout>
         </AppLayout>
     )
