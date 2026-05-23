@@ -72,11 +72,13 @@ export default function StoreIndex({
                                 <Address
                                     data={form.data}
                                     setData={form.setData}
+                                    errors={form.errors}
                                     provinces={provinces}
                                 />
                                 <OperationalHour
                                     data={form.data}
                                     setData={form.setData}
+                                    errors={form.errors}
                                 />
                                 <AdditionalFeatures
                                     data={form.data}
