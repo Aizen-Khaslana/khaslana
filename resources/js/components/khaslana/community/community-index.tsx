@@ -1,4 +1,4 @@
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { Image, X, ThumbsUp } from "lucide-react";
 import { useState, type ChangeEvent } from "react";
 import ProfileIcon from "@/assets/icons/default-profile.png";
@@ -25,7 +25,12 @@ interface PaginatedPosts {
     data: Post[];
 }
 
-export default function CommunityIndex({ posts }: { posts: PaginatedPosts }) {
+export default function CommunityIndex() {
+    const { props } = usePage();
+    const posts = props.posts as any;
+
+    console.log("Struktur asli posts dari Laravel:", posts);
+
     const [content, setContent] = useState("");
     const [mediaFile, setMediaFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -55,13 +60,13 @@ export default function CommunityIndex({ posts }: { posts: PaginatedPosts }) {
         }
     }
 
-    const handlePublish = async () => {
+    const handlePublish = () => {
         if (!content.trim() && !mediaFile) {
             alert("Postingan tidak boleh kosong")
             return;
         }
 
-        await router.post("/community", {
+        router.post("/community", {
             content: content,
             images: mediaFile ? [mediaFile] : [],
         }, {
