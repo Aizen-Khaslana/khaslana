@@ -55,7 +55,7 @@ return new class extends Migration
 
         Schema::create('umkm_locations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('umkm_id')->constrained('umkm')->onDelete('cascade');
+            $table->foreignId('umkm_id')->constrained('umkms')->onDelete('cascade');
             $table->decimal('latitude')->nullable();
             $table->decimal('longitude')->nullable();
             $table->boolean('is_active')->default(false);
