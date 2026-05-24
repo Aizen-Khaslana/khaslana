@@ -1,6 +1,6 @@
 import type { InertiaFormProps } from "@inertiajs/react";
 import { MapPin } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { type StoreFormData } from "@/components/khaslana/settings/store/types";
 import { Button } from "@/components/ui/button";
 import { Label } from '@/components/ui/label';
@@ -86,6 +86,51 @@ export default function Address({
         }
     };
 
+    const initializeLocation = useCallback(async () => {
+        try {
+            // load cities
+            if (
+                data.province_id &&
+                cities.length === 0
+            ) {
+                const citiesData = await fetchCities(data.province_id);
+                setCities(citiesData || []);
+            }
+
+            // load districts
+            if (
+                data.city_id &&
+                districts.length === 0
+            ) {
+                const districtsData = await fetchDistricts(data.city_id);
+                setDistricts(districtsData || []);
+            }
+
+            // load villages
+            if (
+                data.district_id &&
+                villages.length === 0
+            ) {
+                const villagesData = await fetchVillages(data.district_id);
+                setVillages(villagesData || []);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }, [
+        data.province_id,
+        data.city_id,
+        data.district_id,
+
+        cities.length,
+        districts.length,
+        villages.length,
+    ]);
+
+    useEffect(() => {
+        initializeLocation();
+    }, [initializeLocation]);
+
     const handleDetectLocation = async () => {
         if (!navigator.geolocation) {
             alert('Browser tidak mendukung geolocation');
@@ -124,9 +169,6 @@ export default function Address({
 
                     console.log(result);
 
-                    setData('address', result.address);
-                    setData('province_id', result.province_id);
-
                     const citiesData = await fetchCities(result.province_id);
                     setCities(citiesData || []);
 
@@ -136,13 +178,15 @@ export default function Address({
                     const villagesData = await fetchVillages(result.district_id);
                     setVillages(villagesData || []);
 
-                    setData({
-                        ...data,
+                    setData((prev) => ({
+                        ...prev,
+                        latitude,
+                        longitude,
                         address: result.address,
                         province_id: result.province_id,
                         city_id: result.city_id,
                         district_id: result.district_id,
-                    });
+                    }));
                     requestAnimationFrame(() => {
                         setData('village_id', result.village_id);
                     });
