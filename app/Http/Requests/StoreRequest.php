@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {
@@ -93,6 +94,21 @@ class StoreRequest extends FormRequest
                 'file',
                 'mimes:jpg,jpeg,png,pdf',
                 'max:5120',
+            ],
+
+            // umkm_images
+            'images' => [
+                Rule::requiredIf(
+                    !$this->existing_images ||
+                    count($this->existing_images) === 0
+                ),
+                'array',
+            ],
+            
+            'images.*' => [
+                'image',
+                'mimes:jpg,jpeg,png',
+                'max:10240',
             ],
 
             // umkm_locations

@@ -25,6 +25,7 @@ export default function StoreInfo({
     setData,
     errors,
 }: Props) {
+    console.log(data);
     return (
         <div className="space-y-4">
             <div>
@@ -121,6 +122,7 @@ export default function StoreInfo({
                         <span className="text-red-400"> *</span>
                     </Label>
                     <Select
+                        value={data.type}
                         onValueChange={(value) =>
                             setData('type', value)
                         }

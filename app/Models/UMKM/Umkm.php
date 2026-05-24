@@ -87,7 +87,7 @@ class Umkm extends Model
     }
 
     public function umkmImages() {
-        return $this->hasMany(UmkmImmage::class);
+        return $this->hasMany(UmkmImage::class);
     }
 
     public function umkmLocations() {

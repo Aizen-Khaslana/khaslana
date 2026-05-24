@@ -31,7 +31,12 @@ export default function AdditionalFeatures({
                         onCheckedChange={(checked) =>
                             setData('is_order_feature', !!checked)
                         }
-                        className="data-[state=checked]:bg-[#99FF33] data-[state=checked]:border-[#99FF33] hover:cursor-pointer"
+                        className="
+                            border-gray-500/40
+                            data-[state=checked]:bg-[#99FF33] data-[state=checked]:border-[#99FF33]
+                            data-[state=checked]:text-black
+                            hover:cursor-pointer
+                        "
                     />
                     <Label htmlFor="pemesanan" className="font-normal hover:cursor-pointer">
                         Fitur pemesanan
@@ -44,7 +49,13 @@ export default function AdditionalFeatures({
                         onCheckedChange={(checked) =>
                             setData('is_shipping_feature', !!checked)
                         }
-                        className="data-[state=checked]:bg-[#99FF33] data-[state=checked]:border-[#99FF33] hover:cursor-pointer"
+                        className="
+                            border-gray-500/40
+                            data-[state=checked]:bg-[#99FF33]
+                            data-[state=checked]:border-[#99FF33]
+                            data-[state=checked]:text-[#1E1B26]
+                            hover:cursor-pointer
+                        "
                     />
                     <Label htmlFor="pengiriman" className="font-normal hover:cursor-pointer">
                         Fitur pengiriman
