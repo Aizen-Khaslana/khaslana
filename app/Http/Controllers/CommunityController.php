@@ -12,9 +12,15 @@ use Exception;
 class CommunityController extends Controller
 {
     public function index() {
-        $posts = Post::with(['user', 'postImages', 'postLikes'])
+        $currentUserId = Auth::id();
+
+        $posts = Post::with(['user', 'postImages', 'postLikes', 'comments.user'])
             ->latest()
-            ->get();
+            ->get()
+            ->map(function ($post) use ($currentUserId) {
+                $post->is_liked = $post->postLikes->contains('user_id', $currentUserId);
+                return $post;
+            });
 
         return Inertia::render('user/community/index', [
             'posts' => $posts,
@@ -78,5 +84,21 @@ class CommunityController extends Controller
 
             return redirect()->back()->withErrors(['error' => 'Gagal membuat postingan: ' . $e->getMessage()]);
         }
+    }
+
+    public function toggleLike(Post $post) {
+        $userId = Auth::id();
+
+        $existingLike = $post->postLikes()->where('user_id', $userId)->first();
+
+        if ($existingLike) {
+            $existingLike->delete();
+        } else {
+            $post->postLikes()->create([
+                'user_id' => $userId
+            ]);
+        }
+
+        return redirect()->back();
     }
 }
