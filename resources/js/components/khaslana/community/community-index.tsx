@@ -1,35 +1,46 @@
 import { router, usePage } from "@inertiajs/react";
-import { Image, X, ThumbsUp } from "lucide-react";
+import { Image, X, ThumbsUp, MessageCircleMore } from "lucide-react";
 import { useState, type ChangeEvent } from "react";
 import ProfileIcon from "@/assets/icons/default-profile.png";
-
-interface PostImage {
-    id: number;
-    image: string;
-}
 
 interface User {
     id: number;
     name: string;
+    avatar?: string;
+}
+
+interface PostImage {
+    id: number;
+    post_id: number;
+    image: string;
+}
+
+interface PostLike {
+    id: number;
+    user_id: number;
+    post_id: number;
 }
 
 interface Post {
     id: number;
+    user_id: number;
+    umkm_id?: number | null;
     content: string;
     post_date: string;
+    created_at: string;
+
     user: User;
-    postImages: PostImage[];
+    post_images: PostImage[];
+    post_likes: PostLike[];
 }
 
-interface PaginatedPosts {
-    data: Post[];
+interface IndexProps {
+    posts: Post[];
 }
 
 export default function CommunityIndex() {
-    const { props } = usePage();
-    const posts = props.posts as any;
-
-    console.log("Struktur asli posts dari Laravel:", posts);
+    const { posts } = usePage().props as unknown as IndexProps;
+    console.log("Semua data dari Laravel: ", posts);
 
     const [content, setContent] = useState("");
     const [mediaFile, setMediaFile] = useState<File | null>(null);
@@ -70,6 +81,7 @@ export default function CommunityIndex() {
             content: content,
             images: mediaFile ? [mediaFile] : [],
         }, {
+            forceFormData: true,
             onSuccess: () => {
                 setContent("");
                 setMediaFile(null);
@@ -86,7 +98,7 @@ export default function CommunityIndex() {
             
             <section className="community-header flex flex-col w-full pt-8 pb-[40px] max-md:pb-5 gap-2">
                 <h2 className="text-[#99ff33] font-medium text-2xl md:text-5xl">Terhubung, Berkolaborasi, dan Berdaya Bersama.</h2>
-                <p className="text-[#adaaaa] font-light text-xl max-md:text-md">Bagikan perjalanan bisnismu, temukan solusi bersama, dan tumbuh lebih kuat dalam ekosistem komunitas Khaslana</p>
+                <p className="text-[#adaaaa] font-light text-md max-md:text-md">Bagikan perjalanan bisnismu, temukan solusi bersama, dan tumbuh lebih kuat dalam ekosistem komunitas Khaslana</p>
             </section>
             
             <div className="community-container flex flex-col gap-5 w-full py-5 mb-10 box-border">
@@ -127,34 +139,36 @@ export default function CommunityIndex() {
                         </div>
                     </div>
 
-                    {posts && posts.data && posts.data.length > 0 ? (
-                        posts.data.map((post) => (
-                            <div key={post.id} className="post-card w-full flex flex-col gap-2.5 bg-[#222] p-8 rounded-[15px]">
-                                <div className="post-profile flex items-center gap-4">
-                                    <div className="post-avatar">
-                                        <img src={ProfileIcon} alt="Profile" className="avatar w-10 h-10 rounded-full object-cover" />
+                    {posts && posts.length > 0 ? (
+                        posts.map((post) => (
+                            <div key={post.id} className="post-card w-full flex flex-col gap-4 bg-[#222] p-8 rounded-[15px]">
+                                <div className="flex flex-col gap-4">
+                                    <div className="post-profile flex items-center gap-4">
+                                        <div className="post-avatar">
+                                            <img src={ProfileIcon} alt="Profile" className="avatar w-10 h-10 rounded-full object-cover" />
+                                        </div>
+                                        <div className="post-user flex flex-col">
+                                            <h6 className="text-white font-medium text-lg">{post.user?.name || "Anggota Khaslana"}</h6>
+                                            <p className="text-[#888] text-sm">
+                                                {post.post_date ? new Date(post.post_date).toLocaleDateString('id-ID', {
+                                                    year: 'numeric', month: 'long', day: 'numeric'
+                                                }) : "Baru saja"}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="post-user flex flex-col">
-                                        <h6 className="text-white font-medium text-lg">{post.user?.name || "Anggota Khaslana"}</h6>
-                                        <p className="text-[#888] text-sm">
-                                            {post.post_date ? new Date(post.post_date).toLocaleDateString('id-ID', {
-                                                year: 'numeric', month: 'long', day: 'numeric'
-                                            }) : "Baru saja"}
-                                        </p>
-                                    </div>
-                                </div>
 
-                                <div className="post-content flex flex-col gap-5 text-[#adaaaa] font-normal">
-                                    <p className="text-md whitespace-pre-line">{post.content}</p>
-                                    
-                                    {post.postImages && post.postImages.map((imgData) => (
-                                        <img 
-                                            key={imgData.id}
-                                            src={`/storage/${imgData.image}`} 
-                                            alt="Post Content" 
-                                            className="w-full max-w-2xl h-auto rounded-xl object-cover" 
-                                        />
-                                    ))}
+                                    <div className="post-content flex flex-col gap-5 text-[#adaaaa] font-normal">
+                                        <p className="text-md whitespace-pre-line">{post.content}</p>
+                                        
+                                        {post.post_images && post.post_images.map((imgData) => (
+                                            <img 
+                                                key={imgData.id}
+                                                src={`/storage/${imgData.image}`} 
+                                                alt="Post Content" 
+                                                className="w-full max-w-2xl h-auto rounded-xl object-cover" 
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
 
                                 <div className="post-btn mt-2.75">
@@ -163,14 +177,14 @@ export default function CommunityIndex() {
                                             <ThumbsUp className="w-4 h-4" /> 0
                                         </button>
                                         <button className="post-opt-btn flex items-center gap-2 text-sm">
-                                            <span>💬</span> Komentar
+                                            <MessageCircleMore className="w-4 h-4"/> 0
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         ))
                     ) : (
-                        <p className="text-center text-[#888] py-10 text-sm">Belum ada data postingan di komunitas ini.</p>
+                        <p className="text-center text-[#888] py-10 text-sm">Belum ada data postingan di komunitas :(</p>
                     )}
 
                 </div>
