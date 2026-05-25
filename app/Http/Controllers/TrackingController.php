@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Models\UMKM\UmkmLocation;
+use App\Models\UMKM\Umkm;
 
 class TrackingController extends Controller
 {
@@ -14,13 +15,13 @@ class TrackingController extends Controller
         $request->validate([
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
-            'is_active' => 'required|boolean'
+            'is_active' => 'required|boolean',
+            'status' => 'nullable|string|in:TUTUP,MANGKAL,KELILING'
         ]);
 
-        $user = Auth::user();
+        $userId = Auth::id();
 
-        // Cari ID UMKM yang nyambung sama user yang lagi login
-        $umkm = DB::table('umkms')->where('user_id', $user->id)->first();
+        $umkm = Umkm::query()->where('user_id', $userId)->first();
 
         if (!$umkm) {
             return response()->json(['message' => 'Data UMKM tidak ditemukan'], 404);
@@ -28,18 +29,21 @@ class TrackingController extends Controller
 
         $umkmId = $umkm->id;
 
-        // 2. Handle jika UMKM menekan tombol "Berhenti Mangkal"
-        if (!$request->is_active) {
-            DB::table('umkm_locations')
-                ->where('umkm_id', $umkmId)
-                ->latest('id')
-                ->limit(1)
-                ->update(['is_active' => false, 'updated_at' => now()]);
+        // 2. Handle State: TUTUP
+        if (!$request->is_active || $request->status === 'TUTUP') {
+            $lastLocation = UmkmLocation::query()->where('umkm_id', $umkmId)->latest('id')->first();
 
-            return response()->json(['message' => 'Sedang mangkal. Lokasi disembunyikan.']);
+            if ($lastLocation) {
+                $lastLocation->update([
+                    'is_active' => false,
+                    'status' => 'TUTUP'
+                ]);
+            }
+
+            return response()->json(['message' => 'Stay Point ditutup.']);
         }
 
-        // 3. Handle jika UMKM mulai/sedang "Mangkal"
+        // 3. Handle State: MANGKAL & KELILING
         $newLat = $request->latitude;
         $newLng = $request->longitude;
 
@@ -47,62 +51,78 @@ class TrackingController extends Controller
             return response()->json(['message' => 'Koordinat tidak valid'], 400);
         }
 
-        // Ambil riwayat lokasi terakhir dari UMKM ini
-        $lastLocation = DB::table('umkm_locations')
-            ->where('umkm_id', $umkmId)
-            ->latest('id')
-            ->first();
+        $lastLocation = UmkmLocation::query()->where('umkm_id', $umkmId)->latest('id')->first();
 
-        if ($lastLocation) {
-            // Panggil fungsi Haversine
+        if ($lastLocation && $lastLocation->latitude && $lastLocation->longitude) {
             $distance = $this->haversine($lastLocation->latitude, $lastLocation->longitude, $newLat, $newLng);
 
-            // Jika jaraknya masih kurang dari 50 meter
+            // Jika jaraknya masih kurang dari 50 meter, update data terakhir saja
             if ($distance < 50) {
-                DB::table('umkm_locations')
-                    ->where('id', $lastLocation->id)
-                    ->update([
-                        'is_active' => true,
-                        // Update koordinat ke yang paling baru biar makin presisi
-                        'latitude' => $newLat,
-                        'longitude' => $newLng,
-                        'updated_at' => now()
-                    ]);
+                $lastLocation->update([
+                    'is_active' => true,
+                    'latitude' => $newLat,
+                    'longitude' => $newLng,
+                    'status' => $request->status
+                ]);
 
                 return response()->json([
                     'status' => 'updated',
-                    'message' => 'Lokasi masih sama (< 50m)',
-                    'distance' => round($distance, 2) . ' meter'
+                    'message' => 'Status berhasil diubah ke ' . $request->status,
+                    'distance' => round($distance, 2) . ' m'
                 ]);
             }
         }
 
-        // 4. Jika jarak > 50 meter ATAU UMKM ini belum pernah mangkal sama sekali
-        DB::table('umkm_locations')->insert([
+        // 4. Jika jarak > 50 meter ATAU belum pernah ada data, buat record baru
+        UmkmLocation::create([
             'umkm_id' => $umkmId,
             'latitude' => $newLat,
             'longitude' => $newLng,
             'is_active' => true,
-            'created_at' => now(),
-            'updated_at' => now()
+            'status' => $request->status
         ]);
 
         return response()->json([
             'status' => 'new_record',
-            'message' => 'Titik mangkal baru berhasil dicatat',
-            'distance' => isset($distance) ? round($distance, 2) . ' meter' : 0
+            'message' => 'Titik Stay Point baru dicatat (' . $request->status . ')',
+            'distance' => isset($distance) ? round($distance, 2) . ' m' : 0
         ]);
     }
 
     /**
+     * Mengambil status terbaru saat halaman di-refresh (Biar UI nggak balik ke TUTUP)
+     */
+    public function getCurrentStatus()
+    {
+        $userId = Auth::id();
+        $umkm = Umkm::query()->where('user_id', $userId)->first();
+
+        if (!$umkm) {
+            return response()->json(['status' => 'TUTUP']);
+        }
+
+        $lastLocation = UmkmLocation::query()->where('umkm_id', $umkm->id)->latest('id')->first();
+
+        // Kalau ada data lokasi terakhir dan statusnya masih aktif (MANGKAL / KELILING)
+        if ($lastLocation && $lastLocation->is_active) {
+            return response()->json([
+                'status' => $lastLocation->status,
+                'latitude' => $lastLocation->latitude,
+                'longitude' => $lastLocation->longitude
+            ]);
+        }
+
+        // Kalau nggak ada atau is_active false, berarti TUTUP
+        return response()->json(['status' => 'TUTUP']);
+    }
+
+    /**
      * Private Method: Haversine Formula
-     * Untuk menghitung jarak lurus dua titik di permukaan bumi yang melengkung.
      */
     private function haversine($lat1, $lon1, $lat2, $lon2)
     {
-        $earthRadius = 6371000; // Radius bumi dalam satuan meter
+        $earthRadius = 6371000;
 
-        // Konversi derajat ke radian
         $dLat = deg2rad($lat2 - $lat1);
         $dLon = deg2rad($lon2 - $lon1);
 
@@ -112,6 +132,6 @@ class TrackingController extends Controller
 
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
-        return $earthRadius * $c; // Mengembalikan hasil dalam meter
+        return $earthRadius * $c;
     }
 }

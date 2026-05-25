@@ -39,11 +39,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::controller(TrackingController::class)->group(function () {
         Route::post('/umkm/update-location', 'updateLocation')->name('umkm.update-location');
     });
+    
+    Route::get('/umkm/current-location-status', [App\Http\Controllers\TrackingController::class, 'getCurrentStatus']);
 
-    Route::get('/umkm/live-tracking', function () {
-        return inertia('umkm/live-tracking'); // Sesuaikan sama path file lu
-    })->name('umkm.live-tracking');
-
+    Route::get('/umkm/stay-point', function () {
+        return inertia('umkm/stay-point');
+    })->name('umkm.stay-point');
 
 
     // store management

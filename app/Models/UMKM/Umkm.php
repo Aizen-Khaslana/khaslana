@@ -17,7 +17,7 @@ class Umkm extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'ummkms';
+    protected $table = 'umkms';
     protected $fillable = [
         'user_id',
         'province_id',

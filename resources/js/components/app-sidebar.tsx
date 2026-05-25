@@ -13,7 +13,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard, product } from '@/routes';
-import { liveTracking } from '@/routes/umkm';
+import { stayPoint } from '@/routes/umkm';
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
 
@@ -29,8 +29,8 @@ const mainNavItems: NavItem[] = [
         icon: Package,
     },
     {
-        title: 'Livetrack',
-        href: liveTracking(),
+        title: 'Stay Point',
+        href: stayPoint(),
         icon:  MapPin,
     }
 ];
