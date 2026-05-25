@@ -47,10 +47,16 @@ class HandleInertiaRequests extends Middleware
                     'is_umkm' => $request->user()->is_umkm,
 
                     // relation table
-                    'profile_photo' => $request->user()->profile
+                    'profile_photo' => $request->user()->profile?->profile_photo
                         ? asset(
                             'storage/' .
                             $request->user()->profile->profile_photo
+                        )
+                        : null,
+                    'logo' => $request->user()->profile?->logo
+                        ? asset(
+                            'storage/' .
+                            $request->user()->profile->logo
                         )
                         : null,
 

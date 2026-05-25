@@ -52,6 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/store-management', 'index')->name('storeManagement');
         Route::post('/store-management/store', 'store')->name('storeManagement.store');
         Route::put('/store-management/update', 'update')->name('storeManagement.update');
+        Route::post('/store-management/store-logo', 'storeLogo')->name('storeManagement.storeLogo');
     });
 });
 

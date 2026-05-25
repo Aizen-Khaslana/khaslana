@@ -71,7 +71,7 @@ export default function Profile({
                                                 w-24 h-24
                                                 rounded-full
                                                 object-cover
-                                                border border-border
+                                                border-2 border-[#99FF33]/80
                                                 shadow-sm
                                             "
                                         />
@@ -83,13 +83,9 @@ export default function Profile({
                                                 name="profile_photo"
                                                 accept="image/*"
                                                 onChange={(e) => {
-                                                    const file =
-                                                        e.target.files?.[0];
-
+                                                    const file = e.target.files?.[0];
                                                     if (file) {
-                                                        setPreview(
-                                                            URL.createObjectURL(file)
-                                                        );
+                                                        setPreview(URL.createObjectURL(file));
                                                     }
                                                 }}
                                                 className="cursor-pointer"

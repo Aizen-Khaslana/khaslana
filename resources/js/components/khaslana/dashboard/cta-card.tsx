@@ -10,17 +10,14 @@ export default function CtaCard() {
                     <div className="mb-5 flex size-20 items-center justify-center rounded-full border border-[#99FF33] bg-transparent">
                         <Store className="size-10 text-[#99FF33]" />
                     </div>
-
                     <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
                         Lengkapi <span className="text-[#99FF33]">Data UMKM</span> Anda
                     </h1>
-
                     <p className="mt-3 text-sm md:text-base max-w-lg text-muted-foreground">
                         Untuk membuka seluruh fitur UMKM, silakan
                         lengkapi terlebih dahulu data diri dan informasi
                         UMKM Anda.
                     </p>
-
                     <div className="mt-8 grid w-full gap-4 md:grid-cols-3">
                         <div className="rounded-2xl border border-sidebar-border/70 p-4 dark:border-sidebar-border">
                             <h3 className="font-semibold">
@@ -30,7 +27,6 @@ export default function CtaCard() {
                                 Isi identitas dan informasi usaha Anda.
                             </p>
                         </div>
-
                         <div className="rounded-2xl border border-sidebar-border/70 p-4 dark:border-sidebar-border">
                             <h3 className="font-semibold">
                                 Akses Fitur
@@ -39,7 +35,6 @@ export default function CtaCard() {
                                 Buka seluruh fitur UMKM dan layanan Khaslana.
                             </p>
                         </div>
-
                         <div className="rounded-2xl border border-sidebar-border/70 p-4 dark:border-sidebar-border">
                             <h3 className="font-semibold">
                                 Tingkatkan Kredibilitas
