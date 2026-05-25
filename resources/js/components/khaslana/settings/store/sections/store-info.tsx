@@ -25,6 +25,7 @@ export default function StoreInfo({
     setData,
     errors,
 }: Props) {
+    console.log(data);
     return (
         <div className="space-y-4">
             <div>
@@ -121,19 +122,45 @@ export default function StoreInfo({
                         <span className="text-red-400"> *</span>
                     </Label>
                     <Select
+                        value={data.type}
                         onValueChange={(value) =>
                             setData('type', value)
                         }
                         required
                     >
-                        <SelectTrigger className="mt-2 border-gray-500/30 focus-visible:border-[#99FF33] focus-visible:ring-0 transition-all duration-200">
+                        <SelectTrigger
+                            className="
+                                mt-2
+                                border-gray-500/30
+                                bg-transparent
+                                transition-all duration-200
+                                focus:ring-0
+                                focus:border-[#99FF33]
+                                data-[state=open]:border-[#99FF33]
+                                hover:border-[#99FF33]
+                            "
+                        >
                             <SelectValue placeholder="Pilih tipe UMKM" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="TETAP">
+                            <SelectItem
+                                className="
+                                    cursor-pointer
+                                    focus:bg-[#99FF33]/10
+                                    focus:text-[#99FF33]
+                                "
+                                value="TETAP"
+                            >
                                 Tetap
                             </SelectItem>
-                            <SelectItem value="KELILING">
+                            <SelectItem
+                                className="
+                                    cursor-pointer
+                                    focus:bg-[#99FF33]/10
+                                    focus:text-[#99FF33]
+                                "
+                                value="KELILING"
+                            >
                                 Keliling
                             </SelectItem>
                         </SelectContent>

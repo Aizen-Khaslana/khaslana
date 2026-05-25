@@ -1,6 +1,6 @@
 import type { InertiaFormProps } from "@inertiajs/react";
 import { MapPin } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { type StoreFormData } from "@/components/khaslana/settings/store/types";
 import { Button } from "@/components/ui/button";
 import { Label } from '@/components/ui/label';
@@ -86,6 +86,51 @@ export default function Address({
         }
     };
 
+    const initializeLocation = useCallback(async () => {
+        try {
+            // load cities
+            if (
+                data.province_id &&
+                cities.length === 0
+            ) {
+                const citiesData = await fetchCities(data.province_id);
+                setCities(citiesData || []);
+            }
+
+            // load districts
+            if (
+                data.city_id &&
+                districts.length === 0
+            ) {
+                const districtsData = await fetchDistricts(data.city_id);
+                setDistricts(districtsData || []);
+            }
+
+            // load villages
+            if (
+                data.district_id &&
+                villages.length === 0
+            ) {
+                const villagesData = await fetchVillages(data.district_id);
+                setVillages(villagesData || []);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }, [
+        data.province_id,
+        data.city_id,
+        data.district_id,
+
+        cities.length,
+        districts.length,
+        villages.length,
+    ]);
+
+    useEffect(() => {
+        initializeLocation();
+    }, [initializeLocation]);
+
     const handleDetectLocation = async () => {
         if (!navigator.geolocation) {
             alert('Browser tidak mendukung geolocation');
@@ -124,9 +169,6 @@ export default function Address({
 
                     console.log(result);
 
-                    setData('address', result.address);
-                    setData('province_id', result.province_id);
-
                     const citiesData = await fetchCities(result.province_id);
                     setCities(citiesData || []);
 
@@ -136,13 +178,15 @@ export default function Address({
                     const villagesData = await fetchVillages(result.district_id);
                     setVillages(villagesData || []);
 
-                    setData({
-                        ...data,
+                    setData((prev) => ({
+                        ...prev,
+                        latitude,
+                        longitude,
                         address: result.address,
                         province_id: result.province_id,
                         city_id: result.city_id,
                         district_id: result.district_id,
-                    });
+                    }));
                     requestAnimationFrame(() => {
                         setData('village_id', result.village_id);
                     });
@@ -244,15 +288,39 @@ export default function Address({
                     <Select
                         value={data.province_id}
                         onValueChange={handleProvinceChange}
+                        required
                     >
-                        <SelectTrigger className="mt-2 border-gray-500/30 focus-visible:border-[#99FF33] focus-visible:ring-0 transition-all duration-200">
+                        <SelectTrigger
+                            className="
+                                mt-2
+                                border-gray-500/30
+                                bg-transparent
+                                transition-all duration-200
+                                focus:ring-0
+                                focus:border-[#99FF33]
+                                data-[state=open]:border-[#99FF33]
+                                hover:border-[#99FF33]
+                            "
+                        >
                             <SelectValue placeholder="Pilih provinsi" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent
+                            className="
+                                border-gray-500/30
+                                bg-[#191720]
+                                text-white
+                                my-2
+                            "
+                        >
                             {provinces.map((province) => (
                                 <SelectItem
-                                key={province.code}
-                                value={province.code}
+                                    key={province.code}
+                                    value={province.code}
+                                    className="
+                                        cursor-pointer
+                                        focus:bg-[#99FF33]/10
+                                        focus:text-[#99FF33]
+                                    "
                                 >
                                     {province.name}
                                 </SelectItem>
@@ -279,8 +347,20 @@ export default function Address({
                         value={data.city_id}
                         onValueChange={handleCityChange}
                         disabled={!data.province_id}
+                        required
                     >
-                        <SelectTrigger className="mt-2 border-gray-500/30 focus-visible:border-[#99FF33] focus-visible:ring-0 transition-all duration-200">
+                        <SelectTrigger
+                            className="
+                                mt-2
+                                border-gray-500/30
+                                bg-transparent
+                                transition-all duration-200
+                                focus:ring-0
+                                focus:border-[#99FF33]
+                                data-[state=open]:border-[#99FF33]
+                                hover:border-[#99FF33]
+                            "
+                        >
                             <SelectValue placeholder="Pilih kota" />
                         </SelectTrigger>
                         <SelectContent>
@@ -288,6 +368,11 @@ export default function Address({
                                 <SelectItem
                                     key={city.code}
                                     value={city.code}
+                                    className="
+                                        cursor-pointer
+                                        focus:bg-[#99FF33]/10
+                                        focus:text-[#99FF33]
+                                    "
                                 >
                                     {city.name}
                                 </SelectItem>
@@ -314,8 +399,20 @@ export default function Address({
                         value={data.district_id}
                         onValueChange={handleDistrictChange}
                         disabled={!data.city_id}
+                        required
                     >
-                        <SelectTrigger className="mt-2 border-gray-500/30 focus-visible:border-[#99FF33] focus-visible:ring-0 transition-all duration-200">
+                        <SelectTrigger
+                            className="
+                                mt-2
+                                border-gray-500/30
+                                bg-transparent
+                                transition-all duration-200
+                                focus:ring-0
+                                focus:border-[#99FF33]
+                                data-[state=open]:border-[#99FF33]
+                                hover:border-[#99FF33]
+                            "
+                        >
                             <SelectValue placeholder="Pilih kecamatan" />
                         </SelectTrigger>
                         <SelectContent>
@@ -323,6 +420,11 @@ export default function Address({
                                 <SelectItem
                                     key={district.code}
                                     value={district.code}
+                                    className="
+                                        cursor-pointer
+                                        focus:bg-[#99FF33]/10
+                                        focus:text-[#99FF33]
+                                    "
                                 >
                                     {district.name}
                                 </SelectItem>
@@ -351,8 +453,20 @@ export default function Address({
                             setData('village_id', value)
                         }
                         disabled={!data.district_id}
+                        required
                     >
-                        <SelectTrigger className="mt-2 border-gray-500/30 focus-visible:border-[#99FF33] focus-visible:ring-0 transition-all duration-200">
+                        <SelectTrigger
+                            className="
+                                mt-2
+                                border-gray-500/30
+                                bg-transparent
+                                transition-all duration-200
+                                focus:ring-0
+                                focus:border-[#99FF33]
+                                data-[state=open]:border-[#99FF33]
+                                hover:border-[#99FF33]
+                            "
+                        >
                             <SelectValue placeholder="Pilih kelurahan" />
                         </SelectTrigger>
                         <SelectContent>
@@ -360,6 +474,11 @@ export default function Address({
                                 <SelectItem
                                     key={village.code}
                                     value={village.code}
+                                    className="
+                                        cursor-pointer
+                                        focus:bg-[#99FF33]/10
+                                        focus:text-[#99FF33]
+                                    "
                                 >
                                     {village.name}
                                 </SelectItem>
@@ -390,6 +509,7 @@ export default function Address({
                         setData('address', e.target.value)
                     }
                     className="mt-2 border-gray-500/30 focus-visible:border-[#99FF33] focus-visible:ring-0 transition-all duration-200 dark:bg-transparent"
+                    required
                 />
                 {errors.address && (
                     <p className="text-xs text-red-500">
