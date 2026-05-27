@@ -10,10 +10,10 @@ export default function MenuSection() {
                     <h3 className="text-muted-foreground text-sm md:text-base">Koleksi produk produk unggulan dari toko kami.</h3>
                     <Link
                         href=""
-                        className="flex gap-1 text-[#99FF33]"
+                        className="flex gap-1 text-[#99FF33] group transition-all duration-300"
                     >
                         Lihat semua menu
-                        <ChevronRight className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-2 font-semibold" />
+                        <ChevronRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2 font-semibold" />
                     </Link>
                 </div>
             </div>
