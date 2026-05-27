@@ -1,3 +1,5 @@
+import { usePage } from '@inertiajs/react';
+
 import {
     MessageCircle,
     MapPin,
@@ -10,6 +12,14 @@ type Category = {
 }
 
 export default function HeroSection() {
+    const page = usePage<{
+        storeStatus: {
+            isOpen: boolean
+        }
+    }>()
+
+    const { storeStatus } = page.props
+
     const categories: Category[] = [
         {
             name: 'Minuman',
@@ -88,10 +98,24 @@ export default function HeroSection() {
                             backdrop-blur-md
                         "
                     >
-                        <span className="text-[10px] lg:text-[10.5px] font-bold uppercase tracking-wider text-[#99FF33]">
-                            Sedang Buka
+                        <span
+                            className={`text-[10px] lg:text-[10.5px] font-bold uppercase tracking-wider ${storeStatus.isOpen
+                                    ? 'text-[#99FF33]'
+                                    : 'text-gray-400'
+                                }`}
+                        >
+                            {storeStatus.isOpen
+                                ? 'Sedang Buka'
+                                : 'Sedang Tutup'}
                         </span>
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#99FF33]" />
+                        <span className="relative flex h-2.5 w-2.5">
+                            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                                storeStatus.isOpen ? 'bg-green-400' : ''
+                            }`}></span>
+                            <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
+                                storeStatus.isOpen ? 'bg-green-500' : 'bg-gray-400'
+                            }`}></span>
+                        </span>
                     </div>
                     <span className="text-white text-2xl font-medium">
                         08:00 — 22:00 WIB
