@@ -21,6 +21,7 @@ export interface Umkm {
     close_time: string | null;
 
     average_rating: number;
+    is_open: boolean;
 
     is_order_feature: boolean;
     is_shipping_feature: boolean;

@@ -15,23 +15,6 @@ interface HeroSectionProps {
 export default function HeroSection({
     umkmData,
 }: HeroSectionProps) {
-    const page = usePage<{
-        storeStatus: {
-            isOpen: boolean
-        }
-    }>()
-
-    const { storeStatus } = page.props
-
-    const categories: Category[] = [
-        {
-            name: 'Minuman',
-        },
-        {
-            name: 'Makanan',
-        },
-    ];
-
     return (
         <section className="flex flex-col lg:flex-row items-center lg:items-end justify-center lg:justify-between gap-10 lg:gap-16 w-full">
             <div className="flex flex-col flex-1 w-full">
@@ -111,21 +94,21 @@ export default function HeroSection({
                         "
                     >
                         <span
-                            className={`text-[10px] lg:text-[10.5px] font-bold uppercase tracking-wider ${storeStatus.isOpen
+                            className={`text-[10px] lg:text-[10.5px] font-bold uppercase tracking-wider ${umkmData.is_open
                                     ? 'text-[#99FF33]'
                                     : 'text-gray-400'
                                 }`}
                         >
-                            {storeStatus.isOpen
+                            {umkmData.is_open
                                 ? 'Sedang Buka'
                                 : 'Sedang Tutup'}
                         </span>
                         <span className="relative flex h-2.5 w-2.5">
                             <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                                storeStatus.isOpen ? 'bg-green-400' : ''
+                                umkmData.is_open ? 'bg-green-400' : ''
                             }`}></span>
                             <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
-                                storeStatus.isOpen ? 'bg-green-500' : 'bg-gray-400'
+                                umkmData.is_open ? 'bg-green-500' : 'bg-gray-400'
                             }`}></span>
                         </span>
                     </div>

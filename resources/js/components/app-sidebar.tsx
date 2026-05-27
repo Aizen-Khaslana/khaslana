@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, Package, MapPin, ToggleRight } from 'lucide-react';
+import { LayoutGrid, Package, MapPin } from 'lucide-react';
 import BackToHomepage from '@/components/back-to-homepage';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -15,7 +15,6 @@ import {
 import { useAuth } from '@/hooks/use-auth';
 import { dashboard, product } from '@/routes';
 import { stayPoint } from '@/routes/umkm';
-// import { storeStatus } from '@/routes/storeStatus';
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
 
@@ -44,11 +43,6 @@ export function AppSidebar() {
             ]
             : []
         ),
-        // {
-        //     title: 'Store Status',
-        //     href: storeStatus(),
-        //     icon: ToggleRight,
-        // }
     ];
 
     return (
