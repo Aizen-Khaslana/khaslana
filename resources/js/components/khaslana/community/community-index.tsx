@@ -131,13 +131,19 @@ export default function CommunityIndex() {
         });
     }
 
+    const handleDeletePost = (postId: number) => {
+        if (confirm('Yakin ingin menghapus postingan ini?')) {
+            router.delete(`/community/${postId}`);
+        }
+    }
+
     return (
-        <div className="flex flex-col items-center pt-20 md:pt-28 px-6 md:px-12 lg:px-[70px] w-full min-h-screen">
+        <div className="flex flex-col items-center pt-20 md:pt-28 px-6 md:px-12 lg:px-17.5 w-full min-h-screen">
             {isUploaded &&  (
                 <div className="w-full bg-[#99FF33]/20 border border-[#99FF33] text-[#99FF33] p-4 rounded-[15px] text-sm font-medium">Postingan berhasil diupload!</div>
             )}
 
-            <section className="community-header flex flex-col w-full pt-8 pb-[40px] max-md:pb-5 gap-2">
+            <section className="community-header flex flex-col w-full pt-8 pb-10 max-md:pb-5 gap-2">
                 <h2 className="text-[#99ff33] font-medium text-2xl md:text-5xl">Terhubung, Berkolaborasi, dan Berdaya Bersama.</h2>
                 <p className="text-[#adaaaa] font-light text-md max-md:text-md">Bagikan perjalanan bisnismu, temukan solusi bersama, dan tumbuh lebih kuat dalam ekosistem komunitas Khaslana</p>
             </section>
@@ -202,9 +208,10 @@ export default function CommunityIndex() {
                                             </div>
                                         </div>
                                         {isMyPost && (
-                                            <div className="post-options hover:text-[#99ff33] cursor-pointer">
+                                            <button onClick={() => handleDeletePost(post.id)}
+                                                className="post-options hover:text-[#99ff33] cursor-pointer">
                                                 <Trash className="w-4"/>
-                                            </div>
+                                            </button>
                                         )}
                                     </div>
 

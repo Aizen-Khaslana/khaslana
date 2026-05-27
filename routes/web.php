@@ -70,6 +70,8 @@ Route::controller(CommunityController::class)->group(function() {
 
     Route::post('/community', [CommunityController::class, 'store'])->name('community.store');
 
+    Route::delete('/community/{post}', [CommunityController::class, 'destroy'])->name('community.destroy');
+
     Route::post('/community/{post}/like', [CommunityController::class, 'toggleLike'])->name('community.like');
 });
 
