@@ -1,6 +1,6 @@
 import { Transition } from "@headlessui/react";
-import { Form, Head, Link } from "@inertiajs/react";
-import React from "react";
+import { Form, Head, Link, usePage } from "@inertiajs/react";
+import React, { useEffect } from "react";
 import ProfileController from "@/actions/App/Http/Controllers/Settings/ProfileController";
 import DefaultProfile from "@/assets/icons/default-profile.png";
 import InputError from "@/components/input-error";
@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import UnusedNavLayout from "@/layouts/unused-nav-layout";
+import { showSuccessToast } from "@/lib/toast";
 import { home } from "@/routes";
 import { send } from "@/routes/verification";
 
@@ -22,10 +23,24 @@ export default function Profile({
     status,
 }: ProfileProps) {
     const { user } = useAuth();
-
     const [preview, setPreview] = React.useState<string | null>(
         user.profile_photo ?? null
     );
+    const { props } = usePage<{
+        flash: {
+            success?: string;
+            error?: string;
+        };
+    }>();
+
+    useEffect(() => {
+        if (props.flash?.success) {
+            showSuccessToast(
+                "Berhasil",
+                props.flash?.success
+            );
+        }
+    }, [props]);
 
     return (
         <UnusedNavLayout backHref={home().url}>
@@ -169,7 +184,7 @@ export default function Profile({
                                             </div>
                                     )}
                                 </div>
-                                <div className="flex">
+                                <div className="flex items-center gap-2">
                                     <Button
                                         type="submit"
                                         disabled={processing}
@@ -196,6 +211,7 @@ export default function Profile({
                                             className="
                                                 text-sm
                                                 text-[#99FF33]/60
+                                                mt-2
                                             "
                                         >
                                             Berhasil disimpan
