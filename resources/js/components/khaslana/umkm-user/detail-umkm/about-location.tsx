@@ -8,13 +8,13 @@ export default function AboutLocation({
     umkmData,
 }: AboutLocationProps) {
     return (
-        <div className="flex justify-between items-center mt-12">
+        <div className="flex justify-between items-center gap-12 mt-12">
             {/* left section */}
-            <div className="flex flex-col">
+            <div className="flex flex-col w-full">
                 <div>
                     <h2 className="text-xl md:text-2xl font-bold">Tentang Kami</h2>
                 </div>
-                <div className="flex flex-col mt-2">
+                <div className="flex flex-col mt-2 w-full bg-amber-200">
                     <span className="font-normal text-wrap">
                         {umkmData.description}
                     </span>
@@ -22,7 +22,7 @@ export default function AboutLocation({
             </div>
 
             {/* right section */}
-            <div className="flex flex-col">
+            <div className="flex flex-col w-full">
                 <div>
                     <h2 className="text-xl md:text-2xl font-bold">Lokasi</h2>
                 </div>
