@@ -18,6 +18,7 @@ import {
     dashboard,
     logout
 } from "@/routes";
+import { profile } from "@/routes";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -96,7 +97,7 @@ export default function Navbar() {
             ref={navRef}
             className={`navbar ${scrolled ? "navbar-scrolled" : ""} ${
                 menuOpen ? "menu-open" : ""
-            } `}
+            }`}
         >
             <div className="navbar-left">
                 <Link
@@ -125,8 +126,8 @@ export default function Navbar() {
                 <ul className={`
                     ${user ? "navbar-authenticated" : ""}
                     ${user ? "navbar-mobile-auth" : ""}
-                    ${user ? "max-lg:mb-7" : ""}
-                    lg:absolute lg:flex lg:flex-row lg:items-center lg:gap-8`}>
+                    ${user ? "max-[900px]:mb-8" : ""}
+                    `}>
                     {menus.map((menu) => (
                         <li key={menu.name}>
                             <Link
@@ -201,7 +202,7 @@ export default function Navbar() {
                                     </motion.button>
                                     <div className="navbar-mobile-links">
                                         <Link
-                                            href="/profile"
+                                            href={profile()}
                                             className="nav-link"
                                         >
                                             Profile
@@ -262,7 +263,7 @@ export default function Navbar() {
                                                 "
                                             >
                                                 <Link
-                                                    href="/profile"
+                                                    href={profile()}
                                                     className="
                                                         flex items-center gap-3
                                                         px-5 py-4
@@ -279,7 +280,7 @@ export default function Navbar() {
                                                 </Link>
                                                 {!user.is_umkm && (
                                                     <Link
-                                                        href="/dashboard"
+                                                        href={dashboard()}
                                                         className="
                                                             flex items-center gap-3
                                                             px-5 py-4
