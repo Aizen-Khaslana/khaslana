@@ -107,7 +107,7 @@ export default function Profile({
 
                                     <Input
                                         id="name"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 border-gray-500/30 focus-visible:border-[#99FF33] focus-visible:ring-0 transition-all duration-200"
                                         defaultValue={user.name}
                                         name="name"
                                         required
@@ -126,7 +126,7 @@ export default function Profile({
 
                                     <Input
                                         id="username"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 border-gray-500/30 focus-visible:border-[#99FF33] focus-visible:ring-0 transition-all duration-200"
                                         defaultValue={user.username}
                                         name="username"
                                         required
@@ -146,11 +146,11 @@ export default function Profile({
                                     <Input
                                         id="email"
                                         type="email"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 border-gray-500/30 focus-visible:border-[#99FF33] focus-visible:ring-0 transition-all duration-200"
                                         defaultValue={user.email}
                                         name="email"
                                         required
-                                        autoComplete="username"
+                                        autoComplete="email"
                                         placeholder="Email address"
                                     />
 
@@ -203,7 +203,7 @@ export default function Profile({
                                         leave="transition ease-in-out"
                                         leaveTo="opacity-0"
                                     >
-                                        <p className="text-sm text-neutral-600">
+                                        <p className="text-sm text-[#99FF33]/60">
                                             Tersimpan
                                         </p>
                                     </Transition>

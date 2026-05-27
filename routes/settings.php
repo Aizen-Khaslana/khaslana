@@ -9,8 +9,11 @@ use Inertia\Inertia;
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', '/settings/profile');
 
-    Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::controller(ProfileController::class)->group(function () {
+        Route::get('/profile', 'index')->name('profile');
+        Route::get('settings/profile', 'edit')->name('profile.edit');
+        Route::patch('settings/profile', 'update')->name('profile.update');
+    });
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

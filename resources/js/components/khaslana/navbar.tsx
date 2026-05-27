@@ -18,6 +18,7 @@ import {
     dashboard,
     logout
 } from "@/routes";
+import { profile } from "@/routes";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -201,7 +202,7 @@ export default function Navbar() {
                                     </motion.button>
                                     <div className="navbar-mobile-links">
                                         <Link
-                                            href="/profile"
+                                            href={profile()}
                                             className="nav-link"
                                         >
                                             Profile
@@ -262,7 +263,7 @@ export default function Navbar() {
                                                 "
                                             >
                                                 <Link
-                                                    href="/profile"
+                                                    href={profile()}
                                                     className="
                                                         flex items-center gap-3
                                                         px-5 py-4
@@ -279,7 +280,7 @@ export default function Navbar() {
                                                 </Link>
                                                 {!user.is_umkm && (
                                                     <Link
-                                                        href="/dashboard"
+                                                        href={dashboard()}
                                                         className="
                                                             flex items-center gap-3
                                                             px-5 py-4

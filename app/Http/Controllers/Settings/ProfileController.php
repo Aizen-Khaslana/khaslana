@@ -19,6 +19,13 @@ use App\Models\UserProfile;
 
 class ProfileController extends Controller
 {
+    public function index(Request $request): Response {
+        return Inertia::render('user/profile', [
+            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'status' => $request->session()->get('status'),
+        ]);
+    }
+
     /**
      * Show the user's profile settings page.
      */
@@ -98,7 +105,6 @@ class ProfileController extends Controller
                     'success' => 'Profil berhasil diperbarui.',
                 ]);
         } catch (Throwable $th) {
-            dd($th->getMessage());
             if (
                 $newFilePath &&
                 Storage::disk('public')->exists($newFilePath)

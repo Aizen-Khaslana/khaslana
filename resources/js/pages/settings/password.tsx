@@ -33,8 +33,8 @@ export default function Password() {
                 <div className="space-y-6">
                     <Heading
                         variant="default"
-                        title="Update password"
-                        description="Ensure your account is using a long, random password to stay secure"
+                        title="Perbarui Password Anda"
+                        description="Pastikan akun Anda menggunakan password yang panjang dan acak, untuk menjamin keamanan akun Anda."
                     />
 
                     <Form
@@ -63,7 +63,7 @@ export default function Password() {
                             <>
                                 <div className="grid gap-2">
                                     <Label htmlFor="current_password">
-                                        Current password
+                                        Password lama
                                     </Label>
 
                                     <Input
@@ -71,9 +71,9 @@ export default function Password() {
                                         ref={currentPasswordInput}
                                         name="current_password"
                                         type="password"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 border-gray-500/30 focus-visible:border-[#99FF33] focus-visible:ring-0 transition-all duration-200"
                                         autoComplete="current-password"
-                                        placeholder="Current password"
+                                        placeholder="Password lama"
                                     />
 
                                     <InputError
@@ -83,7 +83,7 @@ export default function Password() {
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="password">
-                                        New password
+                                        Password baru
                                     </Label>
 
                                     <Input
@@ -91,9 +91,9 @@ export default function Password() {
                                         ref={passwordInput}
                                         name="password"
                                         type="password"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 border-gray-500/30 focus-visible:border-[#99FF33] focus-visible:ring-0 transition-all duration-200"
                                         autoComplete="new-password"
-                                        placeholder="New password"
+                                        placeholder="Password baru"
                                     />
 
                                     <InputError message={errors.password} />
@@ -101,16 +101,16 @@ export default function Password() {
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="password_confirmation">
-                                        Confirm password
+                                        Konfirmasi password baru
                                     </Label>
 
                                     <Input
                                         id="password_confirmation"
                                         name="password_confirmation"
                                         type="password"
-                                        className="mt-1 block w-full"
+                                        className="mt-1 border-gray-500/30 focus-visible:border-[#99FF33] focus-visible:ring-0 transition-all duration-200"
                                         autoComplete="new-password"
-                                        placeholder="Confirm password"
+                                        placeholder="Konfirmasi password baru"
                                     />
 
                                     <InputError
@@ -122,9 +122,9 @@ export default function Password() {
                                     <Button
                                         disabled={processing}
                                         data-test="update-password-button"
-                                        className='bg-[#99FF33] border-1 border-[#99FF33] hover:bg-[#1E1B26] hover:text-[#99FF33] transition-colors duration-200 hover:cursor-pointer'
+                                        className='bg-[#99FF33] border border-[#99FF33] hover:bg-[#1E1B26] hover:text-[#99FF33] transition-colors duration-200 hover:cursor-pointer'
                                     >
-                                        Save password
+                                        Simpan Password
                                     </Button>
 
                                     <Transition
@@ -134,8 +134,8 @@ export default function Password() {
                                         leave="transition ease-in-out"
                                         leaveTo="opacity-0"
                                     >
-                                        <p className="text-sm text-neutral-600">
-                                            Saved
+                                        <p className="text-sm text-[#99FF33]/60">
+                                            Tersimpan
                                         </p>
                                     </Transition>
                                 </div>
