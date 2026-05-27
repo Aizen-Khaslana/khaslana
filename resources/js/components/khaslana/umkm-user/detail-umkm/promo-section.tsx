@@ -1,5 +1,5 @@
 import DefaultLogo from '@/assets/icons/default-store-logo.png';
-import type { Umkm } from "@/pages/user/umkm";
+import type { Umkm } from "@/types/umkm";
 
 interface PromoSectionProps {
     umkmData: Umkm[];

@@ -4,7 +4,7 @@ import {
     Star,
 } from "lucide-react";
 import DefaultStore from "@/assets/images/umkm-user/default-store.png";
-import type { Umkm } from "@/pages/user/umkm";
+import type { Umkm } from "@/types/umkm";
 
 interface HeroSectionProps {
     umkmData: Umkm[];

@@ -1,5 +1,35 @@
-export default function AboutLocation() {
+import type { Umkm } from "@/types/umkm";
+
+interface AboutLocationProps {
+    umkmData: Umkm[];
+}
+
+export default function AboutLocation({
+    umkmData,
+}: AboutLocationProps) {
     return (
-        <div>test</div>
+        <div className="flex justify-between items-center mt-12">
+            {/* left section */}
+            <div className="flex flex-col">
+                <div>
+                    <h2 className="text-xl md:text-2xl font-bold">Tentang Kami</h2>
+                </div>
+                <div className="flex flex-col mt-2">
+                    <span className="font-normal text-wrap">
+                        {umkmData.description}
+                    </span>
+                </div>
+            </div>
+
+            {/* right section */}
+            <div className="flex flex-col">
+                <div>
+                    <h2 className="text-xl md:text-2xl font-bold">Lokasi</h2>
+                </div>
+                <div className="flex mt-2">
+                    <span>lokasi disini yaa jakk</span>
+                </div>
+            </div>
+        </div>
     )
 }
