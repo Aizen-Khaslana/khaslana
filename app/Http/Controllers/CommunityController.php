@@ -36,6 +36,8 @@ class CommunityController extends Controller
             'comments.user',
         ]);
 
+        $post->is_liked = $post->postLikes->contains('user_id', Auth::id());
+
         return Inertia::render('user/community/detail-post/index', [
             'post' => $post,
         ]);
@@ -123,5 +125,19 @@ class CommunityController extends Controller
         } catch (Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Gagal menghapus postingan: ' . $e->getMessage()]);
         }
+    }
+
+    public function storeComment(Request $request, Post $post) {
+        $request->validate([
+            'comment' => 'required|string|max:500'
+        ]);
+
+        $post->comments()->create([
+            'user_id' => Auth::id(),
+            'post_id' => $request->post_id,
+            'comment' => $request->comment,
+        ]);
+
+        return redirect()->back();
     }
 }

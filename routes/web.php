@@ -68,6 +68,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/community/{post}', [CommunityController::class, 'destroy'])->name('community.destroy');
 
         Route::post('/community/{post}/like', [CommunityController::class, 'toggleLike'])->name('community.like');
+
+        Route::post('/community/{post}/comment', [CommunityController::class, 'storeComment'])->name('community.comments.store');
     });
 });
 
