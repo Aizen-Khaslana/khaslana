@@ -36,7 +36,7 @@ class CommunityController extends Controller
             'comments.user',
         ]);
 
-        return Inertia::render('user/community/show', [
+        return Inertia::render('user/community/detail-post/index', [
             'post' => $post,
         ]);
     }
