@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Models\Post\Post;
+use App\Models\Post\Comment;
 use Illuminate\Support\Facades\Storage;
 use Exception;
 
@@ -36,7 +37,9 @@ class CommunityController extends Controller
             'comments.user',
         ]);
 
-        return Inertia::render('user/community/show', [
+        $post->is_liked = $post->postLikes->contains('user_id', Auth::id());
+
+        return Inertia::render('user/community/detail-post/index', [
             'post' => $post,
         ]);
     }
@@ -122,6 +125,34 @@ class CommunityController extends Controller
             return redirect()->route('community')->with('message', 'Postingan berhasil dihapus!');
         } catch (Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Gagal menghapus postingan: ' . $e->getMessage()]);
+        }
+    }
+
+    public function storeComment(Request $request, Post $post) {
+        $request->validate([
+            'comment' => 'required|string|max:500'
+        ]);
+
+        $post->comments()->create([
+            'user_id' => Auth::id(),
+            'post_id' => $request->post_id,
+            'comment' => $request->comment,
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deleteComment(Request $request, Post $post, Comment $comment) {
+        if ($comment->user_id !== Auth::id()) {
+            return redirect()->back()->withErrors(['error' => 'Anda tidak memiliki akses untuk menghapus komentar ini!']);
+        }
+
+        try {
+            $comment->delete();
+
+            return redirect()->back()->with('message', 'Komentar berhasil dihapus!');
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Gagal menghapus komentar: ' . $e->getMessage()]);
         }
     }
 }
