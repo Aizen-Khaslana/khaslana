@@ -30,7 +30,7 @@ class CategorySeeder extends Seeder
                 'name' => 'WISATA',
             ],
             [
-                'name' => 'BUDAYA',
+                'name' => 'FASHION',
             ],
         ];
 

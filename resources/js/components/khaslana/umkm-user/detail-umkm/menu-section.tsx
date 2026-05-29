@@ -1,5 +1,5 @@
 import { Link } from "@inertiajs/react"
-import { ChevronRight, Plus } from "lucide-react"
+import { ChevronRight, Plus, PackageOpen } from "lucide-react"
 import type { Product } from "@/types/product";
 
 interface MenuSectionProps {
@@ -25,7 +25,8 @@ export default function MenuSection({
                 </div>
             </div>
             {products.length === 0 ? (
-                <div className="w-full mt-8 flex justify-center">
+                <div className="w-full mt-8 flex flex-col gap-4 justify-center items-center">
+                    <PackageOpen className='h-32 w-32 text-center text-[#99FF33]' />
                     <p className="text-sm md:text-base text-white/80 text-center">
                         Toko ini belum memiliki produk.
                     </p>
