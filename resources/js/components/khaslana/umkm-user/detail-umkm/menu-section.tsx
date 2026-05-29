@@ -32,17 +32,19 @@ export default function MenuSection({
                     </p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-8">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
                     {products.map((product) => (
                         <div
                             key={product.id}
                             className="
-                                bg-card
+                                bg-[#262626]
                                 rounded-3xl
                                 overflow-hidden
                                 border
                                 transition-all
+                                duration-300
                                 hover:-translate-y-1
+                                hover:shadow-[0_10px_40px_rgba(153,255,51,0.08)]
                             "
                         >
                             <div className="relative">
@@ -51,8 +53,9 @@ export default function MenuSection({
                                     alt={product.name}
                                     className="
                                         w-full
-                                        h-52
+                                        h-64
                                         object-cover
+                                        bg-[#202020]
                                     "
                                 />
 
@@ -60,11 +63,9 @@ export default function MenuSection({
                                     <span
                                         className="
                                             absolute
-                                            top-3
-                                            left-3
+                                            top-3 left-3
                                             text-xs
-                                            px-2
-                                            py-1
+                                            px-2 py-1
                                             rounded-full
                                             bg-red-100
                                             text-red-500
@@ -76,8 +77,8 @@ export default function MenuSection({
                                 )}
                             </div>
 
-                            <div className="p-4 flex flex-col gap-2">
-                                <h4 className="font-semibold">
+                            <div className="p-4 my-4 flex flex-col gap-2">
+                                <h4 className="text-white text-base md:text-xl font-semibold">
                                     {product.name}
                                 </h4>
 
@@ -107,13 +108,14 @@ export default function MenuSection({
 
                                     <button
                                         className="
-                                            w-10
-                                            h-10
+                                            w-10 h-10
                                             rounded-full
-                                            bg-[#99FF33]/20
-                                            flex
-                                            items-center
-                                            justify-center
+                                            bg-[#303729]
+                                            flex items-center justify-center
+                                            hover:cursor-pointer
+                                            hover:bg-[#99FF33]
+                                            hover:text-black
+                                            transition-colors duration-300
                                         "
                                     >
                                         <Plus size={18} />

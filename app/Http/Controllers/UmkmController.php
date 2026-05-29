@@ -50,7 +50,8 @@ class UmkmController extends Controller
             'productVariants',
             'promo',
             'category',
-        )->get();
+        )->take(4)
+        ->get();
 
         return Inertia::render('user/umkm-user/detail-umkm/index', [
             'umkmData' => $umkm,

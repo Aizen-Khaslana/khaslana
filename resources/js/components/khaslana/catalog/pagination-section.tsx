@@ -17,7 +17,7 @@ export function PaginationSection({
     }
 
      return (
-        <div className="flex justify-center items-center gap-2 pt-2.5 mt-8 flex-wrap">
+        <div className="flex justify-center items-center gap-2 pt-2.5 mb-12 flex-wrap">
             {products.prev_page_url && (
                 <Link
                     href={products.prev_page_url}

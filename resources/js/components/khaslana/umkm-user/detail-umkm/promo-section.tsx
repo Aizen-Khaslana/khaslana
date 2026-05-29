@@ -25,13 +25,13 @@ export default function PromoSection({
                             bg-[#1E1B26]
                         "
                     />
-                    <div className='flex flex-col gap-1 text-[#1E1B26]'>
-                        <h1 className='text-xl md:text-2xl font-bold'>Mitra Lokal: Roti Bangkir Bakery</h1>
-                        <span className='text-sm md:text-base font-normal'>Nikmati bundling spesial Kopi + Roti mulai dari Rp 45.000</span>
+                    <div className='flex flex-col gap-1 text-[#1E1B26] me-4'>
+                        <h1 className='text-xl md:text-2xl font-bold line-clamp-1'>Mitra Lokal: Roti Bangkir Bakery</h1>
+                        <span className='text-sm md:text-base font-normal line-clamp-1'>Nikmati bundling spesial Kopi + Roti mulai dari Rp 45.000</span>
                     </div>
                 </div>
                 <div>
-                    <button className='btn-primary-khaslana bg-[#1E1B26] border-2 border-[#272431] text-sm md:text-base text-[#99FF33] hover:cursor-pointer hover:tracking-wider'>
+                    <button className='btn-primary-khaslana flex shrink-0 whitespace-nowrap bg-[#1E1B26] border-2 border-[#272431] text-sm md:text-base text-[#99FF33] hover:cursor-pointer hover:tracking-wider'>
                         Cek Promo
                     </button>
                 </div>

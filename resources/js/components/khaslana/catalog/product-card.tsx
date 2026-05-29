@@ -45,7 +45,7 @@ export function ProductCard({
                             group z-0
                             flex flex-col
                             overflow-hidden
-                            rounded-[32px]
+                            rounded-3xl
                             bg-[#242424]
                             transition-all duration-300
                             border-2 border-[#99FF33]/10
@@ -54,7 +54,7 @@ export function ProductCard({
                             hover:cursor-pointer
                         "
                     >
-                        <div className="relative h-[220px] overflow-hidden">
+                        <div className="relative h-64 overflow-hidden">
                             <img
                                 src={`/storage/${product.product_images?.[0]?.image}`}
                                 alt={product.name}

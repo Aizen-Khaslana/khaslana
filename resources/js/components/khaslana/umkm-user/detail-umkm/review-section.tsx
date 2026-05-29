@@ -1,3 +1,4 @@
+import { MessageSquareX } from "lucide-react";
 import type { Umkm } from "@/types/umkm";
 
 interface Review {
@@ -25,7 +26,8 @@ export default function ReviewSection({
                 Apa kata mereka tentang pengalaman di {umkmData.store_name}
             </h3>
             {reviews.length === 0 ? (
-                <div className="w-full mt-8 flex items-center justify-center">
+                <div className="w-full mt-8 flex flex-col gap-4 items-center justify-center">
+                    <MessageSquareX className='h-32 w-32 text-center text-[#99FF33]' />
                     <p className="text-sm md:text-base text-center text-white/80">
                         Belum ada review tentang toko ini.
                     </p>
