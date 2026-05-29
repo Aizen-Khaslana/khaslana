@@ -70,6 +70,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/community/{post}/like', [CommunityController::class, 'toggleLike'])->name('community.like');
 
         Route::post('/community/{post}/comment', [CommunityController::class, 'storeComment'])->name('community.comments.store');
+
+        Route::delete('/community/{post}/comment/{comment}', [CommunityController::class, 'deleteComment'])->name('community.comments.delete');
     });
 });
 
