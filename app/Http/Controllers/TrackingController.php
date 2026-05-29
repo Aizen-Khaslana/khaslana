@@ -35,18 +35,36 @@ class TrackingController extends Controller
 
         $umkmId = $umkm->id;
 
-        // 2. Handle State: TUTUP
-        if (!$request->is_active || $request->status === 'TUTUP') {
-            $lastLocation = UmkmLocation::query()->where('umkm_id', $umkmId)->latest('id')->first();
+        $lastLocation = UmkmLocation::query()
+            ->where('umkm_id', $umkmId)
+            ->latest('id')
+            ->first();
 
-            if ($lastLocation) {
-                $lastLocation->update([
+        // ==========================================
+        // THE GOLDEN RULE: MATIKAN SEMUA STATUS AKTIF LAMA!
+        // ==========================================
+        UmkmLocation::query()
+            ->where('umkm_id', $umkmId)
+            ->where('is_active', true)
+            ->update(['is_active' => false]);
+
+            // 2. Handle State: TUTUP
+            if (!$request->is_active || $request->status === 'TUTUP') {
+
+                // Gunakan koordinat dari Request JIKA ADA. 
+                // Kalau NULL, fallback (??) ambil dari $lastLocation->latitude/longitude.
+                $finalLatTutup = $request->latitude ?? ($lastLocation ? $lastLocation->latitude : null);
+                $finalLngTutup = $request->longitude ?? ($lastLocation ? $lastLocation->longitude : null);
+
+                UmkmLocation::create([
+                    'umkm_id' => $umkmId,
+                    'latitude' => $finalLatTutup,
+                    'longitude' => $finalLngTutup,
                     'is_active' => false,
                     'status' => 'TUTUP'
                 ]);
-            }
 
-            return response()->json(['message' => 'Stay Point ditutup.']);
+                return response()->json(['message' => 'Stay Point ditutup.']);
         }
 
         // 3. Handle State: MANGKAL & KELILING
@@ -58,12 +76,13 @@ class TrackingController extends Controller
         }
 
         // CARI JANGKAR MANGKAL TERAKHIR BUAT PATOKAN (Batas Hari Ini Saja)
+        // Note: Array 2 param biar Intelephense nggak rewel
         $lastMangkal = UmkmLocation::query()
             ->where('umkm_id', $umkmId)
             ->where('status', 'MANGKAL')
-            ->whereBetween('created_at', [now()->startOfDay(),now()->endOfDay()], 'and') // ini gimana cara ATASI intelephense yang nyuruh 3 params
+            ->whereBetween('created_at', [now()->startOfDay(), now()->endOfDay()], 'and')
             ->latest('id')
-            ->first();  
+            ->first();
 
         $finalLat = $newLat;
         $finalLng = $newLng;
@@ -87,7 +106,7 @@ class TrackingController extends Controller
             'umkm_id' => $umkmId,
             'latitude' => $finalLat,
             'longitude' => $finalLng,
-            'is_active' => true,
+            'is_active' => true, // Ini SATU-SATUNYA yang true sekarang
             'status' => $request->status
         ]);
 
@@ -97,7 +116,6 @@ class TrackingController extends Controller
             'message' => $msg . ' (' . $request->status . ')',
             'distance' => isset($distance) ? round($distance, 2) . ' m' : '0 m'
         ]);
-
     }
 
     /**

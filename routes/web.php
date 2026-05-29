@@ -8,6 +8,7 @@ use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\MappingController;
 use App\Http\Controllers\UmkmController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -40,6 +41,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', 'index')->name('stayPoint');
         Route::post('/update-location', 'updateLocation')->name('stayPoint.updateLocation');
         Route::get('/current-location-status', 'getCurrentStatus')->name('stayPoint.currentLocation');
+    });
+
+    Route::controller(MappingController::class)->prefix('rute')->group(function () {
+        Route::get('/', 'index')->name('rute');
+
+        // (Opsional besok-besok) Kalau lu butuh endpoint API murni buat reload rute 
+        // tanpa reload halaman, lu bisa tambahin di sini:
+        // Route::get('/api-data', 'getRouteData')->name('rute.data');
     });
 
 
