@@ -71,6 +71,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::post('/community/{post}/comment', [CommunityController::class, 'storeComment'])->name('community.comments.store');
 
+        Route::post('/community/{post}/comment/{comment}/like', [CommunityController::class, 'toggleLikeComment'])->name('community.comments.like');
+
         Route::delete('/community/{post}/comment/{comment}', [CommunityController::class, 'deleteComment'])->name('community.comments.delete');
     });
 });
