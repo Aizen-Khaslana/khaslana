@@ -280,7 +280,7 @@ export default function Navbar() {
                                                 </Link>
 
                                                 <Link
-                                                    href={dashboard()}
+                                                    href={community()}
                                                     className="
                                                         flex items-center gap-3
                                                         px-5 py-4

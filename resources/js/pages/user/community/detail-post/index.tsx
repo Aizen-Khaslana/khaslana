@@ -32,6 +32,12 @@ interface PostLike {
     post_id: number;
 }
 
+interface CommentLike {
+    id: number;
+    comment_id: number;
+    user_id: number;
+}
+
 interface Comment {
     id: number;
     user: {
@@ -40,9 +46,10 @@ interface Comment {
     }
     post_id: number;
     comment: string;
+    comment_likes: CommentLike[];
+    is_liked: boolean;
     created_at: string;
 }
-
 interface Post {
     id: number;
     user_id: number;
@@ -122,9 +129,21 @@ export default function DetailPost() {
         }
     } 
 
+    const handleLikeComment = (postId: number, commentId: number) => {
+        router.post(`/community/${postId}/comment/${commentId}/like`, {}, {
+            preserveScroll: true,
+            onSuccess: () => {
+                console.log("Toggle like comment sukses!");
+            },
+            onError: (err) => {
+                console.error("Gagal melakukan like comment: ", err);
+            }
+        })
+    }
+
     return (
         <UnusedNavLayout backHref='/community'>
-            <div className='flex flex-col gap-10 justify-between mb-20 mx-20'>
+            <div className='flex flex-col gap-10 justify-between mb-20 lg:mx-20 md:mx-14'>
                 <div key={post.id} className="post-card w-full flex flex-3 flex-col gap-4 bg-[#222] p-6 rounded-[15px]">
                     <div className="flex flex-col gap-4">
                         <div className="post-profile flex items-center justify-between gap-4">
@@ -178,14 +197,14 @@ export default function DetailPost() {
                 </div>
 
                 <div className='flex flex-col flex-2 gap-7'>
-                    <h2 className='text-3xl text-[#99ff33]'>{post.comments?.length} <span className='text-white'>Komentar</span></h2>
+                    <h2 className='text-2xl sm:text-3xl text-[#99ff33]'>{post.comments?.length} <span className='text-white'>Komentar</span></h2>
 
                     <div className="relative flex flex-col items-center w-full">        
                         {isUploaded &&  (
-                            <div className="w-full bg-[#99FF33]/20 border border-[#99FF33] text-[#99FF33] p-4 rounded-[15px] text-sm font-medium">Postingan berhasil diupload!</div>
+                            <div className="w-full bg-[#99FF33]/20 border border-[#99FF33] text-[#99FF33] p-4 rounded-[15px] text-sm font-medium">Komentar berhasil diupload!</div>
                         )}
             
-                        <div className="create-comment flex justify-between w-full p-5 gap-10 rounded-[15px]">
+                        <div className="create-comment flex justify-between w-full p-3 gap-10 rounded-[15px]">
                             <div className="post-top flex items-center gap-5 w-full">
                                 <img src={ProfileIcon} alt="Profile" className="w-10 max-md:w-7" />
                                 <input type="text" placeholder="Bagikan komentar Anda..." className="main-input flex flex-1 bg-transparent border-b border-white/30 w-full outline-0 text-white focus:border-[#99ff33] transition-all duration-200"
@@ -203,19 +222,24 @@ export default function DetailPost() {
                         post.comments
                         .slice()
                         .sort((a, b) => {
-                            const isMeA = currentUser && a.user.id === currentUser.id;
-                            const isMeB = currentUser && b.user.id === currentUser.id;
+                            const isMeA = currentUser && a.user.id === currentUser.id ? 1 : 0;
+                            const isMeB = currentUser && b.user.id === currentUser.id ? 1 : 0;
 
-                            if (isMeA && isMeB) return -1;
-                            if (!isMeA && isMeB) return 1;
-                            return 0;
+                            const sortByMe = isMeB - isMeA;
+
+                            if (sortByMe !== 0) return sortByMe;
+
+                            const likesA = a.comment_likes?.length || 0;
+                            const likesB = b.comment_likes?.length || 0;
+
+                            return likesB - likesA;
                         })
                         .map((comment) => (
-                            <div key={comment.id} className='flex flex-col gap-5 mx-10'>
+                            <div key={comment.id} className='flex flex-col gap-5 mx-3'>
                                 <div className="flex items-center gap-5 w-full justify-between">
                                     <div className='flex gap-5 items-center'>
                                         <div className="post-avatar">
-                                            <img src={ProfileIcon} alt="Profile" className="avatar w-10 h-10 rounded-full object-cover" />
+                                            <img src={ProfileIcon} alt="Profile" className="avatar w-10 h-10 max-md:w-8 max-md:h-8 rounded-full object-cover" />
                                         </div>
                                         <div className="post-user flex flex-col">
                                             <h6 className="text-white font-medium text-lg">{comment.user.name || "Anggota Khaslana"}</h6>
@@ -231,6 +255,10 @@ export default function DetailPost() {
                                     </button>
                                 </div>
                                 {comment.comment}
+                                <button type="button" onClick={() => handleLikeComment(post.id, comment.id)} className={`post-opt-btn flex items-center gap-2 text-sm cursor-pointer transition-all duration-100 ${comment.is_liked ? 'text-[#99ff33]' : ''}`}>
+                                    <ThumbsUp className={`w-4 h-4`} /> 
+                                    {comment.comment_likes.length}
+                                </button>
                             </div>
                         ))
                     ) : (

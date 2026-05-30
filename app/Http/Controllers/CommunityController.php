@@ -35,12 +35,35 @@ class CommunityController extends Controller
             'postImages',
             'postLikes',
             'comments.user',
+            'comments.commentLikes'
         ]);
 
         $post->is_liked = $post->postLikes->contains('user_id', Auth::id());
 
+        $post->comments->map(function ($comment) {
+            $comment->is_liked = $comment->commentLikes->contains('user_id', Auth::id());
+            return $comment;
+        });
+
         return Inertia::render('user/community/detail-post/index', [
             'post' => $post,
+        ]);
+    }
+
+    public function myPosts() {
+        $currentUserId = Auth::id();
+
+        $posts = Post::with(['user', 'postImages', 'postLikes', 'comments.user'])
+            ->where('user_id', $currentUserId)
+            ->latest()
+            ->get()
+            ->map(function ($post) use ($currentUserId) {
+                $post->is_liked = $post->postLikes->contains('user_id', $currentUserId);
+                return $post;
+            });
+
+        return Inertia::render('user/community/my-posts/index', [
+            'posts' => $posts,
         ]);
     }
 
@@ -154,5 +177,21 @@ class CommunityController extends Controller
         } catch (Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Gagal menghapus komentar: ' . $e->getMessage()]);
         }
+    }
+
+    public function toggleLikeComment(Post $post, Comment $comment) {
+        $userId = Auth::id();
+
+        $existingLike = $comment->commentLikes()->where('user_id', $userId)->first();
+
+        if ($existingLike) {
+            $existingLike->delete();
+        } else {
+            $comment->commentLikes()->create([
+                'user_id' => $userId
+            ]);
+        }
+
+        return redirect()->back();
     }
 }

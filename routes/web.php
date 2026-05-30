@@ -63,6 +63,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         
         Route::post('/community', [CommunityController::class, 'store'])->name('community.store');
 
+        Route::get('/community/my-posts', [CommunityController::class, 'myPosts'])->name('community.myPosts');
+
         Route::get('/community/{post}', [CommunityController::class, 'show'])->name('community.show');
 
         Route::delete('/community/{post}', [CommunityController::class, 'destroy'])->name('community.destroy');
@@ -70,6 +72,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/community/{post}/like', [CommunityController::class, 'toggleLike'])->name('community.like');
 
         Route::post('/community/{post}/comment', [CommunityController::class, 'storeComment'])->name('community.comments.store');
+
+        Route::post('/community/{post}/comment/{comment}/like', [CommunityController::class, 'toggleLikeComment'])->name('community.comments.like');
 
         Route::delete('/community/{post}/comment/{comment}', [CommunityController::class, 'deleteComment'])->name('community.comments.delete');
     });
