@@ -67,7 +67,7 @@ export function CreatePost() {
         }
 
     return (
-        <div className="relative flex flex-col items-center pt-20 md:pt-28 px-6 md:px-12 lg:px-17.5 w-full min-h-screen">
+        <div className="relative flex flex-col px-6 w-full">
             <section className="community-header flex flex-col w-full pt-8 pb-10 max-md:pb-5 gap-2">
                 <h2 className="text-[#99ff33] font-medium text-2xl md:text-5xl">Buat Postingan</h2>
             </section>

@@ -50,6 +50,23 @@ class CommunityController extends Controller
         ]);
     }
 
+    public function myPosts() {
+        $currentUserId = Auth::id();
+
+        $posts = Post::with(['user', 'postImages', 'postLikes', 'comments.user'])
+            ->where('user_id', $currentUserId)
+            ->latest()
+            ->get()
+            ->map(function ($post) use ($currentUserId) {
+                $post->is_liked = $post->postLikes->contains('user_id', $currentUserId);
+                return $post;
+            });
+
+        return Inertia::render('user/community/my-posts/index', [
+            'posts' => $posts,
+        ]);
+    }
+
     public function create() {
         return Inertia::render('user/community/create-post/index');
     }

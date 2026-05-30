@@ -1,10 +1,10 @@
 import { Head } from '@inertiajs/react';
 import { CreatePost } from '@/components/khaslana/community/create-post';
-import UserLayout from '@/layouts/user-layout';
+import UnusedNavLayout from '@/layouts/unused-nav-layout';
 
 export default function Community() {
     return (
-        <UserLayout>
+        <UnusedNavLayout backHref='/community'>
             <Head title='Buat Postingan'>
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link
@@ -13,6 +13,6 @@ export default function Community() {
                 />
             </Head>
             <CreatePost />
-        </UserLayout>
+        </UnusedNavLayout>
     );
 }
