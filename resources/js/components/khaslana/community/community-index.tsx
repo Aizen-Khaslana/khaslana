@@ -96,7 +96,7 @@ export default function CommunityIndex() {
                             const isMyPost = currentUser && post.user_id === currentUser.id;
 
                         return (
-                            <div key={post.id} className="post-card w-full flex flex-col gap-4 bg-[#222] p-8 rounded-[15px]">
+                            <Link href={`/community/${post.id}`} key={post.id} className="post-card w-full flex flex-col gap-4 bg-[#222] p-8 rounded-[15px]">
                                 <div className="flex flex-col gap-4">
                                     <div className="post-profile flex items-center justify-between gap-4">
                                         <div className="flex items-center gap-4">
@@ -146,7 +146,7 @@ export default function CommunityIndex() {
                                         </button>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         )})
                     ) : (
                         <p className="text-center text-[#888] py-10 text-sm">Belum ada data postingan di komunitas :(</p>

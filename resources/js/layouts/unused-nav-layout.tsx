@@ -18,7 +18,7 @@ export default function UnusedNavLayout({ children, backHref }: UnusedNavLayoutP
                 />
             </Head>
             <div className="min-h-screen h-auto">
-                <div className="flex flex-col px-6 lg:px-[70px] pt-12">
+                <div className="flex flex-col px-6 lg:px-17.5 pt-12">
                     <Back href={backHref} />
                     {children}
                 </div>

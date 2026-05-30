@@ -1,14 +1,14 @@
 import { router } from '@inertiajs/react';
 import {
-    ArrowRight,
+    ChevronRight,
     Heart,
     MapPin,
     Star,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import DefaultStore from '@/assets/images/umkm-user/default-store.png';
-import type { Umkm } from "@/pages/user/umkm";
 import { detail } from '@/routes/umkm';
+import type { Umkm } from "@/types/umkm";
 
 interface UmkmSectionProps {
     umkms: Umkm[];
@@ -116,7 +116,7 @@ export default function UmkmSection({
                         group z-0
                         flex flex-col
                         overflow-hidden
-                        rounded-[32px]
+                        rounded-3xl
                         bg-[#242424]
                         transition-all duration-300
                         border-2 border-[#99FF33]/10
@@ -126,7 +126,7 @@ export default function UmkmSection({
                     onClick={() => handleCardClicked(umkm)}
                 >
                     {/* image */}
-                    <div className="relative h-[220px] overflow-hidden">
+                    <div className="relative h-64 overflow-hidden">
                         <img
                             src={
                                 umkm.umkm_images?.[0]?.image
@@ -201,7 +201,7 @@ export default function UmkmSection({
                                     font-semibold
                                 "
                             >
-                                <Star className="w-3 h-3 lg:w-4 lg:w-4 fill-[#99FF33]" />
+                                <Star className="w-3 h-3 lg:w-4 lg:h-4 fill-[#99FF33]" />
                                 {umkm.average_rating}
                             </div>
                         </div>
@@ -243,7 +243,7 @@ export default function UmkmSection({
                         >
                             <span className="flex items-center justify-center gap-2 text-sm lg:text-base">
                                 Kunjungi Toko
-                                <ArrowRight
+                                <ChevronRight
                                     className="
                                         w-5 h-5
                                         transition-transform duration-300

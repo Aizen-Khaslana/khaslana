@@ -19,6 +19,7 @@ import {
     logout
 } from "@/routes";
 import { profile } from "@/routes";
+import { myPosts } from "@/routes/community";
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -210,10 +211,10 @@ export default function Navbar() {
                                         </Link>
                                         {!user.is_umkm && (
                                             <Link
-                                                href="/dashboard"
+                                                href={myPosts()}
                                                 className="nav-link"
                                             >
-                                                Dashboard
+                                                Postingan
                                                 <LayoutDashboard className="w-5 h-5" />
                                             </Link>
                                         )}
@@ -278,24 +279,23 @@ export default function Navbar() {
                                                         Profile
                                                     </span>
                                                 </Link>
-                                                {!user.is_umkm && (
-                                                    <Link
-                                                        href={dashboard()}
-                                                        className="
-                                                            flex items-center gap-3
-                                                            px-5 py-4
-                                                            text-white
-                                                            transition
-                                                            hover:bg-white/5
-                                                            border-b border-white/5
-                                                        "
-                                                    >
-                                                        <LayoutDashboard className="w-5 h-5" />
-                                                        <span>
-                                                            Dashboard
-                                                        </span>
-                                                    </Link>
-                                                )}
+
+                                                <Link
+                                                    href={myPosts()}
+                                                    className="
+                                                        flex items-center gap-3
+                                                        px-5 py-4
+                                                        text-white
+                                                        transition
+                                                        hover:bg-white/5
+                                                        border-b border-white/5
+                                                    "
+                                                >
+                                                    <LayoutDashboard className="w-5 h-5" />
+                                                    <span>
+                                                        Postingan
+                                                    </span>
+                                                </Link>
                                                 <Link
                                                     href={logout()}
                                                     method="post"

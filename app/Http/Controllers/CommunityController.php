@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use App\Models\Post\Post;
+use App\Models\Post\Comment;
 use Illuminate\Support\Facades\Storage;
 use Exception;
 
@@ -34,10 +35,35 @@ class CommunityController extends Controller
             'postImages',
             'postLikes',
             'comments.user',
+            'comments.commentLikes'
         ]);
 
-        return Inertia::render('user/community/show', [
+        $post->is_liked = $post->postLikes->contains('user_id', Auth::id());
+
+        $post->comments->map(function ($comment) {
+            $comment->is_liked = $comment->commentLikes->contains('user_id', Auth::id());
+            return $comment;
+        });
+
+        return Inertia::render('user/community/detail-post/index', [
             'post' => $post,
+        ]);
+    }
+
+    public function myPosts() {
+        $currentUserId = Auth::id();
+
+        $posts = Post::with(['user', 'postImages', 'postLikes', 'comments.user'])
+            ->where('user_id', $currentUserId)
+            ->latest()
+            ->get()
+            ->map(function ($post) use ($currentUserId) {
+                $post->is_liked = $post->postLikes->contains('user_id', $currentUserId);
+                return $post;
+            });
+
+        return Inertia::render('user/community/my-posts/index', [
+            'posts' => $posts,
         ]);
     }
 
@@ -123,5 +149,49 @@ class CommunityController extends Controller
         } catch (Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Gagal menghapus postingan: ' . $e->getMessage()]);
         }
+    }
+
+    public function storeComment(Request $request, Post $post) {
+        $request->validate([
+            'comment' => 'required|string|max:500'
+        ]);
+
+        $post->comments()->create([
+            'user_id' => Auth::id(),
+            'post_id' => $request->post_id,
+            'comment' => $request->comment,
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deleteComment(Request $request, Post $post, Comment $comment) {
+        if ($comment->user_id !== Auth::id()) {
+            return redirect()->back()->withErrors(['error' => 'Anda tidak memiliki akses untuk menghapus komentar ini!']);
+        }
+
+        try {
+            $comment->delete();
+
+            return redirect()->back()->with('message', 'Komentar berhasil dihapus!');
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Gagal menghapus komentar: ' . $e->getMessage()]);
+        }
+    }
+
+    public function toggleLikeComment(Post $post, Comment $comment) {
+        $userId = Auth::id();
+
+        $existingLike = $comment->commentLikes()->where('user_id', $userId)->first();
+
+        if ($existingLike) {
+            $existingLike->delete();
+        } else {
+            $comment->commentLikes()->create([
+                'user_id' => $userId
+            ]);
+        }
+
+        return redirect()->back();
     }
 }
