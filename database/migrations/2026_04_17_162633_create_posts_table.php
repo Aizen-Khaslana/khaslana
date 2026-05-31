@@ -54,8 +54,6 @@ return new class extends Migration
             $table->foreignId('comment_id')->constrained('comments')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
-
-            $table->unique(['comment_id', 'user_id'], 'comment_user_unique');
         });
     }
 

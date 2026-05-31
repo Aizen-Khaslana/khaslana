@@ -203,7 +203,7 @@ export default function DetailPost() {
                             <div className="w-full bg-[#99FF33]/20 border border-[#99FF33] text-[#99FF33] p-4 rounded-[15px] text-sm font-medium">Komentar berhasil diupload!</div>
                         )}
             
-                        <div className="create-comment flex flex-col justify-between w-full p-3 gap-10 rounded-[15px]">
+                        <div className="create-comment flex flex-col justify-between w-full p-3 gap-4 rounded-[15px]">
                             <div className="post-top flex items-center gap-5 w-full">
                                 <img src={ProfileIcon} alt="Profile" className="w-10 max-md:w-7" />
                                 <input type="text" placeholder="Bagikan komentar Anda..." className="main-input flex flex-1 bg-transparent border-b border-white/30 w-full outline-0 text-white focus:border-[#99ff33] transition-all duration-200"
@@ -211,7 +211,7 @@ export default function DetailPost() {
                                 onChange={(e) => setCommentText(e.target.value)}/>
                             </div>
 
-                            <div className={`post-bottom flex items-center justify-end gap-3 duration-200 transition-all ${commentText !== '' ? 'opacity-100 translate-y-0' : 
+                            <div className={`post-bottom flex relative items-center justify-end gap-3 duration-200 transition-all ${commentText !== '' ? 'opacity-100 translate-y-0' : 
                                      'opacity-0 -translate-y-3'
                             }`}>
                                 <button onClick={() => handleCancelComment()} className='btn-publish bg-muted py-2.5 px-8 font-medium cursor-pointer rounded-[999px] text-muted-foreborder-muted-foreground hover:bg-muted-foreground hover:text-black transition-all duration-200'>Batal</button>
