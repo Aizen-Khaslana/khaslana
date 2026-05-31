@@ -1,3 +1,5 @@
+import type { ProductVariant } from "@/types/attribute";
+
 export interface Product {
     id: number;
     umkm_id: number;
@@ -34,13 +36,7 @@ export interface Product {
         updated_at: string;
     }[];
 
-    product_variants?: {
-        id: number;
-        price: number;
-        stock: number;
-        created_at: string;
-        updated_at: string;
-    }[];
+    product_variants?: ProductVariant[];
 
     umkm?: {
         id: number;

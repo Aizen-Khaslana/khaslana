@@ -1,0 +1,18 @@
+import HeroSection from "@/components/khaslana/catalog/detail/hero-section";
+import type { Product } from "@/types/product"
+
+interface IndexProps {
+    product: Product;
+}
+
+export default function Index({
+    product,
+}: IndexProps) {
+    console.log(product);
+
+    return (
+        <div className="flex flex-col">
+            <HeroSection />
+        </div>
+    )
+}
