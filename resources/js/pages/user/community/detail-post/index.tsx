@@ -2,17 +2,8 @@ import { usePage, router } from '@inertiajs/react';
 import { ThumbsUp, MessageCircleMore, Trash, SendHorizontal } from "lucide-react";
 import { useState } from 'react';
 import ProfileIcon from "@/assets/icons/default-profile.png";
+import { useAuth } from '@/hooks/use-auth';
 import UnusedNavLayout from '@/layouts/unused-nav-layout';
-
-
-interface SharedProps {
-    auth:  {
-        user: {
-            id: number;
-            name: string;
-        } | null;
-    };
-}
 
 interface User {
     id: number;
@@ -70,12 +61,11 @@ interface DetailProps {
 }
 
 export default function DetailPost() {
-    const { auth } = usePage().props as unknown as SharedProps;
-    const currentUser = auth.user;
+    const { user } = useAuth();
 
     const { post } = usePage().props as unknown as DetailProps;
 
-    const isMyPost = currentUser && post.user_id === currentUser.id;
+    const isMyPost = user && post.user_id === user.id;
 
     const [commentText, setCommentText] = useState('');
 
@@ -222,8 +212,8 @@ export default function DetailPost() {
                         post.comments
                         .slice()
                         .sort((a, b) => {
-                            const isMeA = currentUser && a.user.id === currentUser.id ? 1 : 0;
-                            const isMeB = currentUser && b.user.id === currentUser.id ? 1 : 0;
+                            const isMeA = user && a.user.id === user.id ? 1 : 0;
+                            const isMeB = user && b.user.id === user.id ? 1 : 0;
 
                             const sortByMe = isMeB - isMeA;
 
