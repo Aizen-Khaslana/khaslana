@@ -45,6 +45,8 @@ return new class extends Migration
             $table->foreignId('post_id')->constrained('posts')->onDelete('cascade');
             $table->text('comment');
             $table->timestamps();
+
+            $table->unique(['user_id', 'post_id'], 'user_post_unique');
         });
 
         Schema::create('comment_likes', function (Blueprint $table) {

@@ -200,7 +200,7 @@ export default function DetailPost() {
 
                     <div className="relative flex flex-col items-center w-full">        
                         {isUploaded &&  (
-                            <div className="w-full bg-[#99FF33]/20 border border-[#99FF33] text-[#99FF33] p-4 rounded-[15px] text-sm font-medium">Komentar berhasil diupload!</div>
+                            <div className="w-full bg-[#99FF33]/20 border border-[#99FF33] text-[#99FF33] p-4 rounded-[15px] text-sm font-medium mb-8">Komentar berhasil diupload!</div>
                         )}
             
                         <div className="create-comment flex flex-col justify-between w-full p-3 gap-4 rounded-[15px]">
