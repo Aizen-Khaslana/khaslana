@@ -31,10 +31,10 @@ class CatalogController extends Controller
             'category',
             'promo',
             'productImages',
-            'productVariants',
+            'productVariants.attributeValues.attribute',
             'umkm',
             'umkm.city',
-        ])->first();
+        ])->firstOrFail();
 
         return Inertia::render('user/catalog/detail', [
             'product' => $product,

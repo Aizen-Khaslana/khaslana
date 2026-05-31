@@ -1,3 +1,4 @@
+import Index from "@/components/khaslana/catalog/detail";
 import UnusedNavLayout from "@/layouts/unused-nav-layout";
 import { catalog } from "@/routes";
 import type { Product } from "@/types/product";
@@ -9,11 +10,9 @@ interface DetailProps {
 export default function Detail({
     product,
 }: DetailProps) {
-    console.log(product);
-
     return (
         <UnusedNavLayout backHref={catalog().url}>
-            Ini Detail
+            <Index product={product} />
         </UnusedNavLayout>
     )
 }
