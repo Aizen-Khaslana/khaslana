@@ -1,4 +1,4 @@
-import { usePage, Link, router } from "@inertiajs/react";
+import { usePage, Link, router, Head } from "@inertiajs/react";
 import { Plus, Trash } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import UnusedNavLayout from "@/layouts/unused-nav-layout";
@@ -72,6 +72,13 @@ export default function MyPosts() {
 
     return (
         <UnusedNavLayout backHref="/community">
+            <Head title='Postingan Anda'>
+                <link rel="preconnect" href="https://fonts.bunny.net" />
+                <link
+                    href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600"
+                    rel="stylesheet"
+                />
+            </Head>
             <section className="community-header flex justify-between w-full pb-10 max-md:pb-5 gap-2">
                 <h2 className="text-[#99ff33] font-medium text-2xl md:text-5xl">Kelola Postingan</h2>
                 <Link href="/community/create-post"
