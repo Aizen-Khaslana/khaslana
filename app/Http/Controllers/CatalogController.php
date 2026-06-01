@@ -35,6 +35,11 @@ class CatalogController extends Controller
             'productVariants.attributeValues.attribute',
             'umkm',
             'umkm.city',
+            'reviews' => function($query) {
+                $query->latest();
+            },
+            'reviews.user',
+            'reviews.review_likes'
         ])->firstOrFail();
 
         return Inertia::render('user/catalog/detail', [
