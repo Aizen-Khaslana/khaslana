@@ -9,7 +9,7 @@ export default function Index({
     product,
 }: IndexProps) {
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col mb-12">
             <HeroSection product={product} />
         </div>
     )

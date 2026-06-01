@@ -1,7 +1,10 @@
+import { router } from "@inertiajs/react";
 import { X, Minus, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import DefaultProduct from "@/assets/images/product/default-product.png";
 // import { store } from "@/routes/order";
+import { useAuth } from "@/hooks/use-auth";
+import { login } from "@/routes";
 import type { ProductVariant } from "@/types/attribute";
 import type { Product } from "@/types/product";
 
@@ -18,6 +21,8 @@ export default function VariantDialog({
     onClose,
     actionType,
 }: VariantDialogProps) {
+    const { user } = useAuth();
+    
     const groupedAttributes = useMemo(() => {
         const result: Record<string, string[]> = {};
 
@@ -84,6 +89,11 @@ export default function VariantDialog({
         selectedAttributes,
     ]);
 
+    if (!user) {
+        router.visit(login());
+        return;
+    }
+
     const price = selectedVariant?.price ?? 0;
     const stock = selectedVariant?.stock ?? 0;
     const isPurchasable = selectedVariant !== undefined && stock > 0;
@@ -126,7 +136,7 @@ export default function VariantDialog({
     return (
         <div
             className="
-                fixed inset-0 z-[999]
+                fixed inset-0 z-50
                 bg-black/70 backdrop-blur-sm
                 flex items-center justify-center
                 p-4
