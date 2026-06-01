@@ -22,6 +22,7 @@ export default function HeroSection({
     const [actionType, setActionType] = useState<
         "buy-now" | "add-cart"
     >("buy-now");
+    const isShippingFeature = product.umkm?.is_shipping_feature === true;
 
     const handleBuyNowClicked = () => {
         setActionType("buy-now");
@@ -138,7 +139,7 @@ export default function HeroSection({
                                     </p>
                                 </div>
                             </div>
-                            {product.umkm?.is_shipping_feature &&
+                            {isShippingFeature && (
                                 <div className="bg-[#22202C] rounded-2xl p-4 flex items-center gap-3">
                                     <div
                                         className="
@@ -162,7 +163,7 @@ export default function HeroSection({
                                         </p>
                                     </div>
                                 </div>
-                            }
+                            )}
                         </div>
                         <p className="mt-4 text-gray-400 text-base leading-8 line-clamp-6">
                             {product.description}
