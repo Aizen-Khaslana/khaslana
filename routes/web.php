@@ -10,6 +10,7 @@ use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UmkmController;
+use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -77,6 +78,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // catalog routes
     Route::controller(OrderController::class)->group(function () {
         Route::post('/order/store/{product_id}')->name('order.store');
+    });
+
+    Route::controller(CartController::class)->group(function () {
+        Route::get('/cart', 'index')->name('cart');
     });
 });
 

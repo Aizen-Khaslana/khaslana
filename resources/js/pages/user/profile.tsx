@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import ProfileController from "@/actions/App/Http/Controllers/Settings/ProfileController";
 import DefaultProfile from "@/assets/icons/default-profile.png";
 import InputError from "@/components/input-error";
-import UserLocation from "@/components/profile/user-location";
+import UserLocation from "@/components/khaslana/profile/user-location";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
