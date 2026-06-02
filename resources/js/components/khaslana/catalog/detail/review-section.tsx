@@ -137,7 +137,7 @@ export default function ReviewSection() {
                     </div>
                 </div>
 
-                <div className={`flex flex-col gap-5 duration-200 transition-all ${reviewText !== '' ? "translate-y-5" : "-translate-y-10"}`}>
+                <div className={`flex flex-col gap-4 mt-6 duration-200 transition-all ${reviewText !== '' ? "translate-y-5" : "-translate-y-10"}`}>
                     {reviews.length > 0 ? (
                         reviews.map((review) => (
                             <div key={review.id} className='flex flex-col gap-5 mx-3 bg-[#222] p-8 rounded-3xl'>
@@ -162,7 +162,7 @@ export default function ReviewSection() {
                                 </div>
 
                                 {review.comment}
-                                
+
                                 <div className="flex justify-between">
                                     <button type="button" onClick={() => handleLikeReview(review.id, product.id)} className={`post-opt-btn flex items-center gap-2 text-sm cursor-pointer transition-all duration-100 ${review.is_liked ? 'text-[#99ff33]' : ''}`}>
                                         <ThumbsUp className={`w-4 h-4`} /> 

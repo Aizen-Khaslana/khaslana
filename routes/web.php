@@ -77,7 +77,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // catalog routes
     Route::controller(OrderController::class)->group(function () {
-        Route::post('/order/store/{product_id}')->name('order.store');
+        Route::get('order/create', 'index')->name('order.index');
+        Route::post('/order/store/{product_id}', 'store')->name('order.store');
     });
 
     Route::controller(CartController::class)->group(function () {
