@@ -39,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // product routes
     Route::controller(ProductController::class)->group(function() {
         Route::get('/product', 'index')->name('product');
+        Route::get('/product/create', 'create')->name('product.create');
     });
 
     // tracking routes
