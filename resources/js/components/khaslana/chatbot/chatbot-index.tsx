@@ -48,6 +48,7 @@ export default function ChatbotIndex() {
             const response = await axios.post(store().url, {
                 message: content,
             });
+            console.log(response.data);
             setMessages((prev) => [
                 ...prev,
                 {

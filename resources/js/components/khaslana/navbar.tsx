@@ -309,7 +309,7 @@ export default function Navbar() {
                                                         </span>
                                                     </Link>
 
-                                                    {user.is_umkm === true && (
+                                                    {user.is_umkm == 1 && (
                                                         <Link
                                                             href={dashboard()}
                                                             className="
