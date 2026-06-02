@@ -52,8 +52,8 @@ return new class extends Migration
 
         Schema::create('variant_attributes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('variant_id')->constrained('product_variants')->onDelete('restrict');
-            $table->foreignId('attribute_value_id')->constrained('attribute_values')->onDelete('restrict');
+            $table->foreignId('variant_id')->constrained('product_variants')->onDelete('cascade');
+            $table->foreignId('attribute_value_id')->constrained('attribute_values')->onDelete('cascade');
             $table->timestamps();
         });
     }

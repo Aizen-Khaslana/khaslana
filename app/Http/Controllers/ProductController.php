@@ -163,50 +163,24 @@ class ProductController extends Controller
             }
             return redirect()->back()->withErrors(['message' => $th->getMessage()]);
         }
+    }
 
-        // DB::transaction(function () use ($validated, $request) {
+    public function destroy($product_id) {
+        $user = Auth::user();
 
-        //     foreach ($request->file('images') as $image) {
-        //         $path = $image->store(
-        //             'products',
-        //             'public'
-        //         );
-        //         ProductImage::create([
-        //             'product_id' => $product->id,
-        //             'image' => $path,
-        //         ]);
-        //     }
+        if (!$user->is_umkm) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        }
 
-        //     $attributeMap = [];
-        //     foreach ($validated['attributes'] as $attributeData) {
-        //         $attribute = Attribute::create([
-        //             'name' => $attributeData['name'],
-        //         ]);
+        $product = Product::where('id', $product_id)
+                    ->where('umkm_id', $user->umkm->id)
+                    ->first();
 
-        //         foreach ($attributeData['values'] as $value) {
-        //             $attributeValue = AttributeValue::create([
-        //                 'attribute_id' => $attribute->id,
-        //                 'value' => $value,
-        //             ]);
-        //             $attributeMap[$attribute->name][$value] = $attributeValue->id;
-        //         }
-        //     }
+        if (!$product) {
+            return redirect()->back()->with('error', 'Produk tidak ditemukan.');
+        }
 
-        //     foreach ($validated['variants'] as $variantData) {
-        //         $variant = ProductVariant::create([
-        //             'product_id' => $product->id,
-        //             'price' => $variantData['price'],
-        //             'stock' => $variantData['stock'],
-        //         ]);
-
-        //         foreach ($variantData['attributes'] as $attribute) {
-        //             VariantAttribute::create([
-        //                 'variant_id' => $variant->id,
-        //                 'attribute_value_id' => $attributeMap[$attribute['attribute']][$attribute['value']],
-        //             ]);
-        //         }
-        //     };
-
-        // });
+        $product->delete();
+        return redirect()->route('product')->with('success', 'Produk berhasil dihapus.');
     }
 }

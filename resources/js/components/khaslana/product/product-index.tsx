@@ -1,5 +1,7 @@
-import { Link } from '@inertiajs/react';
-import { Eye, Pencil, Trash2 } from 'lucide-react';
+import { Link, router } from '@inertiajs/react';
+import { Eye, Pencil, Trash2, PackageOpen } from 'lucide-react';
+import DeleteDialog from '@/components/khaslana/product/delete-dialog';
+import { create, destroy } from '@/routes/product';
 import type { PaginatedProducts } from "@/types/paginated-product";
 
 interface ProductIndexProps {
@@ -14,6 +16,13 @@ export default function ProductIndex({
             return text;
         }
         return text.substring(0, limit) + '...';
+    };
+
+    const handleDelete = (productId: number) => {
+        router.delete(
+            destroy(productId).url,
+            {preserveScroll: true}
+        );
     };
 
     return (
@@ -49,7 +58,13 @@ export default function ProductIndex({
                                     colSpan={6}
                                     className="py-10 text-center text-muted-foreground"
                                 >
-                                    Belum ada produk
+                                    <div className='flex flex-col items-center'>
+                                        <PackageOpen className='h-32 w-32 text-center text-[#99FF33] mb-4' />
+                                        <span className='flex gap-1'>
+                                            Belum data ada produk. Ayo tambahkan produk Anda
+                                            <a href={create().url} className='text-[#99FF33] underline'>disini</a>.
+                                        </span>
+                                    </div>
                                 </td>
                             </tr>
                         ) : (
@@ -94,20 +109,22 @@ export default function ProductIndex({
                                             >
                                                 <Eye size={16} className='group-hover:text-[#99FF33]' />
                                             </Link>
-
                                             <Link
                                                 href={`/products/${product.id}/edit`}
                                                 className="p-2 rounded-md group hover:bg-[#99FF33]/20 transition-colors duration-200"
                                             >
                                                 <Pencil size={16} className='group-hover:text-[#99FF33]' />
                                             </Link>
-
-                                            <button
-                                                type="button"
-                                                className="p-2 rounded-md hover:bg-red-500/20 cursor-pointer transition-colors duration-200"
+                                            <DeleteDialog
+                                                productName={product.name}
+                                                onDelete={() => handleDelete(product.id)}
                                             >
-                                                <Trash2 size={16} className='text-red-500' />
-                                            </button>
+                                                <button
+                                                    type="button"
+                                                    className="p-2 rounded-md hover:bg-red-500/20 cursor-pointer transition-colors duration-200">
+                                                    <Trash2 size={16} className="text-red-500" />
+                                                </button>
+                                            </DeleteDialog>
                                         </div>
                                     </td>
                                 </tr>

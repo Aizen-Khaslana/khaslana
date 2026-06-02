@@ -43,6 +43,7 @@ export default function CreateProduct({
                     {/* header */}
                     <div className="flex flex-col align-items-center gap-3">
                         <Link
+                            href={product()}
                             className='flex items-center gap-1 group w-fit'
                         >
                             <ChevronLeft className='h-5 w-5 text-[#99FF33] group-hover:text-white transition-colors duration-200' />

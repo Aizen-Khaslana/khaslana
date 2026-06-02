@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/product', 'index')->name('product');
         Route::get('/product/create', 'create')->name('product.create');
         Route::post('/product/store', 'store')->name('product.store');
+        Route::delete('/product/destroy/{product_id}', 'destroy')->name('product.destroy');
     });
 
     // tracking routes

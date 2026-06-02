@@ -513,7 +513,7 @@ export default function CreateIndex({
                         <div className="flex items-center justify-between mt-6">
                             <div>
                                 <h2 className="text-lg font-semibold text-[#99FF33]">
-                                    Attribute Produk
+                                    Atribut Produk
                                 </h2>
                                 <p className="text-sm text-muted-foreground">
                                     Contoh: Warna, Ukuran, Tingkat Pedas, Kemasan, dll
@@ -533,7 +533,7 @@ export default function CreateIndex({
                                 "
                             >
                                 <Plus className="h-4 w-4" />
-                                Attribute
+                                Tambah Atribut
                             </Button>
                         </div>
 
@@ -545,7 +545,7 @@ export default function CreateIndex({
                                 >
                                     <div>
                                         <Label>
-                                            Nama Atribute
+                                            Nama Atribut
                                             <span className="text-red-400">
                                                 *
                                             </span>
@@ -631,7 +631,7 @@ export default function CreateIndex({
                                                 removeAttribute(attributeIndex)
                                             }
                                         >
-                                            Hapus Attribute
+                                            Hapus Atribut
                                         </Button>
                                     )}
                                 </div>
@@ -644,8 +644,7 @@ export default function CreateIndex({
                                 Variant Produk
                             </h2>
                             <p className="text-sm text-muted-foreground">
-                                Tentukan harga dan stok
-                                setiap variasi produk
+                                Tentukan harga dan stok setiap variasi produk
                             </p>
                         </div>
 
