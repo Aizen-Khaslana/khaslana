@@ -2,6 +2,7 @@ import { usePage, router } from "@inertiajs/react";
 import { ThumbsUp, Trash } from "lucide-react";
 import { useState } from "react";
 import ProfileIcon from "@/assets/icons/default-profile.png";
+import { useAuth } from "@/hooks/use-auth";
 
 interface ReviewLike {
     id: number;
@@ -31,9 +32,11 @@ interface ProductDetailProps {
 }
 
 export default function ReviewSection() {
-    // const { user } = useAuth();
+    const { user } = useAuth();
     const { product } = usePage().props as unknown as ProductDetailProps;
     const reviews = product.reviews || [];
+    
+    const isMyReview = user && reviews[].user.id == user.id;
 
     const [isUploaded, setIsUploaded] = useState(false);
     const [reviewText, setReviewText] = useState('');
