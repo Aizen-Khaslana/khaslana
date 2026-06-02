@@ -179,7 +179,7 @@ export default function DetailPost() {
                                     key={imgData.id}
                                     src={`/storage/${imgData.image}`} 
                                     alt="Post Content" 
-                                    className="w-full max-w-sm max-h-sm rounded-xl" 
+                                    className="w-full max-w-3xl rounded-xl" 
                                 />
                             ))}
                         </div>
