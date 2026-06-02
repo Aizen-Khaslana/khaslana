@@ -7,7 +7,7 @@ export default function Order() {
     const searchParams = new URLSearchParams(url.split('?')[1]);
     const productId = searchParams.get('product_id');
 
-    const backUrl = productId ? `/products/${productId}` : "products";
+    const backUrl = productId ? `/catalog/${productId}` : "catalog";
 
     console.log(backUrl)
 
