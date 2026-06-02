@@ -98,8 +98,7 @@ Route::controller(UmkmController::class)->group(function() {
     Route::get('/umkm/products', 'umkmProducts')->name('umkm.products');
     Route::get('/umkm/navigasi/{umkm_id}', 'navigasi')->name('umkm.navigasi');
     Route::get('/umkm/tracking/{umkm_id?}', 'tracking')->name('umkm.tracking');
-    Route::get('/umkm/rute/{umkm_id}', 'rute')->name('umkm.rute');
-    
+    Route::get('/umkm/rute/{umkm_id}', 'rute')->name('umkm.rute'); 
 });
 
 Route::controller(ChatbotController::class)->group(function () {
