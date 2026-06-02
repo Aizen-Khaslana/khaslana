@@ -14,6 +14,8 @@ use App\Http\Controllers\MappingController;
 use App\Http\Controllers\UmkmController;
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -104,6 +106,22 @@ Route::controller(UmkmController::class)->group(function() {
 Route::controller(ChatbotController::class)->group(function () {
     Route::get('/help', 'index')->name('chatbot');
     Route::post('/help/store', 'message')->name('chatbot.store');
+});
+
+Route::post('/dashboard/store-status', function (Request $request) {
+
+    $request->validate([
+        'status' => 'required|in:BUKA,TUTUP',
+    ]);
+
+    /** @var \App\Models\User $user */
+    $user = Auth::user();
+
+    $user->umkm()->update([
+        'status' => $request->status,
+    ]);
+
+    return back();
 });
 
 require __DIR__.'/settings.php';
