@@ -21,7 +21,9 @@ class CatalogController extends Controller
             'productVariants',
             'umkm',
             'umkm.city',
-        ])->paginate(12);
+        ])
+        ->latest()
+        ->paginate(12);
         $categories = Category::all();
 
         return Inertia::render('user/catalog', [

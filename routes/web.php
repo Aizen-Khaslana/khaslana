@@ -83,8 +83,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // catalog routes
     Route::controller(OrderController::class)->group(function () {
-        Route::get('order/create', 'index')->name('order.index');
-        Route::post('/order/store/{product_id}', 'store')->name('order.store');
+        Route::get('order/{order_id}', 'index')->name('order');
+        Route::post('/order/store/{product_id}', 'dialogStore')->name('order.dialogStore');
+        Route::post('/order/payment/{order}/generate', 'generatePayment')->name('order.generatePayment');
     });
 
     Route::controller(CartController::class)->group(function () {

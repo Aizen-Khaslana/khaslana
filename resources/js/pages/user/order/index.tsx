@@ -1,15 +1,21 @@
 import { Head, usePage } from "@inertiajs/react";
 import OrderIndex from "@/components/khaslana/order/order-index";
 import UnusedNavLayout from "@/layouts/unused-nav-layout";
+import { catalog } from "@/routes";
+import { show } from "@/routes/catalog";
+import type { Order } from "@/types/order";
 
-export default function Order() {
+interface IndexProps {
+    order: Order;
+}
+
+export default function Order({
+    order,
+}: IndexProps) {
     const { url } = usePage();
     const searchParams = new URLSearchParams(url.split('?')[1]);
     const productId = searchParams.get('product_id');
-
-    const backUrl = productId ? `/catalog/${productId}` : "catalog";
-
-    console.log(backUrl)
+    const backUrl = productId ? show(productId).url : catalog().url;
 
     return (
         <UnusedNavLayout backHref={backUrl}>
@@ -20,7 +26,7 @@ export default function Order() {
                     rel="stylesheet"
                 />
             </Head>
-            <OrderIndex />
+            <OrderIndex order={order} />
         </UnusedNavLayout>
     )
 }

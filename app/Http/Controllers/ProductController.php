@@ -36,7 +36,9 @@ class ProductController extends Controller
                 'productVariants.attributeValues.attribute',
                 'umkm',
                 'umkm.city',
-            ])->paginate(20);
+            ])
+            ->latest()
+            ->paginate(20);
             $categories = Category::all();
         }
 

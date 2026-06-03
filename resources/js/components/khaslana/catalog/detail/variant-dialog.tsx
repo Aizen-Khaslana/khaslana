@@ -2,9 +2,10 @@ import { router } from "@inertiajs/react";
 import { X, Minus, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import DefaultProduct from "@/assets/images/product/default-product.png";
-// import { store } from "@/routes/order";
 import { useAuth } from "@/hooks/use-auth";
+import { showErrorToast } from "@/lib/toast";
 import { login } from "@/routes";
+import { dialogStore } from "@/routes/order";
 import type { ProductVariant } from "@/types/attribute";
 import type { Product } from "@/types/product";
 
@@ -124,26 +125,27 @@ export default function VariantDialog({
             attributes: selectedAttributes,
         });
 
-        /**
-         * nanti route nya:
-         *
-         * dialogStore.post(...)
-         */
         if (actionType === "add-cart") {
             console.log("Fitur Keranjang Belum Aktif.");
             return;
         }
 
         if (actionType === "buy-now") {
-            router.visit("/order/create", {
-                method: "get",
-                data: {
-                    product_id: product.id,
+            router.post(dialogStore(product.id).url,
+                {
                     variant_id: selectedVariant.id,
                     quantity,
-                    attributes: selectedAttributes,
+                },
+                {
+                    preserveScroll: true,
+                    onError: (errors) => {
+                        const firstError = Object.values(errors)[0];
+                        if (firstError) {
+                            showErrorToast("Gagal", String(firstError));
+                        }
+                    },
                 }
-            })
+            )
         }
     };
 
