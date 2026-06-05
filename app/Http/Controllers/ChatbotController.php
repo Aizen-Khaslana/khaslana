@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Product\Product;
 use App\Models\UMKM\Umkm;
+use App\Models\Order\Order;
+use App\Models\Order\OrderItem;
+use App\Models\Order\Payment;
 use App\Services\GeminiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -72,6 +75,12 @@ class ChatbotController extends Controller
 
         $user = Auth::user();
 
+        $orders = Order::where('user_id', $user->id)->with([
+            'orderItems',
+            'payment',
+            'umkm',
+        ])->get();
+
         return <<<PROMPT
             Kamu adalah Pusat Bantuan untuk aplikasi Khaslana. Jika user sudah login, untuk pertama kali dan jika diperlukan, sapalah user dengan data {$user}. Batasi jawaban anda seputar aplikasi khaslana saja dan yang masih berkaitan
             dengan aplikasi Khaslana, jika pertanyaan pengguna tidak berkaitan dengan Khaslana, kaitkan jawabannya dengan sesuatu yang berkaitan dengan Khaslana
@@ -128,6 +137,8 @@ class ChatbotController extends Controller
 
             10. Warna website khaslana menggunakan warna hijau, navy atau biru tua dan juga putih sebagai 3 warna yang paling banyak muncul, hexa lengkapnya hijau: #99FF33, biru tua: 1E1B26, dan putih #FFFFFF,
             jika user bertanya tentang warna, jelaskan juga filosofi nya terutama untuk warna primary khaslana yaitu hijau, kaitkan dengan UMKM dan juga marketplace. Jangan jawab sesuatu tentang warna jika pengguna tidak bertanya tentang warna Khaslana.
+
+            11. Jika pengguna bertanya tentang order yang dia buat, ini adalah data order nya: {$orders}. CATATAN PENTING UNTUK ORDER: JANGAN BERIKAN DATA ORDER JIKA PENGGUNA BELUM LOGIN, HANYA BERIKAN DATA ORDER JIKA PENGGUNA BERTANYA TENTANG ORDER MILIKNYA
 
             Gunakan bahasa Indonesia yang ramah dan mudah dipahami. Jangan lupa buat user setertarik mungkin dengan Khaslana.
         PROMPT;
