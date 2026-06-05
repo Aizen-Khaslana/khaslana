@@ -7,6 +7,7 @@ import {
     LayoutDashboard,
     ShoppingCart,
     Store,
+    History,
 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import "@/components/khaslana/css/navbar.css";
@@ -28,6 +29,7 @@ import {
 } from "@/routes";
 import { profile } from "@/routes";
 import { myPosts } from "@/routes/community";
+import { list } from "@/routes/order";
 import { tracking } from "@/routes/umkm";
 
 export default function Navbar() {
@@ -222,6 +224,7 @@ export default function Navbar() {
                                                 href={cart()}
                                                 className="nav-link hidden min-[970px]:block"
                                             >
+                                                Keranjang
                                                 <ShoppingCart className="w-5 h-5" />
                                             </Link>
                                             <Link
@@ -246,6 +249,13 @@ export default function Navbar() {
                                             >
                                                 Postingan
                                                 <LayoutDashboard className="w-5 h-5" />
+                                            </Link>
+                                            <Link
+                                                href={list()}
+                                                className="nav-link"
+                                            >
+                                                Riwayat Order
+                                                <History className="w-5 h-5" />
                                             </Link>
                                             <Link
                                                 href={logout()}
@@ -342,6 +352,22 @@ export default function Navbar() {
                                                         <LayoutDashboard className="w-5 h-5" />
                                                         <span>
                                                             Postingan
+                                                        </span>
+                                                    </Link>
+                                                    <Link
+                                                        href={list()}
+                                                        className="
+                                                            flex items-center gap-3
+                                                            px-5 py-4
+                                                            text-white
+                                                            transition
+                                                            hover:bg-white/5
+                                                            border-b border-white/5
+                                                        "
+                                                    >
+                                                        <History className="w-5 h-5" />
+                                                        <span>
+                                                            Riwayat Order
                                                         </span>
                                                     </Link>
                                                     <Link

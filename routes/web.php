@@ -83,12 +83,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // order routes
     Route::controller(OrderController::class)->group(function () {
-        Route::get('order/{order_id}', 'index')->name('order');
+        Route::get('/order/list', 'list')->name('order.list');
+        Route::get('/order/{order_id}', 'index')->name('order');
         Route::post('/order/store/{product_id}', 'dialogStore')->name('order.dialogStore');
         Route::post('/order/payment/{order}/generate', 'generatePayment')->name('order.generatePayment');
         Route::patch('/order/checkout/{order}', 'checkout')->name('order.checkout');
-
-        Route::get('order/show/{order}', 'show')->name('order.show');
+        Route::get('/order/show/{order}', 'show')->name('order.show');
     });
 
     Route::controller(CartController::class)->group(function () {
@@ -120,6 +120,7 @@ Route::controller(ChatbotController::class)->group(function () {
     Route::post('/help/store', 'message')->name('chatbot.store');
 });
 
+// midtrans callback, https needs, use ngrok if local dev
 Route::post('/midtrans/callback', [OrderController::class, 'callback']);
 
 require __DIR__.'/settings.php';

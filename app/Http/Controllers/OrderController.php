@@ -36,6 +36,16 @@ class OrderController extends Controller
         ]);
     }
 
+    public function list() {
+        $orders = Order::where('user_id', Auth::user()->id)->with([
+            'umkm',
+            'orderItems',
+        ])->get();
+        return Inertia::render('user/order/list', [
+            'orders' => $orders,
+        ]);
+    }
+
     public function show(Order $order) {
         return Inertia::render('user/order/show', [
             'order' => $order,
@@ -210,12 +220,20 @@ class OrderController extends Controller
         $payment = Payment::where('midtrans_order_id', $orderId)->first();
 
         if (
-            $transactionStatus === 'settlement' ||
+            $order->payment_status !== 'DIBAYAR' &&
             (
-                $transactionStatus === 'capture' &&
-                $fraudStatus === 'accept'
+                $transactionStatus === 'settlement' ||
+                (
+                    $transactionStatus === 'capture' &&
+                    $fraudStatus === 'accept'
+                )
             )
         ) {
+            $order->load('orderItems.variant');
+            foreach ($order->orderItems as $item) {
+                $item->variant->decrement('stock', $item->quantity);
+            }
+
             $order->update([
                 'payment_status' => 'DIBAYAR',
                 'status' => 'DIBAYAR',
