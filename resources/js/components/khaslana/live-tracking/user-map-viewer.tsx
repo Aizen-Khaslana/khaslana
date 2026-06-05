@@ -107,7 +107,7 @@ function FitMapBounds({ merchants, userLocation, routePath, routeNodes, activeNo
             routeNodes[activeNodeIndex]
         ) {
             const node = routeNodes[activeNodeIndex];
-            map.setView([node.latitude, node.longitude], 17, {
+            map.setView([node.latitude, node.longitude], 19, {
                 animate: true,
                 duration: 1
             });
@@ -130,7 +130,7 @@ function FitMapBounds({ merchants, userLocation, routePath, routeNodes, activeNo
             map.fitBounds(bounds, { 
                 paddingTopLeft, 
                 paddingBottomRight, 
-                maxZoom: 17,
+                maxZoom: 20,
                 animate: true,
                 duration: 1.5
             });
