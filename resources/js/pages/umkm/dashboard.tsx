@@ -10,6 +10,7 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { storeStatusRoute } from '@/routes/dashboard';
 import type { BreadcrumbItem } from '@/types';
+import type { Order } from '@/types/order';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -67,6 +68,7 @@ interface DashboardProps {
     store_rating: StoreRating[];
     top_products: TopProducts[];
     sales_chart: ChartItem[];
+    orders: Order[];
 }
 
 interface ChartItem {
@@ -80,7 +82,8 @@ export default function Dashboard({
     active_product,
     store_rating,
     top_products,
-    sales_chart
+    sales_chart,
+    orders
 }: DashboardProps) {
 
     const { user } = useAuth();
@@ -105,8 +108,8 @@ export default function Dashboard({
     const storeProduct = store_rating?.[0]?.products?.[0];
 
     const storeStatistics = [
-        {id: 1, title: 'Pesanan hari ini', 'value': stat.total_pembeli, 'icon': <ShoppingBag className='size-8'/>},
-        {id: 2, title: 'Pendapatan hari ini', 'value': stat.total_pendapatan, 'icon': <DollarSign className='size-8'/>},
+        {id: 1, title: 'Pesanan', 'value': stat.total_pembeli, 'icon': <ShoppingBag className='size-8'/>},
+        {id: 2, title: 'Pendapatan', 'value': stat.total_pendapatan, 'icon': <DollarSign className='size-8'/>},
         {id: 3, title: 'Produk aktif', 'value': product.total_produk, 'icon': <Package className='size-8'/>},
         {id: 4, title: 'Rating toko', 'value': storeProduct?.reviews_avg_rating
             ? `${Number(storeProduct.reviews_avg_rating).toFixed(1)}/5.0`
@@ -120,6 +123,13 @@ export default function Dashboard({
                 <CtaCard />
             ) : (
                 <>
+                    <div className='flex'>
+                        <div className='flex flex-col gap-3 mb-4 justify-between'>
+                            <span className='font-semibold text-4xl'>Ringkasan Toko Anda.</span>
+                            <span className='text-[#adaaaa]'>Pantau kinerja toko Anda secara real-time</span>
+                        </div>
+                    </div>
+                    
                     <div>
                         <div className="rounded-xl border border-sidebar-border/70 p-6 dark:border-sidebar-border">
                             <h2 className="text-xl font-bold">
@@ -153,15 +163,17 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    <div className='grid grid-cols-4 max-md:grid-cols-2 gap-4 justify-between w-full'>
+                    <div className='grid grid-cols-4 max-md:grid-cols-2 gap-4 justify-between w-full mb-4'>
                         {storeStatistics.map((item) => (
                             <div key={item.id}
-                                className='flex flex-col gap-2 w-full rounded-4xl p-6 bg-[#222]'>
+                                className='flex flex-col gap-4 w-full rounded-4xl p-6 bg-[#222]'>
                                 <div className='w-fit p-3 text-[#99ff33] rounded-[999px] bg-[#cacaca]/20'>
                                     {item.icon}
                                 </div>
-                                <span className='text-[#adaaaa]'>{item.title}</span>
-                                <span className='font-semibold text-3xl'>{item.value}</span>
+                                <div className='flex flex-col'>
+                                    <span className='text-[#adaaaa]'>{item.title}</span>
+                                    <span className='font-semibold text-3xl'>{item.value}</span>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -190,12 +202,12 @@ export default function Dashboard({
                             </ResponsiveContainer>
                         </div>
 
-                        <div className='flex flex-col gap-4 bg-[#191720] w-full rounded-4xl p-6 py-6 flex-2'>
+                        <div className='flex flex-col gap-4 bg-[#191720] w-full rounded-4xl p-6 py-6 flex-2 mb-6'>
                             <span className='text-2xl font-semibold pb-3'>Produk Terlaris</span>
                             {top_products.map((item) => (
                                 <div className='flex justify-between gap-3'>
                                     <div className='flex gap-4'>
-                                        <img src={`storage/${item.product_images}`} alt="tes" className='size-16 bg-white rounded-[999px]'/>
+                                        <img src={`storage/${item.product_images}`} alt="tes" className='size-13 bg-white rounded-[999px]'/>
 
                                         <div className='flex flex-col justify-center'>
                                             <span className='text-lg font-medium'>{item.name}</span>
@@ -205,11 +217,37 @@ export default function Dashboard({
 
                                     <div className='flex flex-col justify-center items-end text-[#adaaaa]'>
                                         <span className='text-xl font-semibold text-[#99ff33]'>{item.total_terjual || 0}</span>
-                                        TERJUAL
+                                        <span className='text-sm'>TERJUAL</span>
                                     </div>
                                 </div>
                             ))}
                             <a href="/product" className='flex text-[#99ff33] font-semibold w-full justify-center mt-6'>Lihat Semua Produk</a>
+                        </div>
+                    </div>
+
+                    <div className='flex'>
+                        <div className='flex flex-col bg-[#191720] w-full rounded-4xl p-6 flex-4 gap-6'>
+                            <span className='text-2xl font-semibold'>Pesanan Terbaru</span>
+                            <div className='flex justify-between w-full px-10'>
+                                <div className='flex flex-col'>
+                                    <span className='font-semibold text-sm tracking-[1px] text-[#BFCBAF]'>PELANGGAN</span>
+                                    {orders.map((item) => (
+                                        <span key={item.id}>{item.user_id}</span>
+                                    ))}
+                                </div>
+                                
+                                <div className='flex flex-col'>
+                                    <span className='font-semibold text-sm tracking-[1px] text-[#BFCBAF]'>PRODUK</span>
+                                </div>
+
+                                <div className='flex flex-col'>
+                                    <span className='font-semibold text-sm tracking-[1px] text-[#BFCBAF]'>STATUS</span>
+                                </div>
+
+                                <div className='flex flex-col'>
+                                    <span className='font-semibold text-sm tracking-[1px] text-[#BFCBAF]'>TOTAL</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </>
