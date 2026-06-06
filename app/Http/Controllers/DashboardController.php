@@ -86,10 +86,21 @@ class DashboardController extends Controller
         ]);
         $user = Auth::user();
 
-        $user->umkm()->update([
+        $user->umkm->update([
             'status' => $request->status,
         ]);
 
         return back();
+    }
+
+    public function order() {
+        $orders = Order::where('umkm_id', Auth::user()->umkm->id)->with([
+            'umkm',
+            'orderItems',
+            'user'
+        ])->orderBy('created_at', 'desc')
+          ->paginate(20);
+
+        return Inertia::render('umkm/order', ['orders' => $orders]);
     }
 }

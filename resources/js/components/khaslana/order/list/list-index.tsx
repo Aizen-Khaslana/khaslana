@@ -1,6 +1,8 @@
 import { router } from "@inertiajs/react";
+import { useState } from "react";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Order } from "@/types/order"
+import ConfirmationDialog from "../../confirmation-dialog";
 
 interface ListIndexProps {
     orders: Order[];
@@ -9,6 +11,9 @@ interface ListIndexProps {
 export default function ListIndex({
     orders,
 }: ListIndexProps) {
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
+
     const formatRupiah = (value: number | undefined) =>
         new Intl.NumberFormat("id-ID", {
             style: "currency",
@@ -52,12 +57,28 @@ export default function ListIndex({
         }
     }
 
-    const handleCompleteOrder = (orderId: number) => {
-        if (confirm("Apakah kamu yakin pesanan sudah diterima dengan baik")) {
-            router.patch(`/order/complete/${orderId}`)
-            showSuccessToast("Pesanan berhasil diselesaikan");
-        }
-        showErrorToast("Terjadi error, silahkan coba lagi.");
+    const handleCompleteOrder = (e: React.MouseEvent, orderId: number) => {
+        e.stopPropagation();
+        e.preventDefault();
+        setSelectedOrderId(orderId);
+        setIsDialogOpen(true);
+    }
+    
+    const confirmCompleteOrder = () => {
+        if (!selectedOrderId) return;
+
+        router.patch(`/order/complete/${selectedOrderId}`, {}, {
+            onSuccess: () => {
+                setIsDialogOpen(false);
+                setSelectedOrderId(null);
+                showSuccessToast("Pesanan berhasil diselesaikan");
+            },
+            onError: () => {
+                setIsDialogOpen(false);
+                setSelectedOrderId(null);
+                showErrorToast("Terjadi error, silahkan coba lagi.")
+            }
+        })
     }
 
     return (
@@ -112,8 +133,8 @@ export default function ListIndex({
                                     Lihat Detail
                                 </a>
                                 {order.type == 'DIANTAR' && order.status == 'DIKIRIM' && (
-                                    <button onClick={() => handleCompleteOrder(order.id)}
-                                        className="flex border border-[#99ff33] justify-center hover:text-[#99ff33] px-4.5 font-semibold py-2 rounded-[999px] text-sm text-black bg-[#99ff33] hover:bg-transparent duration-200 transition-all">
+                                    <button onClick={(e) => handleCompleteOrder(e, order.id)}
+                                        className="flex border border-[#99ff33] justify-center hover:text-[#99ff33] px-4.5 font-semibold py-2 rounded-[999px] text-sm text-black bg-[#99ff33] hover:bg-transparent duration-200 transition-all cursor-pointer">
                                         Selesai
                                     </button>
                                 )}
@@ -122,6 +143,18 @@ export default function ListIndex({
                     </a>
                 ))}
             </div>
+
+            <ConfirmationDialog 
+                open={isDialogOpen}
+                title="Selesaikan Pesanan Ini?"
+                description="Pastikan Anda sudah menerima produk. Aksi ini tidak dapat dibatalkan"
+                confirmText="Ya, Selesai"
+                onConfirm={confirmCompleteOrder}
+                onCancel={() => {
+                    setIsDialogOpen(false);
+                    setSelectedOrderId(null);
+                }}
+            />
         </>
     )
 }
