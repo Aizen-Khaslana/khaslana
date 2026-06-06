@@ -9,8 +9,12 @@ export default function ListIndex({
 }: ListIndexProps) {
     console.log(orders);
     return (
-        <div>
+        <>
+            <div>
+                <span className="font-semibold text-4xl">Riwayat <span className="text-[#99ff33]">Pesanan</span></span>
+            </div>
             
-        </div>
+               
+        </>
     )
 }
