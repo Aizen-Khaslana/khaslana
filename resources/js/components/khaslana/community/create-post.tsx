@@ -75,8 +75,8 @@ export function CreatePost() {
         }
 
     return (
-        <div className="relative flex flex-col px-6 w-full">
-            <section className="community-header flex flex-col w-full pt-8 pb-10 max-md:pb-5 gap-2">
+        <div className="flex flex-col w-full mx-auto">
+            <section className="flex flex-col w-full pb-10 max-md:pb-5 gap-2">
                 <h2 className="text-[#99ff33] font-medium text-2xl md:text-5xl">
                     Buat Postingan
                 </h2>
@@ -86,7 +86,7 @@ export function CreatePost() {
                 <div className="w-full bg-[#99FF33]/20 border border-[#99FF33] text-[#99FF33] p-4 rounded-[15px] text-sm font-medium">Postingan berhasil diupload!</div>
             )}
 
-            <div className="create-post flex flex-col w-full bg-[#222] md:p-8 p-5 gap-10 rounded-[15px] mb-20">
+            <div className="flex flex-col w-full bg-[#222] md:p-8 gap-10 rounded-[15px] mb-20">
                 <div className="flex items-start gap-3.75">
                     <img
                         src={user.profile_photo ?? ProfileIcon}

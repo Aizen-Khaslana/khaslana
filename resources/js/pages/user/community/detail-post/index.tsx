@@ -7,7 +7,8 @@ import { useAuth } from '@/hooks/use-auth';
 import UnusedNavLayout from '@/layouts/unused-nav-layout';
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import { community } from '@/routes';
-import { like, destroy } from "@/routes/community";
+import { like, destroy, show } from "@/routes/community";
+import type { BreadcrumbItem } from '@/types';
 import type { Post } from '@/types/post';
 
 interface DetailProps {
@@ -17,6 +18,17 @@ interface DetailProps {
 export default function DetailPost({
     post,
 }: DetailProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Komunitas',
+            href: community().url,
+        },
+        {
+            title: 'Detail Postingan',
+            href: show(post.id).url,
+        },
+    ];
+
     const { user } = useAuth();
     const isMyPost = user && post.user_id === user.id;
     const isMyComment = (commentUserId: number) => {
@@ -110,7 +122,7 @@ export default function DetailPost({
     }
 
     return (
-        <UnusedNavLayout backHref={community().url}>
+        <UnusedNavLayout backHref={community().url} breadcrumbs={breadcrumbs}>
             <Head title='Detail Postingan'>
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link

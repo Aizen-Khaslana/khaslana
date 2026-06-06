@@ -85,9 +85,7 @@ export default function Dashboard({
     sales_chart,
     latest_orders
 }: DashboardProps) {
-
     const { user } = useAuth();
-
     const [storeStatus, setStoreStatus] = useState(status);
 
     const handleToggleStore = () => {
@@ -99,7 +97,6 @@ export default function Dashboard({
         router.post(storeStatusRoute(), {
             status: newStatus,
         });
-
         setStoreStatus(newStatus);
     };
 

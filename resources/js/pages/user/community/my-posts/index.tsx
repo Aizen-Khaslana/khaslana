@@ -1,77 +1,82 @@
-import { usePage, Link, router, Head } from "@inertiajs/react";
-import { Plus, Trash } from "lucide-react";
+import { Link, router, Head } from "@inertiajs/react";
+import {
+    Plus,
+    Trash,
+    MessageCircleX,
+    MessageCircleMore,
+    ThumbsUp,
+} from "lucide-react";
+import { useState } from "react";
+import ProfileIcon from "@/assets/icons/default-profile.png";
+import DeleteConfirmationDialog from "@/components/khaslana/delete-confirmation-dialog";
 import { useAuth } from "@/hooks/use-auth";
 import UnusedNavLayout from "@/layouts/unused-nav-layout";
+import { showSuccessToast, showErrorToast } from "@/lib/toast";
+import { community } from "@/routes";
+import { create, show, destroy, like, myPosts } from "@/routes/community";
+import type { BreadcrumbItem } from '@/types';
+import type { Post } from "@/types/post";
 
-interface User {
-    id: number;
-    name: string;
-    avatar?: string;
-}
-
-interface PostImage {
-    id: number;
-    post_id: number;
-    image: string;
-}
-
-interface PostLike {
-    id: number;
-    user_id: number;
-    post_id: number;
-}
-
-interface CommentLike {
-    id: number;
-    comment_id: number;
-    user_id: number;
-}
-
-interface Comment {
-    id: number;
-    user: {
-        id: number;
-        name: string;
-    }
-    post_id: number;
-    comment: string;
-    comment_likes: CommentLike[];
-    is_liked: boolean;
-    created_at: string;
-}
-
-interface Post {
-    id: number;
-    user_id: number;
-    umkm_id?: number | null;
-    content: string;
-    post_date: string;
-    created_at: string;
-
-    user: User;
-    post_images: PostImage[];
-    post_likes: PostLike[];
-    comments?: Comment[];
-    is_liked: boolean;
-}
+const breadcrumbs: BreadcrumbItem[] = [
+    {
+        title: 'Komunitas',
+        href: community().url,
+    },
+    {
+        title: 'Kelola Postingan',
+        href: myPosts().url,
+    },
+];
 
 interface MyPostsProps {
     posts: Post[];
 }
 
-export default function MyPosts() {
+export default function MyPosts({
+    posts,
+}: MyPostsProps) {
     const { user } = useAuth();
+    const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-    const { posts } = usePage().props as unknown as MyPostsProps;
+    const handleDeletePost = () => {
+        if (!selectedPostId) return;
 
-    const handleDeletePost = (postId: number) => {
-        if (confirm('Yakin ingin menghapus postingan ini?')) {
-            router.delete(`/community/${postId}`);
-        }
+        router.delete(destroy(selectedPostId).url, {
+            preserveScroll: true,
+            onSuccess: () => {
+                showSuccessToast("Postingan berhasil dihapus");
+                setIsDeleteDialogOpen(false);
+                setSelectedPostId(null);
+            },
+            onError: () => {
+                showErrorToast("Gagal menghapus postingan");
+            },
+        });
     };
 
+    const openDeleteDialog = (postId: number) => {
+        setSelectedPostId(postId);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const handleLike = (postId: number, is_liked: boolean) => {
+        router.post(like(postId).url, {}, {
+            preserveScroll: true,
+            onSuccess: () => {
+                if(!is_liked) {
+                    showSuccessToast("Berhasil menyukai postingan");
+                }
+            },
+            onError: (err) => {
+                console.error("Gagal melakukan like: ", err);
+                showErrorToast("Gagal menyukai postingan");
+            }
+        })
+    }
+
     return (
-        <UnusedNavLayout backHref="/community">
+        <UnusedNavLayout backHref={community().url} breadcrumbs={breadcrumbs}>
             <Head title='Postingan Anda'>
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link
@@ -80,57 +85,171 @@ export default function MyPosts() {
                 />
             </Head>
             <section className="community-header flex justify-between w-full pb-10 max-md:pb-5 gap-2">
-                <h2 className="text-[#99ff33] font-medium text-2xl md:text-5xl">Kelola Postingan</h2>
-                <Link href="/community/create-post"
-                    className="bg-[#99FF33] flex gap-2 items-center border border-[#99FF33] py-2.5 px-5 font-medium cursor-pointer rounded-[20px] text-black hover:bg-transparent hover:text-[#99ff33] transition-all duration-200">
-                    <Plus />
+                <h2 className="text-[#99ff33] font-medium text-2xl md:text-5xl">Kelola Postingan Anda</h2>
+                <Link
+                    href={create()}
+                    className="
+                        flex items-center
+                        border border-[#99FF33] rounded-xl
+                        bg-[#99FF33] hover:bg-transparent
+                        py-2.5 px-5 gap-2 h-fit
+                        font-medium text-black hover:text-[#99ff33]
+                        text-sm md:text-base
+                        cursor-pointer whitespace-nowrap
+                        transition-all duration-200
+                    "
+                >
+                    <Plus className="h-5 w-5 md:h-6 md:w-6" />
                     Buat Postingan
                 </Link>
             </section>
+
             {posts && posts.length > 0 ? (
                 posts.map((post) => {
                     const isMyPost = user && post.user_id === user.id;
 
-                return (
-                    <Link href={`/community/${post.id}`} key={post.id} className="post-card w-full flex flex-col gap-4 bg-[#222] p-8 rounded-[15px]">
-                        <div className="flex flex-col gap-4">
-                            <div className="post-profile flex items-center justify-between gap-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="post-user flex flex-col">
-                                        <h6 className="text-white font-medium text-lg">{post.user?.name || "Anggota Khaslana"}</h6>
-                                        <p className="text-[#888] text-sm">
-                                            {post.post_date ? new Date(post.post_date).toLocaleDateString('id-ID', {
-                                                year: 'numeric', month: 'long', day: 'numeric'
-                                            }) : "Baru saja"}
-                                        </p>
+                    return (
+                        <Link
+                            href={show(post.id)}
+                            key={post.id}
+                            className="w-full flex flex-col gap-4 bg-[#222] p-6 rounded-[15px]"
+                        >
+                            <div className="flex flex-col gap-4">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="flex items-center ps-2 gap-4">
+                                        <img
+                                            src={user.profile_photo ?? ProfileIcon}
+                                            alt="Profile"
+                                            className="w-11 h-11 border border-white/10 rounded-full object-cover"
+                                        />
+                                        <div className="flex flex-col">
+                                            <h6 className="text-white font-medium text-lg">
+                                                {post.user.name}
+                                            </h6>
+                                            <p className="text-[#888] text-xs md:text-sm">
+                                                {post.post_date ? new Date(post.post_date).toLocaleDateString('id-ID', {
+                                                    year: 'numeric', month: 'long', day: 'numeric'
+                                                }) : "Baru saja"}
+                                            </p>
+                                        </div>
                                     </div>
+                                    {isMyPost && (
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.preventDefault()
+                                                e.stopPropagation()
+                                                openDeleteDialog(post.id)
+                                            }}
+                                            className="
+                                                flex items-center justify-center
+                                                rounded-full aspect-square
+                                                h-9 w-9 p-2
+                                                hover:bg-white/20 hover:text-red-400
+                                                transition-all duraion-300
+                                                cursor-pointer
+                                            "
+                                        >
+                                            <Trash className="w-4 aspect-square"/>
+                                        </button>
+                                    )}
                                 </div>
-                                {isMyPost && (
-                                    <button onClick={() => handleDeletePost(post.id)}
-                                        className="post-options hover:text-[#99ff33] cursor-pointer">
-                                        <Trash className="w-4"/>
-                                    </button>
-                                )}
-                            </div>
 
-                            <div className="post-content flex flex-col gap-5 text-[#adaaaa] font-normal">
-                                <p className="text-md whitespace-pre-line">{post.content}</p>
-                                
-                                {post.post_images && post.post_images.map((imgData) => (
-                                    <img 
-                                        key={imgData.id}
-                                        src={`/storage/${imgData.image}`} 
-                                        alt="Post Content" 
-                                        className="w-full max-w-50 h-auto rounded-xl" 
-                                    />
-                                ))}
+                                <div className="post-content flex flex-col ps-3 gap-5 text-[#adaaaa] font-normal">
+                                    <p className="text-md whitespace-pre-line">{post.content}</p>
+                                    
+                                    {post.post_images && post.post_images.map((imgData) => (
+                                        <img 
+                                            key={imgData.id}
+                                            src={`/storage/${imgData.image}`} 
+                                            alt="Post Content" 
+                                            className="w-full max-w-50 h-auto rounded-xl" 
+                                        />
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    </Link>
-                )})
+                            <div className="mt-2.75">
+                                <div className="flex gap-1 items-center bg-transparent text-[#adaaaa]">
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            e.stopPropagation()
+                                            handleLike(post.id, post.is_liked)
+                                        }}
+                                        className={`
+                                            group
+                                            flex items-center gap-2
+                                            px-3 py-2
+                                            rounded-xl
+                                            text-sm font-medium
+                                            cursor-pointer
+                                            transition-all duration-300
+                                            hover:bg-[#99FF33]/10
+                                            active:scale-95
+                                            ${post.is_liked ?
+                                                'text-[#99FF33] bg-[#99FF33]/10 shadow-[0_0_15px_rgba(153,255,51,0.15)]'
+                                            : 'text-[#adaaaa]'}
+                                        `}
+                                    >
+                                        <ThumbsUp
+                                            className={`
+                                                w-4 h-4
+                                                transition-all duration-300
+                                                group-hover:-translate-y-0.5
+                                                group-hover:scale-125
+                                                ${ post.is_liked ?
+                                                    "fill-[#99FF33] scale-110"
+                                                : ""}
+                                            `}
+                                        />
+                                        <span className="transition-all duration-300 group-hover:translate-x-0.5">
+                                            {post.post_likes.length}
+                                        </span>
+                                    </button>
+                                    <button
+                                        className="
+                                                group
+                                                flex items-center gap-2
+                                                px-3 py-2
+                                                rounded-xl
+                                                text-sm font-medium
+                                                text-[#adaaaa]
+                                                hover:bg-white/5
+                                                hover:text-white
+                                                active:scale-95
+                                                transition-all duration-300
+                                                cursor-pointer
+                                        "
+                                    >
+                                        <MessageCircleMore className="w-4 h-4"/>
+                                        {post.comments?.length}
+                                    </button>
+                                </div>
+                            </div>
+                        </Link>
+                    )
+                })
             ) : (
-                <p className="text-center text-[#888] py-10 text-sm">Belum ada data postingan di komunitas :(</p>
+                <div className="flex flex-col items-center justify-center w-full py-12">
+                    <MessageCircleX className='h-32 w-32 text-center text-[#99FF33] mb-8' />
+                    <p className="text-center text-white/80 text-sm md:text-base">
+                        Anda belum memposting apapun. Ayo buat postingan pertama Anda!.
+                    </p>
+                </div>
             )}
+
+            {/* delete dialog */}
+            <DeleteConfirmationDialog
+                open={isDeleteDialogOpen}
+                title="Hapus Postingan"
+                description="Apakah Anda yakin ingin menghapus postingan ini? Tindakan ini tidak dapat dibatalkan."
+                onCancel={() => {
+                    setIsDeleteDialogOpen(false);
+                    setSelectedPostId(null);
+                }}
+                onConfirm={handleDeletePost}
+            />
         </UnusedNavLayout>
     )
 }
