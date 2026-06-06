@@ -21,39 +21,64 @@ export default function ShowIndex({
         switch (status) {
             case 'TERTUNDA':
                 return (
-                    <div className="px-4 py-1.5 border border-orange-500 text-orange-400 bg-orange-500/10 rounded-full font-bold text-md">TERTUNDA</div>
+                    <div className="px-4 py-1.5 border border-orange-500 text-orange-400 bg-orange-500/10 rounded-full font-bold text-md max-md:text-xs max-md:mt-2">TERTUNDA</div>
                 )
             case 'MENUNGGU PEMBAYARAN':
                 return (
-                    <div className="px-4 py-1.5 border border-yellow-500 text-yellow-400 bg-orange-500/10 rounded-full font-bold text-md">MENUNGGU PEMBAYARAN</div>
+                    <div className="px-4 py-1.5 border border-yellow-500 text-yellow-400 bg-orange-500/10 rounded-full font-bold text-md max-md:text-xs max-md:mt-2">MENUNGGU PEMBAYARAN</div>
                 )
             case 'DIBAYAR':
                 return (
-                    <div className="px-4 py-1.5 border border-yellow-500 text-yellow-400 bg-orange-500/10 rounded-full font-bold text-md">DIBAYAR</div>
+                    <div className="px-4 py-1.5 border border-yellow-500 text-yellow-400 bg-orange-500/10 rounded-full font-bold text-md max-md:text-xs max-md:mt-2">DIBAYAR</div>
                 )
             case 'DALAM PROSES':
                 return (
-                    <div className="px-4 py-1.5 border border-yellow-500 text-yellow-400 bg-orange-500/10 rounded-full font-bold text-md">DALAM PROSES</div>
+                    <div className="px-4 py-1.5 border border-yellow-500 text-yellow-400 bg-orange-500/10 rounded-full font-bold text-md max-md:text-xs max-md:mt-2">DALAM PROSES</div>
                 )
             case 'DIKIRIM':
                 return (
-                    <div className="px-4 py-1.5 border border-yellow-500 text-yellow-400 bg-orange-500/10 rounded-full font-bold text-md">DIKIRIM</div>
+                    <div className="px-4 py-1.5 border border-yellow-500 text-yellow-400 bg-orange-500/10 rounded-full font-bold text-md max-md:text-xs max-md:mt-2">DIKIRIM</div>
                 )
             case 'SELESAI':
                 return (
-                    <div className="px-4 py-1.5 border border-yellow-500 text-yellow-400 bg-orange-500/10 rounded-full font-bold text-md">SELESAI</div>
+                    <div className="px-4 py-1.5 border border-yellow-500 text-yellow-400 bg-orange-500/10 rounded-full font-bold text-md max-md:text-xs max-md:mt-2">SELESAI</div>
                 )
             default:
                 return (
-                    <div className="px-4 py-1.5 border border-red-500 text-red-400 bg-orange-500/10 rounded-full font-bold text-md">DIBATALKAN</div>
+                    <div className="px-4 py-1.5 border border-red-500 text-red-400 bg-orange-500/10 rounded-full font-bold text-md max-md:text-xs max-md:mt-2">DIBATALKAN</div>
+                )
+        }
+    }
+
+    const renderPaymentBubble = (status: string) => {
+        switch (status) {
+            case 'BELUM DIBAYAR':
+                return (
+                    <div className="px-4 py-1.5 border border-yellow-500 text-yellow-400 bg-orange-500/10 rounded-full font-bold text-sm max-md:text-xs max-md:mt-2">BELUM DIBAYAR</div>
+                )
+            case 'DIBAYAR':
+                return (
+                    <div className="px-4 py-1.5 border border-green-500 text-green-400 bg-orange-500/10 rounded-full font-bold text-sm max-md:text-xs max-md:mt-2">DIBAYAR</div>
+                )
+            case 'GAGAL':
+                return (
+                    <div className="px-4 py-1.5 border border-red-500 text-red-400 bg-orange-500/10 rounded-full font-bold text-sm max-md:text-xs max-md:mt-2">GAGAL</div>
+                )
+            case 'KADALUWARSA':
+                return (
+                    <div className="px-4 py-1.5 border border-red-500 text-red-400 bg-orange-500/10 rounded-full font-bold text-sm max-md:text-xs max-md:mt-2">KADALUWARSA</div>
+                )
+            default:
+                return (
+                    <div className="px-4 py-1.5 border border-gray-500 text-gray-400 bg-orange-500/10 rounded-full font-bold text-sm max-md:text-xs max-md:mt-2">N/A</div>
                 )
         }
     }
     
     return (
         <div className="flex flex-col gap-6 mb-8">
-            <div className="flex justify-between items-end mb-8">
-                <div className="flex items-end gap-2">
+            <div className="flex max-md:flex-col justify-between max-md:items-start items-end mb-8">
+                <div className="flex max-md:flex-col max-md:items-start items-end gap-2">
                     <span className="text-4xl font-semibold flex gap-2">Detail 
                     <span className="text-[#99ff33]">Pesanan</span>
                     </span>
@@ -102,7 +127,7 @@ export default function ShowIndex({
             </div>
             
             <div className="flex max-md:flex-col justify-between w-full gap-6">
-                {!order.shipping_service ? (
+                {order.shipping_service && (
                     <div className="flex flex-col gap-6 bg-[#131313] p-8 rounded-3xl w-full">
                         <span className="font-semibold text-2xl">Info Pengiriman</span>
                         <div className="flex flex-col gap-2">
@@ -120,12 +145,13 @@ export default function ShowIndex({
                             </div>
                         </div>
                     </div>
-                ) : (
-                    <div className="hidden"></div>
                 )}
 
                 <div className="flex flex-col gap-6 bg-[#131313] p-8 rounded-3xl w-full">
-                    <span className="font-semibold text-2xl">Rincian Pembayaran</span>
+                    <span className="font-semibold flex max-md:flex-col max-md:w-fit justify-between text-2xl">
+                        Rincian Pembayaran
+                        <span className="max-md:w-fit">{renderPaymentBubble(order.payment_status)}</span>
+                    </span>
                     <div className="flex flex-col gap-1">
                         <div className="flex justify-between w-full text-lg">
                             <span>Metode Pembayaran</span>
