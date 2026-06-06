@@ -1,6 +1,7 @@
 import { Transition } from '@headlessui/react';
 import { Form, Head, Link } from '@inertiajs/react';
 import React from 'react';
+
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DefaultProfile from '@/assets/icons/default-profile.png';
 import DeleteUser from '@/components/delete-user';

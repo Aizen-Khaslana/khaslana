@@ -1,5 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useEffect, useRef } from 'react';
+
 import CtaCard from '@/components/khaslana/dashboard/cta-card';
 import ProductIndex from '@/components/khaslana/product/product-index';
 import { useAuth } from '@/hooks/use-auth';

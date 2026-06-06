@@ -1,5 +1,6 @@
 import { Link, router } from "@inertiajs/react"
 import { ChevronRight, Plus, PackageOpen } from "lucide-react"
+
 import { show } from "@/routes/catalog";
 import type { Product } from "@/types/product";
 

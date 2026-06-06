@@ -6,6 +6,7 @@ import {
     Star,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+
 import DefaultStore from '@/assets/images/umkm-user/default-store.png';
 import { detail } from '@/routes/umkm';
 import type { Umkm } from "@/types/umkm";

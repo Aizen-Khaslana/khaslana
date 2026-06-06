@@ -1,4 +1,5 @@
 import { Head } from "@inertiajs/react"
+
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import Footer from "@/components/khaslana/footer"
 import Back from "@/layouts/components/back";

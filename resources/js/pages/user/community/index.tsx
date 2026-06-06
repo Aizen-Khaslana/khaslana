@@ -1,4 +1,5 @@
 import { Head } from '@inertiajs/react';
+
 import CommunityIndex from '@/components/khaslana/community/community-index';
 import UserLayout from '@/layouts/user-layout';
 import type { Post } from '@/types/post';

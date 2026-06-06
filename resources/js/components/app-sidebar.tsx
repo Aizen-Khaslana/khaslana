@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { LayoutGrid, Package, MapPin, ClipboardList } from 'lucide-react';
+
 import BackToHomepage from '@/components/back-to-homepage';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -17,6 +18,7 @@ import { dashboard, product } from '@/routes';
 import { stayPoint } from '@/routes';
 import { order } from '@/routes/dashboard';
 import type { NavItem } from '@/types';
+
 import AppLogo from './app-logo';
 
 

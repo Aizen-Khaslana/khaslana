@@ -2,6 +2,7 @@ import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
 import { ChevronLeft, Power, Map as MapIcon } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
+
 import CtaCard from '@/components/khaslana/dashboard/cta-card';
 import EmptyRouteModal from '@/components/khaslana/live-tracking/empty-route-modal';
 import MapDetailCard from '@/components/khaslana/live-tracking/map-detail-card';
@@ -9,7 +10,6 @@ import StayPointActions from '@/components/khaslana/live-tracking/stay-point-act
 import StayPointInfoCard from '@/components/khaslana/live-tracking/stay-point-info-card';
 import StayPointMap from '@/components/khaslana/live-tracking/stay-point-map';
 import StayPointModal from '@/components/khaslana/live-tracking/stay-point-modal';
-
 import { useAuth } from '@/hooks/use-auth';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';

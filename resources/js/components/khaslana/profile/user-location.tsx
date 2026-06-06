@@ -1,6 +1,7 @@
 import { type InertiaFormProps } from "@inertiajs/react";
 import { MapPin } from "lucide-react";
 import { useState, useCallback, useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Label } from '@/components/ui/label';
 import {

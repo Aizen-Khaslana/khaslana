@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import axios from 'axios';
 import { ChevronLeft } from 'lucide-react';
 import React, { useEffect, useState, useCallback } from 'react';
+
 import KhaslanaLogo from "@/assets/icons/khaslana-logo-green.png";
 import MerchantSidebar from '@/components/khaslana/live-tracking/merchant-sidebar';
 import SelectedMerchantCard from '@/components/khaslana/live-tracking/selected-merchant-card';

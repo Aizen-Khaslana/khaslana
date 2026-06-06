@@ -1,4 +1,5 @@
 import { Head } from "@inertiajs/react";
+
 import ChatbotIndex from "@/components/khaslana/chatbot/chatbot-index";
 import UserLayout from "@/layouts/user-layout";
 

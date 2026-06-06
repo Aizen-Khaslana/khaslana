@@ -1,4 +1,5 @@
 import { Head } from '@inertiajs/react';
+
 import ShowIndex from '@/components/khaslana/order/show/show-index';
 import UnusedNavLayout from '@/layouts/unused-nav-layout';
 import type { Order } from '@/types/order';

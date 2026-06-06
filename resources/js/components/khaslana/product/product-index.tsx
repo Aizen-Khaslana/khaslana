@@ -1,5 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import { Eye, Pencil, Trash2, PackageOpen } from 'lucide-react';
+
 import DeleteDialog from '@/components/khaslana/product/delete-dialog';
 import { create, destroy } from '@/routes/product';
 import type { PaginatedProducts } from "@/types/paginated-product";

@@ -1,4 +1,5 @@
 import { Head } from '@inertiajs/react';
+
 import { CreatePost } from '@/components/khaslana/community/create-post';
 import UnusedNavLayout from '@/layouts/unused-nav-layout';
 import { community } from '@/routes';

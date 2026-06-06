@@ -1,5 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import { Eye, PackageOpen } from 'lucide-react';
+
 import {
   Select,
   SelectContent,

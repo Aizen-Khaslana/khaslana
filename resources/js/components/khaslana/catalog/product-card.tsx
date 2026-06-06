@@ -1,5 +1,6 @@
 import { router } from '@inertiajs/react';
 import { PackageOpen } from 'lucide-react';
+
 import addToCartIcon from "@/assets/images/catalog/addtocart.svg";
 import locationIcon from "@/assets/images/catalog/location.svg";
 import starIcon from "@/assets/images/catalog/star.svg";

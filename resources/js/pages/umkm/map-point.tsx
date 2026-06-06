@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react';
 import { ChevronLeft } from 'lucide-react';
 import React, { useState } from 'react';
+
 import CtaCard from '@/components/khaslana/dashboard/cta-card';
 import EmptyRouteModal from '@/components/khaslana/live-tracking/empty-route-modal';
 import MapDetailCard from '@/components/khaslana/live-tracking/map-detail-card';

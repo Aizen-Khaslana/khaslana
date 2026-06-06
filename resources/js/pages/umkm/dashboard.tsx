@@ -2,9 +2,9 @@ import { Head, router } from '@inertiajs/react';
 import { ShoppingBag, DollarSign, Package, Star } from 'lucide-react';
 import { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+
 import CtaCard from '@/components/khaslana/dashboard/cta-card';
 // import StatisticCard from '@/components/khaslana/dashboard/statistic-card';
-
 import { useAuth } from '@/hooks/use-auth';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';

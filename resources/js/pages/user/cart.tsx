@@ -1,4 +1,5 @@
 import { Head } from "@inertiajs/react";
+
 import CartIndex from "@/components/khaslana/cart/cart-index";
 import UserLayout from "@/layouts/user-layout";
 

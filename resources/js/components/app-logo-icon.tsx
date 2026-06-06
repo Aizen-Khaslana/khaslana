@@ -1,5 +1,6 @@
 // import type { SVGAttributes } from 'react';
 import type { ImgHTMLAttributes } from 'react';
+
 import KhaslanaLogo from '@/assets/images/khaslana.svg';
 
 export default function AppLogoIcon(props: ImgHTMLAttributes<HTMLImageElement>) {

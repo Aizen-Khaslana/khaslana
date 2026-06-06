@@ -1,5 +1,6 @@
 import { Head, Link } from "@inertiajs/react";
 import { BotMessageSquare } from "lucide-react";
+
 import Footer from "@/components/khaslana/footer";
 import Navbar from "@/components/khaslana/navbar";
 import {

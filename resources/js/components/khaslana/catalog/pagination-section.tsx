@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+
 import type { PaginatedProducts } from '@/types/paginated-product';
 
 interface PaginationSectionProps {

@@ -1,6 +1,7 @@
 import { router } from "@inertiajs/react";
 import { Image, X } from "lucide-react";
 import { useState, type ChangeEvent } from "react";
+
 import ProfileIcon from "@/assets/icons/default-profile.png";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/use-auth";

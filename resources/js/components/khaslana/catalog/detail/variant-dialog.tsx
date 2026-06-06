@@ -1,6 +1,7 @@
 import { router } from "@inertiajs/react";
 import { X, Minus, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
+
 import DefaultProduct from "@/assets/images/product/default-product.png";
 import { useAuth } from "@/hooks/use-auth";
 import { showErrorToast } from "@/lib/toast";

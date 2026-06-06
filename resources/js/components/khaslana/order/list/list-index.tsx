@@ -1,7 +1,9 @@
 import { router } from "@inertiajs/react";
 import { useState } from "react";
+
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Order } from "@/types/order"
+
 import ConfirmationDialog from "../../confirmation-dialog";
 
 interface ListIndexProps {
