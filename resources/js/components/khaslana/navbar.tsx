@@ -121,7 +121,7 @@ export default function Navbar() {
                     <img
                         src={logo}
                         alt="Logo Khaslana"
-                        className="navbar-logo"
+                        className="navbar-logo hover:-rotate-390 hover:scale-115 transition-all duration-300"
                     />
                     <div className="font-semibold">Khaslana</div>
                 </Link>
