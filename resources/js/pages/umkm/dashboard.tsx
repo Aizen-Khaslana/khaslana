@@ -82,9 +82,7 @@ export default function Dashboard({
     top_products,
     sales_chart
 }: DashboardProps) {
-
     const { user } = useAuth();
-
     const [storeStatus, setStoreStatus] = useState(status);
 
     const handleToggleStore = () => {
@@ -96,7 +94,6 @@ export default function Dashboard({
         router.post(storeStatusRoute(), {
             status: newStatus,
         });
-
         setStoreStatus(newStatus);
     };
 
@@ -120,36 +117,33 @@ export default function Dashboard({
                 <CtaCard />
             ) : (
                 <>
-                    <div>
-                        <div className="rounded-xl border border-sidebar-border/70 p-6 dark:border-sidebar-border">
-                            <h2 className="text-xl font-bold">
-                                Status Toko
-                            </h2>
-
-                            <p className="mt-2 text-sm text-muted-foreground">Atur status operasional toko Anda</p>
-
-                            <div className="mt-6 flex items-center justify-between">
-                                <span
-                                    className={`font-semibold ${storeStatus === 'BUKA'
-                                        ? 'text-green-500'
-                                        : 'text-red-500'
-                                        }`}
-                                >
-                                    {storeStatus}
-                                </span>
-
-                                <button
-                                    onClick={handleToggleStore}
-                                    className={`rounded-lg px-4 py-2 text-white ${storeStatus === 'BUKA'
-                                            ? 'bg-green-500'
-                                            : 'bg-red-500'
-                                        }`}
-                                >
-                                    {storeStatus === 'BUKA'
-                                        ? 'Tutup Toko'
-                                        : 'Buka Toko'}
-                                </button>
-                            </div>
+                    <div className="rounded-xl border border-sidebar-border/70 p-6 dark:border-sidebar-border">
+                        <h2 className="text-xl font-bold">
+                            Status Toko
+                        </h2>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                            Atur status operasional toko Anda
+                        </p>
+                        <div className="mt-6 flex items-center justify-between">
+                            <span
+                                className={`font-semibold ${storeStatus === 'BUKA'
+                                    ? 'text-green-500'
+                                    : 'text-red-500'
+                                    }`}
+                            >
+                                {storeStatus}
+                            </span>
+                            <button
+                                onClick={handleToggleStore}
+                                className={`rounded-lg px-4 py-2 text-white ${storeStatus === 'BUKA'
+                                        ? 'bg-green-500'
+                                        : 'bg-red-500'
+                                    }`}
+                            >
+                                {storeStatus === 'BUKA'
+                                    ? 'Tutup Toko'
+                                    : 'Buka Toko'}
+                            </button>
                         </div>
                     </div>
 

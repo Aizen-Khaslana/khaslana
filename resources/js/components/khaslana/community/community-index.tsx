@@ -104,7 +104,7 @@ export default function CommunityIndex({
                                 <Link
                                     href={show(post.id)}
                                     key={post.id}
-                                    className="post-card w-full flex flex-col gap-4 bg-[#222] p-6 rounded-[15px]"
+                                    className="w-full flex flex-col gap-4 bg-[#222] p-6 rounded-[15px]"
                                 >
                                     <div className="flex flex-col gap-4">
                                         <div className="flex items-start justify-between gap-4">
