@@ -48,6 +48,11 @@ class OrderController extends Controller
     }
 
     public function show(Order $order) {
+        $order->loadMissing([
+            'orderItems.product.productImages',
+            'user'
+        ]);
+
         return Inertia::render('user/order/show', [
             'order' => $order,
         ]);
