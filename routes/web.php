@@ -13,9 +13,8 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\MappingController;
 use App\Http\Controllers\UmkmController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\PromoController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -36,6 +35,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
         Route::post('/dashboard/store-status', 'storeStatus')->name('dashboard.storeStatusRoute');
         Route::get('/dashboard/order', 'order')->name('dashboard.order');
+        Route::get('/dashboard/order/{order}', 'showOrder')->name('dashboard.order.show');
+        Route::patch('/dashboard/order/change-status/{order}', 'changeOrderStatus')->name('dashboard.order.changeStatus');
     });
 
     // product routes
@@ -63,6 +64,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/store-management/store', 'store')->name('storeManagement.store');
         Route::put('/store-management/update', 'update')->name('storeManagement.update');
         Route::post('/store-management/store-logo', 'storeLogo')->name('storeManagement.storeLogo');
+
+        Route::get('/store-management/promo', 'promoIndex')->name('storeManagement.promo.index');
+        Route::post('/store-management/promo', 'promoStore')->name('storeManagement.promo.store');
+        Route::put('/store-management/promo/{promo}', 'promoUpdate')->name('storeManagement.promo.update');
+        Route::delete('/store-management/promo/{promo}', 'promoDestroy')->name('storeManagement.promo.destroy');
     });
 
     // community routes
@@ -93,8 +99,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/order/show/{order}', 'show')->name('order.show');
     });
 
-    Route::controller(CartController::class)->group(function () {
-        Route::get('/cart', 'index')->name('cart');
+    //Cart Route
+    Route::controller(CartController::class)->prefix('cart')->group(function () {
+        Route::get('/', 'index')->name('cart');
+        Route::post('/add', 'store')->name('cart.add');
+        Route::patch('/update/{id}', 'update')->name('cart.update');
+        Route::delete('/remove/{id}', 'destroy')->name('cart.remove');
+        // Route::delete('/clear', 'clear')->name('cart.clear');
+        Route::post('/checkout-order', 'checkoutToOrder')->name('cart.checkoutToOrder');
+    });
+
+    Route::controller(CatalogController::class)->group(function() {
+        Route::post('/catalog/{id}/review', 'storeReview')->name('catalog.storeReview');
+        Route::delete('/catalog/{product}/review/{review}', 'deleteReview')->name('catalog.deleteReview');
     });
 });
 
@@ -104,8 +121,6 @@ Route::get('/community', [CommunityController::class, 'index'])->name('community
 Route::controller(CatalogController::class)->group(function() {
     Route::get('/catalog', 'index')->name('catalog');
     Route::get('/catalog/{id}', 'show')->name('catalog.show');
-    Route::post('/catalog/{id}/review', 'storeReview')->name('catalog.storeReview');
-    Route::delete('/catalog/{product}/review/{review}', 'deleteReview')->name('catalog.deleteReview');
 });
 
 Route::controller(UmkmController::class)->group(function() {
@@ -116,6 +131,10 @@ Route::controller(UmkmController::class)->group(function() {
     Route::get('/umkm/tracking/{umkm_id?}', 'tracking')->name('umkm.tracking');
     Route::get('/umkm/rute/{umkm_id}', 'rute')->name('umkm.rute');
 });
+
+Route::get('/promo/{id}', [PromoController::class, 'show'])->name('promo.show');
+
+Route::get('/umkm/{id}/promo', [\App\Http\Controllers\UmkmController::class, 'showPromo'])->name('umkm.promo');
 
 Route::controller(ChatbotController::class)->group(function () {
     Route::get('/help', 'index')->name('chatbot');
