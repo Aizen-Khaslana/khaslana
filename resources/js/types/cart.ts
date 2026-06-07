@@ -6,7 +6,8 @@ import type { User } from '@/types';
 export interface Umkm {
     id: number;
     user_id: number;
-    name: string;
+    store_name: string; // ✅ REAL FIELD
+    name?: string;      // optional (kalau pakai accessor nanti)
     type: 'TETAP' | 'KELILING';
     is_active: boolean;
     created_at?: string;
@@ -38,7 +39,12 @@ export interface Product {
     price: number;
     description?: string;
     image?: string;
-    umkm?: Umkm; // Eager loaded dari CartController
+    umkm?: Umkm;
+    product_images?: ProductImage[];
+}
+export interface ProductImage {
+    id: number;
+    image: string;
 }
 
 export interface ProductVariant {
@@ -47,7 +53,7 @@ export interface ProductVariant {
     price: number;
     stock: number;
     product?: Product;
-    attributeValues?: AttributeValue[]; // 🔥 FIX naming
+    attribute_values?: AttributeValue[];
 }
 
 // ==========================================

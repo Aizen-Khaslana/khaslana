@@ -21,6 +21,7 @@ class CartController extends Controller
         $cart = Cart::with([
             // 🔥 FIX: relation name
             'cartItems.variant.product.umkm',
+            'cartItems.variant.product.productImages',
             'cartItems.variant.attributeValues.attribute'
         ])->where('user_id', $userId)->first();
 
@@ -120,20 +121,21 @@ class CartController extends Controller
         $selectedItems = CartItem::whereHas('cart', function ($query) use ($userId) {
             $query->where('user_id', $userId);
         })
-            // 🔥 FIX relation
             ->with('variant.product.umkm', 'variant.attributeValues.attribute')
             ->whereIn('id', $request->cart_item_ids)
             ->get();
 
         if ($selectedItems->isEmpty()) {
-            return redirect()->back()->withErrors(['message' => 'Pilih minimal satu produk untuk melakukan checkout.']);
+            return redirect()->back()->withErrors([
+                'message' => 'Pilih minimal satu produk untuk checkout.'
+            ]);
         }
 
+        // 🔒 SINGLE UMKM VALIDATION
         $umkmIds = $selectedItems->pluck('variant.product.umkm_id')->unique();
-
         if ($umkmIds->count() > 1) {
             return redirect()->back()->withErrors([
-                'message' => 'Batas Aturan Transaksi: Anda hanya bisa melakukan checkout produk dari satu UMKM yang sama dalam satu pesanan.'
+                'message' => 'Checkout hanya bisa dari satu UMKM.'
             ]);
         }
 
@@ -142,61 +144,73 @@ class CartController extends Controller
         DB::beginTransaction();
 
         try {
+            // 🔥 GENERATE INVOICE (SAMA SEPERTI OrderController)
+            $invoiceNumber =
+                'INV-' .
+                now()->format('YmdHis') .
+                '-' .
+                strtoupper(\Illuminate\Support\Str::random(5));
+
             $totalPrice = 0;
 
             foreach ($selectedItems as $item) {
-                $price = $item->variant->price; // 🔥 FIX
-                $totalPrice += $price * $item->quantity;
+                $totalPrice += $item->variant->price * $item->quantity;
             }
 
-            // 🔥 FIX ENUM + REQUIRED FIELD
+            // 🔥 CREATE ORDER (SYNC DENGAN OrderController)
             $order = Order::create([
                 'user_id' => $userId,
                 'umkm_id' => $targetUmkmId,
-                'invoice_number' => 'INV-' . time() . rand(100, 999),
+
+                'invoice_number' => $invoiceNumber,
                 'type' => 'DIAMBIL',
                 'total_price' => $totalPrice,
-                'status' => 'MENUNGGU PEMBAYARAN',
+                'status' => 'TERTUNDA',
                 'payment_status' => 'BELUM DIBAYAR',
-                'address' => '-',
-                'shipping_cost' => 0,
+
+                'address' => '',
+                'shipping_cost' => $selectedItems->first()->variant->product->umkm->shipping_cost ?? 0,
             ]);
 
             foreach ($selectedItems as $item) {
                 $variant = ProductVariant::lockForUpdate()->findOrFail($item->variant_id);
 
                 if ($variant->stock < $item->quantity) {
-                    throw new \Exception("Stok untuk produk {$variant->product->name} tidak mencukupi.");
+                    throw new \Exception("Stok tidak mencukupi.");
                 }
 
-                // 🔥 BUILD VARIANT DETAIL
+                // 🔥 VARIANT DETAIL (SAMA FORMAT DENGAN OrderController)
                 $variantDetail = $variant->attributeValues
                     ->map(fn($attr) => $attr->attribute->name . ': ' . $attr->value)
-                    ->implode(', ');
+                    ->join(', ');
 
-                OrderItem::create([
-                    'order_id' => $order->id,
+                $subtotal = $variant->price * $item->quantity;
+
+                // 🔥 CREATE ORDER ITEM (100% MATCH UI)
+                $order->orderItems()->create([
                     'product_id' => $variant->product->id,
                     'variant_id' => $variant->id,
+
                     'product_name' => $variant->product->name,
                     'variant_detail' => $variantDetail,
                     'price' => $variant->price,
                     'quantity' => $item->quantity,
-                    'subtotal' => $variant->price * $item->quantity,
+                    'subtotal' => $subtotal,
                 ]);
 
-                $variant->decrement('stock', $item->quantity);
-                $item->delete();
+                
             }
 
             DB::commit();
 
-            return redirect()->route('order.show', $order->id)
-                ->with('success', 'Pesanan berhasil dibuat, silakan selesaikan pembayaran.');
+            // 🔥 REDIRECT KE HALAMAN YANG BENAR (OrderIndex)
+            return redirect()->route('order', $order->id)
+                ->with('success', 'Pesanan berhasil dibuat.');
         } catch (\Exception $e) {
             DB::rollBack();
+
             return redirect()->back()->withErrors([
-                'message' => 'Gagal memproses checkout: ' . $e->getMessage()
+                'message' => 'Checkout gagal: ' . $e->getMessage()
             ]);
         }
     }

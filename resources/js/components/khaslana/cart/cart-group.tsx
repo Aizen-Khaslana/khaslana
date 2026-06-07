@@ -1,4 +1,4 @@
-import { Store } from 'lucide-react';
+import { Store, SquarePen, Check } from 'lucide-react';
 import React from 'react';
 import { CartItem } from '@/components/khaslana/cart/cart-item';
 import type { CartItem as CartItemType } from '@/types/cart';
@@ -13,6 +13,7 @@ interface CartGroupProps {
     onGroupSelectToggle: (itemIds: number[], shouldSelectAll: boolean) => void;
     onQuantityChange: (id: number, newQuantity: number) => void;
     onRemove: (id: number) => void;
+    onToggleEdit: () => void;
 }
 
 export const CartGroup: React.FC<CartGroupProps> = ({
@@ -25,6 +26,7 @@ export const CartGroup: React.FC<CartGroupProps> = ({
     onQuantityChange,
     onRemove,
     onGroupSelectToggle,
+    onToggleEdit,
 }) => {
     // Ekstraksi seluruh ID item yang berada di kelompok UMKM ini
     const itemIds = items.map((item) => item.id);
@@ -41,36 +43,66 @@ export const CartGroup: React.FC<CartGroupProps> = ({
         <div className="bg-[#161619] border border-[#202024] rounded-2xl overflow-hidden p-4 space-y-4">
             
             {/* 🏪 KEPALA TOKO (MERCHANT HEADER GROUP) */}
-            <div className="flex items-center justify-between pb-3 border-b border-[#202024]">
-                <div className="flex items-center gap-3">
-                    {/* Master Checkbox Kelompok Toko */}
-                    <input
-                        type="checkbox"
-                        id={`master-checkbox-umkm-${umkmId}`}
-                        checked={isAllGroupItemsSelected}
-                        onChange={handleMasterCheckboxChange}
-                        className="w-5 h-5 rounded border-[#2a2a30] bg-[#1a1a1e] text-[#99ff33] focus:ring-[#99ff33] focus:ring-offset-0 focus:ring-1 cursor-pointer transition-colors"
-                    />
-                    
-                    {/* Label Informasi Toko */}
-                    <label 
-                        htmlFor={`master-checkbox-umkm-${umkmId}`}
-                        className="flex items-center gap-2 cursor-pointer group"
-                    >
-                        <Store className="w-4 h-4 text-[#7c7c8a] group-hover:text-[#99ff33] transition-colors" />
-                        <span className="text-sm font-bold text-[#f2f2f3] group-hover:text-white transition-colors tracking-wide">
-                            {merchantName}
-                        </span>
-                    </label>
-                </div>
-
-                {/* Badge Jumlah Item Toko */}
-                <div className="bg-[#1a1a1e] px-2.5 py-1 rounded-full border border-[#2a2a30]">
-                    <span className="text-[10px] font-bold text-[#7c7c8a] tracking-wider uppercase">
-                        {items.length} Produk
-                    </span>
-                </div>
+            <div className="flex items-center justify-between pb-3 border-b border-[#202024] pr-2">
+            {/* KIRI */}
+            <div className="flex items-center gap-3 min-w-0">
+            <div
+                onClick={handleMasterCheckboxChange}
+                className={`
+                    w-5 h-5 rounded flex items-center justify-center
+                    border cursor-pointer transition
+                    ${isAllGroupItemsSelected
+                        ? 'bg-[#99ff33] border-[#99ff33]'
+                        : 'bg-[#1a1a1e] border-[#2a2a30]'
+                    }
+                `}
+            >
+                {isAllGroupItemsSelected && (
+                    <Check className="w-4 h-4 text-[#161619] stroke-[3]"/>
+                )}
             </div>
+
+                <label 
+                    htmlFor={`master-checkbox-umkm-${umkmId}`}
+                    className="flex items-center gap-2 cursor-pointer group min-w-0"
+                >
+                    <Store className="w-4 h-4 text-[#99ff33] shrink-0" />
+                    <span className="text-sm font-bold text-[#f2f2f3] truncate">
+                        {merchantName}
+                    </span>
+                </label>
+            </div>
+
+            {/* KANAN */}
+            <div className="flex items-center gap-2 shrink-0 pr-1">
+
+            <button
+                type="button"
+                onClick={onToggleEdit}
+                className={`
+                    flex items-center gap-1.5 text-xs font-semibold
+                    px-3 py-1.5 rounded-md border transition
+                    ${isEditMode
+                        ? 'bg-[#261919] text-[#ff4444] border-[#4d1f1f]'
+                        : 'text-[#7c7c8a] hover:text-white border-transparent'
+                    }
+                `}
+            >
+                {isEditMode ? (
+                    <>
+                        <Check className="w-3.5 h-3.5" />
+                        <span>Selesai</span>
+                    </>
+                ) : (
+                    <>
+                        <SquarePen className="w-3.5 h-3.5" />
+                        <span>Ubah</span>
+                    </>
+                )}
+            </button>
+
+            </div>
+        </div>
 
             {/* 📦 DAFTAR BARIS PRODUK INTERNAL TOKO */}
             <div className="space-y-3">

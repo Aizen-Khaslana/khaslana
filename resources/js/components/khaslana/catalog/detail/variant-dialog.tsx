@@ -127,7 +127,25 @@ export default function VariantDialog({
         });
 
         if (actionType === "add-cart") {
-            console.log("Fitur Keranjang Belum Aktif.");
+            router.post(
+                "/cart/add",
+                {
+                    product_variant_id: selectedVariant.id,
+                    quantity,
+                },
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        onClose();
+                    },
+                    onError: (errors) => {
+                        const firstError = Object.values(errors)[0];
+                        if (firstError) {
+                            showErrorToast("Gagal", String(firstError));
+                        }
+                    },
+                }
+            );
             return;
         }
 

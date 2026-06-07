@@ -1,5 +1,5 @@
 import { router } from '@inertiajs/react';
-import { ShoppingCart, Edit3, Check, ShoppingBag } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { CartGroup } from '@/components/khaslana/cart/cart-group';
 import { CartSummary } from '@/components/khaslana/cart/cart-summary';
@@ -14,7 +14,7 @@ export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
     // 🎛️ STATE MANAGEMENT
     // ----------------------------------------------------
     const [selectedItemsMap, setSelectedItemsMap] = useState<SelectedCartItemsMap>({});
-    const [isEditMode, setIsEditMode] = useState<boolean>(false);
+    const [editModeMap, setEditModeMap] = useState<Record<number, boolean>>({});
     const [isCheckoutLoading, setIsCheckoutLoading] = useState<boolean>(false);
 
     // ----------------------------------------------------
@@ -23,24 +23,31 @@ export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
     
     // 1. Mengelompokkan item keranjang berdasarkan Toko/UMKM menggunakan useMemo (Bottom-Up Integration)
     const groupedMerchantItems = useMemo(() => {
-        if (!cart || !cart.cart_items || cart.cart_items.length === 0) return [];
-
-        const groups: Record<number, { umkmId: number; merchantName: string; items: CartItem[] }> = {};
-
+        if (!cart || !cart.cart_items) return [];
+    
+        const groups: Record<number, {
+            umkmId: number;
+            merchantName: string;
+            items: CartItem[];
+        }> = {};
+    
         cart.cart_items.forEach((item) => {
             const umkm = item.variant?.product?.umkm;
-            if (!umkm) return; // Skip jika data relasi tidak lengkap
 
-            if (!groups[umkm.id]) {
-                groups[umkm.id] = {
-                    umkmId: umkm.id,
-                    merchantName: umkm.name,
-                    items: [],
+            const umkmId = umkm?.id ?? 0;
+            const merchantName = umkm?.store_name ?? 'UMKM Tidak Diketahui';
+
+            if (!groups[umkmId]) {
+                groups[umkmId] = {
+                    umkmId,
+                    merchantName,
+                    items: []
                 };
             }
-            groups[umkm.id].items.push(item);
-        });
 
+            groups[umkmId].items.push(item);
+        });
+    
         return Object.values(groups);
     }, [cart]);
 
@@ -148,18 +155,20 @@ export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
 
     // State: Keranjang Memiliki Item Terisi (Active State Layout)
     return (
-        <div className="w-full max-w-3xl mx-auto px-4 pt-6 pb-32 space-y-6">
+        <div className="w-full max-w-6xl mx-auto px-6 pt-6 pb-32 space-y-6">
             
             {/* 📋 KEPALA HALAMAN CART (HEADER CONTROLLER) */}
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                    <ShoppingBag className="w-5 h-5 text-[#99ff33]" />
-                    <h2 className="text-xl font-black text-white tracking-wide uppercase">
-                        Keranjang Saya
-                    </h2>
+                <div className="space-y-1">
+                    <h1 className="text-2xl font-bold text-white">
+                        Keranjang Belanja
+                    </h1>
+                    <p className="text-sm text-[#7c7c8a]">
+                        Selesaikan pesanan Anda untuk mendukung pertumbuhan ekonomi lokal.
+                    </p>
                 </div>
                 
-                {/* Tombol Toggle Mode Edit Mode (Figma Reference Action) */}
+                {/* Tombol Toggle Mode Edit Mode (Figma Reference Action)
                 <button
                     type="button"
                     onClick={() => setIsEditMode(!isEditMode)}
@@ -177,29 +186,35 @@ export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
                     ) : (
                         <>
                             <Edit3 className="w-3.5 h-3.5" />
-                            <span>Edit Mode</span>
+                            <span>Edit</span>
                         </>
                     )}
-                </button>
+                </button> */}
             </div>
 
             {/* 📦 LOOPING KELOMPOK TOKO UMKM */}
             <div className="space-y-5">
-                {groupedMerchantItems.map((group) => (
-                    <CartGroup
-                        key={group.umkmId}
-                        umkmId={group.umkmId}
-                        merchantName={group.merchantName}
-                        items={group.items}
-                        selectedItemsMap={selectedItemsMap}
-                        isEditMode={isEditMode}
-                        onSelectToggle={handleSelectToggle}
-                        onGroupSelectToggle={handleGroupSelectToggle}
-                        onQuantityChange={handleQuantityChange}
-                        onRemove={handleRemoveItem}
-                    />
-                ))}
-            </div>
+            {groupedMerchantItems.map((group) => (
+                <CartGroup
+                    key={group.umkmId}
+                    umkmId={group.umkmId}
+                    merchantName={group.merchantName}
+                    items={group.items}
+                    selectedItemsMap={selectedItemsMap}
+                    isEditMode={editModeMap[group.umkmId] ?? false}
+                    onToggleEdit={() => {
+                        setEditModeMap(prev => ({
+                            ...prev,
+                            [group.umkmId]: !prev[group.umkmId],
+                        }));
+                    }}
+                    onSelectToggle={handleSelectToggle}
+                    onGroupSelectToggle={handleGroupSelectToggle}
+                    onQuantityChange={handleQuantityChange}
+                    onRemove={handleRemoveItem}
+                />
+            ))}
+        </div>
 
             {/* 💰 STICKY BOTTOM BANNER SUMMARY (Figma Full-Width Horizontal Style) */}
             <CartSummary
