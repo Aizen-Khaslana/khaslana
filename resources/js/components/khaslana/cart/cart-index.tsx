@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/react';
 import { ShoppingCart } from 'lucide-react';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { CartGroup } from '@/components/khaslana/cart/cart-group';
 import { CartSummary } from '@/components/khaslana/cart/cart-summary';
 import type { Cart, CartItem, SelectedCartItemsMap } from '@/types/cart';
@@ -10,18 +10,12 @@ interface CartIndexProps {
 }
 
 export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
-    // ----------------------------------------------------
-    // 🎛️ STATE MANAGEMENT
-    // ----------------------------------------------------
+
     const [selectedItemsMap, setSelectedItemsMap] = useState<SelectedCartItemsMap>({});
     const [editModeMap, setEditModeMap] = useState<Record<number, boolean>>({});
     const [isCheckoutLoading, setIsCheckoutLoading] = useState<boolean>(false);
-
-    // ----------------------------------------------------
-    // 📊 REACTIVE CALCULATION (COMPUTED VALUES)
-    // ----------------------------------------------------
     
-    // 1. Mengelompokkan item keranjang berdasarkan Toko/UMKM menggunakan useMemo (Bottom-Up Integration)
+    // Grouping Cart-Item
     const groupedMerchantItems = useMemo(() => {
         if (!cart || !cart.cart_items) return [];
     
@@ -51,17 +45,14 @@ export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
         return Object.values(groups);
     }, [cart]);
 
-    // 2. Memfilter array item apa saja yang saat ini sedang dicentang oleh user
+    // Array Filter Selected Item
     const selectedItemsArray = useMemo(() => {
         if (!cart || !cart.cart_items) return [];
         return cart.cart_items.filter((item) => !!selectedItemsMap[item.id]);
     }, [cart, selectedItemsMap]);
 
-    // ----------------------------------------------------
-    // 🛠️ INTERACTION HANDLERS (BACKEND BRIDGE)
-    // ----------------------------------------------------
 
-    // Aksi pencentangan baris item tunggal
+    // Action Single Selection
     const handleSelectToggle = (id: number) => {
         setSelectedItemsMap((prev) => ({
             ...prev,
@@ -69,7 +60,7 @@ export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
         }));
     };
 
-    // Aksi pencentangan massal satu grup Toko/UMKM
+    // Action Multi Selection
     const handleGroupSelectToggle = (itemIds: number[], shouldSelectAll: boolean) => {
         setSelectedItemsMap((prev) => {
             const updatedMap = { ...prev };
@@ -80,7 +71,7 @@ export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
         });
     };
 
-    // Sinkronisasi Kuantitas via HTTP PATCH (Inertia Visit)
+    // Sinkronisasi Kuantitas
     const handleQuantityChange = (id: number, newQuantity: number) => {
         router.patch(
             `/cart/update/${id}`,
@@ -92,7 +83,7 @@ export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
         );
     };
 
-    // Eksekusi Penghapusan Item via HTTP DELETE (Inertia Visit)
+    // Eksekusi Penghapusan Item
     const handleRemoveItem = (id: number) => {
         router.delete(`/cart/remove/${id}`, {
             preserveScroll: true,
@@ -106,7 +97,7 @@ export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
         });
     };
 
-    // Gerbang Transisi Akhir: Penyerahan data item terpilih ke sistem Order Rafi
+    // Send Data To Order
     const handleCheckoutExecute = () => {
         const cartItemIds = selectedItemsArray.map((item) => item.id);
     
@@ -125,11 +116,8 @@ export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
         );
     };
 
-    // ----------------------------------------------------
-    // 👁️ VISUAL RENDERING CONDITIONAL STATE
-    // ----------------------------------------------------
     
-    // State: Keranjang Kosong (Empty State Layout)
+    // Empty State Layout
     if (groupedMerchantItems.length === 0) {
         return (
             <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 text-center">
@@ -153,11 +141,11 @@ export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
         );
     }
 
-    // State: Keranjang Memiliki Item Terisi (Active State Layout)
+    // Active State Layout
     return (
         <div className="w-full max-w-6xl mx-auto px-6 pt-6 pb-32 space-y-6">
             
-            {/* 📋 KEPALA HALAMAN CART (HEADER CONTROLLER) */}
+            {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
                     <h1 className="text-2xl font-bold text-white">
@@ -168,31 +156,9 @@ export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
                     </p>
                 </div>
                 
-                {/* Tombol Toggle Mode Edit Mode (Figma Reference Action)
-                <button
-                    type="button"
-                    onClick={() => setIsEditMode(!isEditMode)}
-                    className={`flex items-center gap-1.5 text-xs font-bold tracking-wide uppercase px-4 py-2 rounded-lg border transition-all duration-200 ${
-                        isEditMode
-                            ? 'bg-[#261919] text-[#ff4444] border-[#4d1f1f] hover:bg-[#361f1f]'
-                            : 'bg-[#1a1a1e] text-[#7c7c8a] border-[#2a2a30] hover:text-white hover:border-[#40404a]'
-                    }`}
-                >
-                    {isEditMode ? (
-                        <>
-                            <Check className="w-3.5 h-3.5" />
-                            <span>Selesai</span>
-                        </>
-                    ) : (
-                        <>
-                            <Edit3 className="w-3.5 h-3.5" />
-                            <span>Edit</span>
-                        </>
-                    )}
-                </button> */}
             </div>
 
-            {/* 📦 LOOPING KELOMPOK TOKO UMKM */}
+            {/* LOOPING Group UMKM */}
             <div className="space-y-5">
             {groupedMerchantItems.map((group) => (
                 <CartGroup
@@ -216,7 +182,7 @@ export const CartIndex: React.FC<CartIndexProps> = ({ cart }) => {
             ))}
         </div>
 
-            {/* 💰 STICKY BOTTOM BANNER SUMMARY (Figma Full-Width Horizontal Style) */}
+            {/* Sticky Button Banner*/}
             <CartSummary
                 selectedItems={selectedItemsArray}
                 onCheckout={handleCheckoutExecute}

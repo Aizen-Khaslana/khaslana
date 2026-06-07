@@ -1,10 +1,8 @@
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
 import { ChevronLeft, Power, Map as MapIcon } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
-
+import { useState, useEffect } from 'react';
 import CtaCard from '@/components/khaslana/dashboard/cta-card';
-import EmptyRouteModal from '@/components/khaslana/live-tracking/empty-route-modal';
 import MapDetailCard from '@/components/khaslana/live-tracking/map-detail-card';
 import StayPointActions from '@/components/khaslana/live-tracking/stay-point-actions';
 import StayPointInfoCard from '@/components/khaslana/live-tracking/stay-point-info-card';
@@ -12,6 +10,7 @@ import StayPointMap from '@/components/khaslana/live-tracking/stay-point-map';
 import StayPointModal from '@/components/khaslana/live-tracking/stay-point-modal';
 import { useAuth } from '@/hooks/use-auth';
 import AppLayout from '@/layouts/app-layout';
+import { showErrorToast } from "@/lib/toast";
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -27,7 +26,6 @@ export interface RouteNode {
 }
 
 export default function StayPoint() {
-    // 1. STATE MANAGEMENT
     const [status, setStatus] = useState<StatusType>('TUTUP');
     const [position, setPosition] = useState<[number, number] | null>(null);
     const [address, setAddress] = useState<string>('-');
@@ -40,15 +38,12 @@ export default function StayPoint() {
     const [showModal, setShowModal] = useState(false);
     const [modalConfig, setModalConfig] = useState({ title: '', desc: '', type: 'success' });
     
-    // STATE BARU KHUSUS FITUR LAYER RUTE
     const [showRouteLayer, setShowRouteLayer] = useState(false);
     const [routeNodes, setRouteNodes] = useState<RouteNode[]>([]);
     const [selectedRoutePin, setSelectedRoutePin] = useState<RouteNode | null>(null);
-    const [showEmptyModal, setShowEmptyModal] = useState(false);
     
     const { user } = useAuth();
 
-    // 2. FUNGSI LOGIKA (API & GPS)
     const handleBuka = () => {
         setIsLoading(true);
         if (!navigator.geolocation) {
@@ -184,21 +179,20 @@ export default function StayPoint() {
             setPrevAddress('');
             setShowModal(false);
             
-            // Reset overlay rute juga kalau lagi nutup toko
             setShowRouteLayer(false);
             setSelectedRoutePin(null);
         }).catch(() => alert("Gagal matiin Stay Point!")).finally(() => setIsLoading(false));
     };
 
-    // FUNGSI TOGGLE RUTE LAYER
+    // TOGGLE RUTE
     const toggleRouteLayer = async () => {
         if (!showRouteLayer) {
             setIsLoading(true);
             try {
                 const res = await axios.get('/rute/api-data');
                 if (res.data.length === 0) {
-                    setShowEmptyModal(true);
-                
+                    showErrorToast("Anda belum memiliki data rute mangkal");
+                    return;
                 } else {
                     setRouteNodes(res.data);
                     setShowRouteLayer(true);
@@ -210,7 +204,7 @@ export default function StayPoint() {
             }
         } else {
             setShowRouteLayer(false);
-            setSelectedRoutePin(null); // Kembali ke Info Card biasa
+            setSelectedRoutePin(null); 
         }
     };
 
@@ -244,7 +238,7 @@ export default function StayPoint() {
         checkInitialStatus();
     }, []);
 
-    // 3. RENDER UI TERPUSAT
+    // 3. RENDER UI
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title='Stay Point' />
@@ -274,10 +268,10 @@ export default function StayPoint() {
                             )}
                         </div>
 
-                        {/* Komponen Peta (Ubah jadi Relatif karena nampung tombol overlay) */}
+                        {/* Komponen Peta */}
                         <div className="w-full h-full flex-1 min-h-[200px] bg-[#242424] rounded-[24px] overflow-hidden border-2 border-[#99FF33]/10 relative z-0">
                             
-                            {/* Tombol Overlay Rute (Muncul kalau status gak TUTUP) */}
+                            {/* Tombol Overlay Rute */}
                             {status !== 'TUTUP' && position && (
                                 <button 
                                     onClick={toggleRouteLayer}
@@ -309,7 +303,7 @@ export default function StayPoint() {
 
                         {/* LOGIKA SWAPPING INFO CARD */}
                         {selectedRoutePin ? (
-                            // Panggil komponen MapDetailCard yang udah punya efek loading & API Geocoding
+                            // Panggil komponen MapDetailCard
                             <div className="animate-in fade-in duration-300">
                                 <MapDetailCard selectedNode={selectedRoutePin} />
                             </div>
@@ -326,14 +320,6 @@ export default function StayPoint() {
                         )}
                         
                     </div>
-
-                    {showEmptyModal && (
-                        <EmptyRouteModal
-                            title="Waduh!"
-                            description="Anda Belum Memiliki Data Mangkal!"
-                            redirectUrl="/stay-point"
-                        />
-                    )}
 
                     {/* Komponen Modal Global */}
                     <StayPointModal 

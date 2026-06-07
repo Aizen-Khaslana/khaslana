@@ -1,37 +1,28 @@
 import type { User } from '@/types'; 
 
-// ==========================================
-// 🏬 KONTRAK DATA UMKM (Peta Relasi Produk)
-// ==========================================
 export interface Umkm {
     id: number;
     user_id: number;
-    store_name: string; // ✅ REAL FIELD
-    name?: string;      // optional (kalau pakai accessor nanti)
+    store_name: string; 
+    name?: string;   
     type: 'TETAP' | 'KELILING';
     is_active: boolean;
     created_at?: string;
     updated_at?: string;
 }
 
-// ==========================================
-// 📦 KONTRAK DATA ATRIBUT VARIASI PRODUK
-// ==========================================
 export interface Attribute {
     id: number;
-    name: string; // Contoh: "Level Pedas", "Ukuran"
+    name: string; 
 }
 
 export interface AttributeValue {
     id: number;
     attribute_id: number;
-    value: string; // Contoh: "Level 5", "Jumbo"
+    value: string; 
     attribute?: Attribute;
 }
 
-// ==========================================
-// 🏷️ KONTRAK DATA PRODUK & VARIANNYA
-// ==========================================
 export interface Product {
     id: number;
     umkm_id: number;
@@ -56,9 +47,6 @@ export interface ProductVariant {
     attribute_values?: AttributeValue[];
 }
 
-// ==========================================
-// 🛒 KONTRAK UTAMA: KERANJANG BELANJA (CART)
-// ==========================================
 export interface CartItem {
     id: number;
     cart_id: number;
@@ -74,13 +62,9 @@ export interface Cart {
     user_id: number;
     created_at?: string;
     updated_at?: string;
-    
-    // Eager Loaded Relations dari CartController
     cart_items: CartItem[];
     user?: User;
 }
-
-// Helper Interface untuk menangani State Checkbox di Frontend React nanti
 export interface SelectedCartItemsMap {
     [cartItemId: number]: boolean;
 }

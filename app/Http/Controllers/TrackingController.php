@@ -10,14 +10,13 @@ use App\Models\UMKM\Umkm;
 class TrackingController extends Controller
 {
 
-    public function index()
-    {
-        return inertia('umkm/stay-point');
-    }
+        public function index()
+        {
+            return inertia('umkm/stay-point');
+        }
 
     public function updateLocation(Request $request)
     {
-        // 1. Validasi Input dari Frontend
         $request->validate([
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
@@ -40,9 +39,7 @@ class TrackingController extends Controller
             ->latest('id')
             ->first();
 
-        // ==========================================
-        // THE GOLDEN RULE: MATIKAN SEMUA STATUS AKTIF LAMA!
-        // ==========================================
+        
         UmkmLocation::query()
             ->where('umkm_id', $umkmId)
             ->where('is_active', true)

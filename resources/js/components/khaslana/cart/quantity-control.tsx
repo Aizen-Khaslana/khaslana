@@ -26,7 +26,7 @@ export const QuantityControl: React.FC<QuantityControlProps> = ({
         }
     };
 
-    // Evaluasi status tombol disabled untuk mencegah aksi ilegal
+    // Evaluasi status tombol disabled
     const isMinusDisabled = quantity <= 1;
     const isPlusDisabled = quantity >= stock;
 

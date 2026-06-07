@@ -1,5 +1,4 @@
 import { Store, SquarePen, Check } from 'lucide-react';
-import React from 'react';
 import { CartItem } from '@/components/khaslana/cart/cart-item';
 import type { CartItem as CartItemType } from '@/types/cart';
 
@@ -28,13 +27,8 @@ export const CartGroup: React.FC<CartGroupProps> = ({
     onGroupSelectToggle,
     onToggleEdit,
 }) => {
-    // Ekstraksi seluruh ID item yang berada di kelompok UMKM ini
     const itemIds = items.map((item) => item.id);
-
-    // Evaluasi apakah seluruh item di dalam toko ini sedang tercentang
     const isAllGroupItemsSelected = items.every((item) => selectedItemsMap[item.id]);
-
-    // Handler ketika master checkbox toko di-klik
     const handleMasterCheckboxChange = () => {
         onGroupSelectToggle(itemIds, !isAllGroupItemsSelected);
     };
@@ -42,7 +36,7 @@ export const CartGroup: React.FC<CartGroupProps> = ({
     return (
         <div className="bg-[#161619] border border-[#202024] rounded-2xl overflow-hidden p-4 space-y-4">
             
-            {/* 🏪 KEPALA TOKO (MERCHANT HEADER GROUP) */}
+            {/* MERCHANT HEADER GROUP */}
             <div className="flex items-center justify-between pb-3 border-b border-[#202024] pr-2">
             {/* KIRI */}
             <div className="flex items-center gap-3 min-w-0">
@@ -104,7 +98,7 @@ export const CartGroup: React.FC<CartGroupProps> = ({
             </div>
         </div>
 
-            {/* 📦 DAFTAR BARIS PRODUK INTERNAL TOKO */}
+            {/* DAFTAR BARIS PRODUK */}
             <div className="space-y-3">
                 {items.map((item) => (
                     <CartItem

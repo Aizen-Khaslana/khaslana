@@ -1,14 +1,9 @@
-// :contentReference[oaicite:0]{index=0}
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
 import { ChevronLeft } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
-
-import EmptyRouteModal from '@/components/khaslana/live-tracking/empty-route-modal';
 import UserMapViewer from '@/components/khaslana/live-tracking/user-map-viewer';
 import type { Umkm } from '@/types/umkm';
-
-// ================== TYPES ==================
 interface RouteNode {
     latitude: number;
     longitude: number;
@@ -28,7 +23,7 @@ export default function UserUmkmRoute({ umkm, routeNodes }: Props) {
 
     const isEmpty = routeNodes.length === 0;
 
-    // ================== OSRM ROUTE ==================
+    //OSRM ROUTE
     useEffect(() => {
         const processRoute = async () => {
     
@@ -87,7 +82,7 @@ export default function UserUmkmRoute({ umkm, routeNodes }: Props) {
     
     }, [routeNodes]);
 
-    // ================== REVERSE GEOCODING ==================
+    // REVERSE GEOCODING
     useEffect(() => {
         if (activeIndex === null) return;
     
@@ -126,15 +121,6 @@ export default function UserUmkmRoute({ umkm, routeNodes }: Props) {
                 <ChevronLeft className="w-8 h-8 text-[#99FF33]" />
                 Kembali
             </button>
-
-            {/* EMPTY */}
-            {isEmpty && (
-                <EmptyRouteModal
-                    title="Waduh!"
-                    description="UMKM Ini Belum Memiliki Data Mangkal!"
-                    redirectUrl={`/umkm/detail/${umkm.id}`}
-                />
-            )}
 
             {/* MAP */}
             {!isEmpty && (

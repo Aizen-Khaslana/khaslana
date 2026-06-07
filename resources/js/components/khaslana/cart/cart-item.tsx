@@ -1,5 +1,5 @@
 import { Trash2, Check } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import DefaultProduct from "@/assets/images/product/default-product.png";
 import { QuantityControl } from '@/components/khaslana/cart/quantity-control';
 import DeleteConfirmationDialog from '@/components/khaslana/delete-confirmation-dialog';
@@ -44,7 +44,6 @@ export const CartItem: React.FC<CartItemProps> = ({
         })
         .join(', ');
 
-    // 🔥 FIX IMAGE HERE
     const imageUrl =
         product?.product_images?.[0]?.image
             ? `/storage/${product.product_images[0].image}`
