@@ -89,20 +89,25 @@ class DashboardController extends Controller
 
         if ($request->has('status')) {
             $isOpen = $umkm->status === 'BUKA';
-
             $umkm->update([
                 'status' => $isOpen ? 'TUTUP' : 'BUKA',
             ]);
-            $umkm->umkmLocations()->update([
-                'status' => $isOpen ? 'TUTUP' : 'MANGKAL',
-            ]);
+            // $umkm->umkmLocations()
+            //     ->latest('id')
+            //     ->first()
+            //     ?->update([
+            //         'is_active' => true,
+            //         'status' => $isOpen ? 'TUTUP' : 'MANGKAL',
+            //     ]);
         }
 
-
         if ($request->filled('statusLokasi')) {
-            $umkm->umkmLocations()->update([
-                'status' => $request->statusLokasi,
-            ]);
+            $umkm->umkmLocations()
+                ->latest('id')
+                ->first()
+                ?->update([
+                    'status' => $request->statusLokasi,
+                ]);
         }
 
         return back();
