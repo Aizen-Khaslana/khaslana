@@ -40,6 +40,7 @@ class UmkmController extends Controller
             'umkmData',
             'umkmImages',
             'umkmLocations',
+            'promos',
         )->firstOrFail();
         $reviews = Review::where('umkm_id', $umkm_id)->with(
             'reviewLikes',
