@@ -1,6 +1,5 @@
 import { Head, router } from '@inertiajs/react';
 import { ShoppingBag, DollarSign, Package, Star } from 'lucide-react';
-import { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import SwitchOff from '@/assets/images/dashboard/switch-off.svg';
 import SwitchOn from '@/assets/images/dashboard/switch-on.svg';
@@ -9,6 +8,7 @@ import CtaCard from '@/components/khaslana/dashboard/cta-card';
 // import StatisticCard from '@/components/khaslana/dashboard/statistic-card';
 import { useAuth } from '@/hooks/use-auth';
 import AppLayout from '@/layouts/app-layout';
+import { showSuccessToast } from '@/lib/toast';
 import { dashboard } from '@/routes';
 import { storeStatusRoute } from '@/routes/dashboard';
 import type { BreadcrumbItem } from '@/types';
@@ -88,38 +88,36 @@ export default function Dashboard({
     latest_orders
 }: DashboardProps) {
     const { user } = useAuth();
-    const [storeStatus, setStoreStatus] = useState(status);
-
     const handleToggleStore = () => {
-        const newStatus =
-            storeStatus === 'BUKA'
-                ? 'TUTUP'
-                : 'BUKA';
-
         router.post(storeStatusRoute(), {
-            status: newStatus,
-        },
-            {
-                preserveScroll: true,
-                preserveState: true,
-            });
-
-        setStoreStatus(newStatus);
+            status: true,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                showSuccessToast('Status toko berhasil diubah!');
+            }
+        });
     };
 
-    const stat = umkm_stat?.[0] || { total_pembeli: 0, total_pendapatan: 0 };
-    const product = active_product?.[0] || { total_produk: 0 };
+    const formatRupiah = (value: number | undefined) =>
+        new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0,
+        }
+    ).format(value ?? 0);
+
+    const stat = umkm_stat?.[0] || {total_pembeli: 0, total_pendapatan: 0};
+    const product = active_product?.[0] || {total_produk: 0};
     const storeProduct = store_rating?.[0]?.products?.[0];
 
     const storeStatistics = [
-        { id: 1, title: 'Pesanan', 'value': stat.total_pembeli, 'icon': <ShoppingBag className='size-8' /> },
-        { id: 2, title: 'Pendapatan', 'value': stat.total_pendapatan, 'icon': <DollarSign className='size-8' /> },
-        { id: 3, title: 'Produk aktif', 'value': product.total_produk, 'icon': <Package className='size-8' /> },
-        {
-            id: 4, title: 'Rating toko', 'value': storeProduct?.reviews_avg_rating
-                ? `${Number(storeProduct.reviews_avg_rating).toFixed(1)}/5.0`
-                : '0.0/5.0', 'icon': <Star className='size-8' />
-        },
+        {id: 1, title: 'Pesanan', 'value': stat.total_pembeli, 'icon': <ShoppingBag className='size-8'/>},
+        {id: 2, title: 'Pendapatan', 'value': formatRupiah(Number(stat.total_pendapatan)), 'icon': <DollarSign className='size-8'/>},
+        {id: 3, title: 'Produk aktif', 'value': product.total_produk, 'icon': <Package className='size-8'/>},
+        {id: 4, title: 'Rating toko', 'value': storeProduct?.reviews_avg_rating
+            ? `${Number(storeProduct.reviews_avg_rating).toFixed(1)}/5.0`
+            : '0.0/5.0', 'icon': <Star className='size-8'/>},
     ]
 
     return (
@@ -134,28 +132,30 @@ export default function Dashboard({
                             <h1 className="font-semibold text-4xl">Ringkasan Toko Anda.</h1>
                             <p className="text-[#adaaaa]">Pantau kinerja toko Anda secara real-time</p>
                         </div>
-
                         <div className="flex items-center gap-3 bg-[#191720] px-4 py-2 rounded-2xl">
                             <span className="text-xl font-medium text-white">
                                 Status Toko :
                             </span>
-
                             <span
-                                className={`text-xl font-bold ${storeStatus === 'BUKA' ? 'text-[#99FF33]' : 'text-red-500'
-                                    }`}
+                                className={`
+                                    text-xl font-bold
+                                    ${status === 'BUKA'
+                                        ? 'text-[#99FF33]'
+                                        : 'text-red-500'
+                                    }
+                                `}
                             >
-                                {storeStatus === 'BUKA' ? 'Buka' : 'Tutup'}
+                                {status === 'BUKA' ? 'Buka' : 'Tutup'}
                             </span>
-
                             <button
                                 type="button"
                                 onClick={handleToggleStore}
                                 className="focus:outline-none transition-transform active:scale-95 ml-2"
                             >
                                 <img
-                                    src={storeStatus === 'BUKA' ? SwitchOn : SwitchOff}
-                                    alt={storeStatus === 'BUKA' ? "Switch is On" : "Switch is Off"}
-                                    className="w-[65px] h-[40px] cursor-pointer"
+                                    src={status === 'BUKA' ? SwitchOn : SwitchOff}
+                                    alt={status === 'BUKA' ? "Switch is On" : "Switch is Off"}
+                                    className="w-full h-full cursor-pointer"
                                 />
                             </button>
                         </div>

@@ -81,19 +81,36 @@ class DashboardController extends Controller
     }
 
     public function storeStatus(Request $request) {
-    $request->validate([
-        'status' => 'required|in:BUKA,TUTUP',
-    ]);
-    
-    $user = Auth::user();
+        $request->validate([
+            'statusLokasi' => 'nullable|in:TUTUP,MANGKAL,KELILING',
+        ]);
 
-    $umkm = $user->umkm;
-    
-    $umkm->status = $request->status;
-    
-    $umkm->save();
+        $umkm = $request->user()->umkm;
 
-    return back();
+        if ($request->has('status')) {
+            $isOpen = $umkm->status === 'BUKA';
+            $umkm->update([
+                'status' => $isOpen ? 'TUTUP' : 'BUKA',
+            ]);
+            // $umkm->umkmLocations()
+            //     ->latest('id')
+            //     ->first()
+            //     ?->update([
+            //         'is_active' => true,
+            //         'status' => $isOpen ? 'TUTUP' : 'MANGKAL',
+            //     ]);
+        }
+
+        if ($request->filled('statusLokasi')) {
+            $umkm->umkmLocations()
+                ->latest('id')
+                ->first()
+                ?->update([
+                    'status' => $request->statusLokasi,
+                ]);
+        }
+
+        return back();
     }
 
     public function order() {
@@ -104,6 +121,37 @@ class DashboardController extends Controller
         ])->orderBy('created_at', 'desc')
           ->paginate(20);
 
-        return Inertia::render('umkm/order', ['orders' => $orders]);
+        return Inertia::render('umkm/order/index', ['orders' => $orders]);
+    }
+
+    public function changeOrderStatus(Request $request, Order $order) {
+        $request->validate([
+            'status' => 'required'
+        ]);
+
+        $updateData = ['status' => $request->status];
+
+        if ($request->status === 'DIKIRIM') {
+            $updateData['shipped_at'] = now();
+        } elseif ($request->status === 'SELESAI') {
+            $updateData['completed_at'] = now();
+        }
+
+        $order->update($updateData);
+
+        return back()->with('success', 'Status order berhasil diubah!');
+    }
+
+    public function showOrder(Order $order) {
+        $order->loadMissing([
+            'user',
+            'orderItems',
+            'payment',
+            'umkm'
+        ]);
+
+        return Inertia::render('umkm/order/show', [
+            'order' => $order
+        ]);
     }
 }

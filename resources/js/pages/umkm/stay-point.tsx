@@ -1,10 +1,9 @@
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
 import { ChevronLeft, Power, Map as MapIcon } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import CtaCard from '@/components/khaslana/dashboard/cta-card';
-import EmptyRouteModal from '@/components/khaslana/live-tracking/empty-route-modal';
 import MapDetailCard from '@/components/khaslana/live-tracking/map-detail-card';
 import StayPointActions from '@/components/khaslana/live-tracking/stay-point-actions';
 import StayPointInfoCard from '@/components/khaslana/live-tracking/stay-point-info-card';
@@ -12,23 +11,35 @@ import StayPointMap from '@/components/khaslana/live-tracking/stay-point-map';
 import StayPointModal from '@/components/khaslana/live-tracking/stay-point-modal';
 import { useAuth } from '@/hooks/use-auth';
 import AppLayout from '@/layouts/app-layout';
+import { showSuccessToast, showErrorToast } from '@/lib/toast';
+import { stayPoint } from '@/routes';
+import { storeStatusRoute } from '@/routes/dashboard';
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Stay Point', href: '/umkm/stay-point' },
+    {
+        title: 'Stay Point',
+        href: stayPoint().url
+    },
 ];
 
 type StatusType = 'TUTUP' | 'BUKA' | 'MANGKAL' | 'KELILING';
 
 export interface RouteNode {
+    statusToko: StatusType;
+    statusLokasi: StatusType;
     latitude: number;
     longitude: number;
     total_mangkal: number;
 }
 
-export default function StayPoint() {
+export default function StayPoint({
+    statusToko,
+    statusLokasi,
+}: RouteNode) {
+    console.log(statusLokasi)
     // 1. STATE MANAGEMENT
-    const [status, setStatus] = useState<StatusType>('TUTUP');
+    // const [status, setStatus] = useState<StatusType>('TUTUP');
     const [position, setPosition] = useState<[number, number] | null>(null);
     const [address, setAddress] = useState<string>('-');
     const [isLoading, setIsLoading] = useState(false);
@@ -40,19 +51,41 @@ export default function StayPoint() {
     const [showModal, setShowModal] = useState(false);
     const [modalConfig, setModalConfig] = useState({ title: '', desc: '', type: 'success' });
     
-    // STATE BARU KHUSUS FITUR LAYER RUTE
     const [showRouteLayer, setShowRouteLayer] = useState(false);
     const [routeNodes, setRouteNodes] = useState<RouteNode[]>([]);
     const [selectedRoutePin, setSelectedRoutePin] = useState<RouteNode | null>(null);
-    const [showEmptyModal, setShowEmptyModal] = useState(false);
     
     const { user } = useAuth();
+
+    const handleToggleStoreStatus = () => {
+        router.post(storeStatusRoute(), {
+            status: true,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                showSuccessToast('Status toko berhasil diubah!');
+            }
+        });
+    };
+
+    // const handleToggleLocationStatus = (locStatus: StatusType) => {
+    //     const newStatusLokasi = locStatus;
+
+    //     router.post(storeStatusRoute(), {
+    //         statusLokasi: newStatusLokasi,
+    //     }, {
+    //         preserveScroll: true,
+    //         onSuccess: () => {
+    //             showSuccessToast('Status toko berhasil diubah!');
+    //         }
+    //     });
+    // };
 
     // 2. FUNGSI LOGIKA (API & GPS)
     const handleBuka = () => {
         setIsLoading(true);
         if (!navigator.geolocation) {
-            alert("Browser lu nggak support Geolocation.");
+            showErrorToast('Browser anda tidak mendukung geolocation!');
             setIsLoading(false);
             return;
         }
@@ -60,13 +93,14 @@ export default function StayPoint() {
         navigator.geolocation.getCurrentPosition(
             (pos) => {
                 setPosition([pos.coords.latitude, pos.coords.longitude]);
-                setStatus('BUKA');
                 setPrevPosition(null);
                 setPrevAddress('');
+                handleToggleStoreStatus();
                 setIsLoading(false);
             },
             (err) => {
-                alert(`Izinkan akses lokasi GPS lu ya Bre! (${err.message})`);
+                showErrorToast('Izinkan akses lokasi GPS Anda!');
+                console.log(err);
                 setIsLoading(false);
             },
             { enableHighAccuracy: true }
@@ -98,7 +132,7 @@ export default function StayPoint() {
                 const currentLat = pos.coords.latitude;
                 const currentLng = pos.coords.longitude;
                 
-                if (status === 'MANGKAL' && position && address !== '-') {
+                if (statusLokasi === 'MANGKAL' && position && address !== '-') {
                     setPrevPosition(position);
                     setPrevAddress(address);
                 }
@@ -109,11 +143,14 @@ export default function StayPoint() {
                     latitude: currentLat,
                     longitude: currentLng,
                     is_active: true,
-                    status: 'MANGKAL'
+                    statusLokasi: 'MANGKAL',
                 }).then(() => {
-                    setStatus('MANGKAL');
-                    setShowLastPin(false); 
-                    fetchAddress(currentLat, currentLng); 
+                    // handleToggleLocationStatus('MANGKAL');
+                    setShowLastPin(false);
+                    router.reload({
+                        only: ['statusLokasi']
+                    });
+                    fetchAddress(currentLat, currentLng);
                     setModalConfig({
                         title: 'Yeay Stay Point Sudah Aktif!',
                         desc: 'Costumer dapat melacak lokasi anda',
@@ -123,7 +160,8 @@ export default function StayPoint() {
                 }).catch(() => alert("Gagal nyambung ke server!")).finally(() => setIsLoading(false));
             },
             (err) => {
-                alert(`Gagal ambil lokasi baru: ${err.message}`);
+                showErrorToast('Gagal mengubah lokasi terbaru');
+                console.log(err);
                 setIsLoading(false);
             },
             { enableHighAccuracy: true }
@@ -137,7 +175,7 @@ export default function StayPoint() {
                 const currentLat = pos.coords.latitude;
                 const currentLng = pos.coords.longitude;
 
-                if (status === 'MANGKAL' && position && address !== '-') {
+                if (statusLokasi === 'MANGKAL' && position && address !== '-') {
                     setPrevPosition(position);
                     setPrevAddress(address);
                 }
@@ -148,14 +186,18 @@ export default function StayPoint() {
                     latitude: currentLat,
                     longitude: currentLng,
                     is_active: true,
-                    status: 'KELILING'
+                    statusLokasi: 'KELILING',
                 }).then(() => {
-                    setStatus('KELILING');
+                    // handleToggleLocationStatus('KELILING');
                     setShowLastPin(false);
+                    router.reload({
+                        only: ['statusLokasi']
+                    });
                 }).catch(() => alert("Gagal update status!")).finally(() => setIsLoading(false));
             },
             (err) => {
-                alert(`Gagal ambil lokasi baru: ${err.message}`);
+                showErrorToast('Gagal mengubah lokasi terbaru');
+                console.log(err);
                 setIsLoading(false);
             },
             { enableHighAccuracy: true }
@@ -175,30 +217,30 @@ export default function StayPoint() {
         setIsLoading(true);
         axios.post('/stay-point/update-location', {
             is_active: false,
-            status: 'TUTUP'
+            statusToko: 'TUTUP',
+            statusLokasi: 'TUTUP',
         }).then(() => {
-            setStatus('TUTUP');
+            handleToggleStoreStatus();
             setPosition(null);
             setAddress('-');
             setPrevPosition(null);
             setPrevAddress('');
             setShowModal(false);
             
-            // Reset overlay rute juga kalau lagi nutup toko
             setShowRouteLayer(false);
             setSelectedRoutePin(null);
         }).catch(() => alert("Gagal matiin Stay Point!")).finally(() => setIsLoading(false));
     };
 
-    // FUNGSI TOGGLE RUTE LAYER
+    // TOGGLE RUTE
     const toggleRouteLayer = async () => {
         if (!showRouteLayer) {
             setIsLoading(true);
             try {
                 const res = await axios.get('/rute/api-data');
                 if (res.data.length === 0) {
-                    setShowEmptyModal(true);
-                
+                    showErrorToast("Anda belum memiliki data rute mangkal");
+                    return;
                 } else {
                     setRouteNodes(res.data);
                     setShowRouteLayer(true);
@@ -210,7 +252,7 @@ export default function StayPoint() {
             }
         } else {
             setShowRouteLayer(false);
-            setSelectedRoutePin(null); // Kembali ke Info Card biasa
+            setSelectedRoutePin(null); 
         }
     };
 
@@ -219,8 +261,7 @@ export default function StayPoint() {
             setIsLoading(true);
             try {
                 const res = await axios.get('/stay-point/current-location-status');
-                const currentStatus = res.data.status;
-                setStatus(currentStatus);
+                const currentStatus = res.data.statusLokasi;
                 
                 if (currentStatus === 'MANGKAL' || currentStatus === 'KELILING') {
                     const lat = res.data.latitude;
@@ -244,7 +285,7 @@ export default function StayPoint() {
         checkInitialStatus();
     }, []);
 
-    // 3. RENDER UI TERPUSAT
+    // 3. RENDER UI
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title='Stay Point' />
@@ -261,7 +302,7 @@ export default function StayPoint() {
                                 Kembali
                             </button>
                             
-                            {status === 'TUTUP' ? (
+                            {statusToko === 'TUTUP' ? (
                                 <button onClick={handleBuka} disabled={isLoading} className="flex items-center gap-2 bg-[#99FF33] text-black px-6 py-2.5 rounded-xl font-bold hover:bg-[#8ae62e] transition disabled:opacity-50">
                                     <Power className="w-5 h-5" />
                                     {isLoading ? 'Mencari...' : 'Buka'}
@@ -274,11 +315,11 @@ export default function StayPoint() {
                             )}
                         </div>
 
-                        {/* Komponen Peta (Ubah jadi Relatif karena nampung tombol overlay) */}
+                        {/* Komponen Peta */}
                         <div className="w-full h-full flex-1 min-h-[200px] bg-[#242424] rounded-[24px] overflow-hidden border-2 border-[#99FF33]/10 relative z-0">
                             
                             {/* Tombol Overlay Rute (Muncul kalau status gak TUTUP) */}
-                            {status !== 'TUTUP' && position && (
+                            {statusToko !== 'TUTUP' && position && (
                                 <button 
                                     onClick={toggleRouteLayer}
                                     className={`absolute top-4 right-4 z-[999] p-3 rounded-xl shadow-lg border border-white/10 transition-all ${showRouteLayer ? 'bg-[#99FF33] text-black' : 'bg-[#1C1A24] text-white hover:bg-[#2A2A2A]'}`}
@@ -289,7 +330,8 @@ export default function StayPoint() {
                             )}
 
                             <StayPointMap 
-                                status={status} 
+                                statusToko={statusToko} 
+                                statusLokasi={statusLokasi} 
                                 position={position} 
                                 prevPosition={prevPosition} 
                                 showLastPin={showLastPin} 
@@ -301,7 +343,8 @@ export default function StayPoint() {
 
                         {/* Komponen Tombol Aksi Utama */}
                         <StayPointActions 
-                            status={status} 
+                            statusToko={statusToko} 
+                            statusLokasi={statusLokasi} 
                             isLoading={isLoading} 
                             onMangkal={handleMangkal} 
                             onKeliling={handleKeliling} 
@@ -309,14 +352,15 @@ export default function StayPoint() {
 
                         {/* LOGIKA SWAPPING INFO CARD */}
                         {selectedRoutePin ? (
-                            // Panggil komponen MapDetailCard yang udah punya efek loading & API Geocoding
+                            // Panggil komponen MapDetailCard
                             <div className="animate-in fade-in duration-300">
                                 <MapDetailCard selectedNode={selectedRoutePin} />
                             </div>
                         ) : (
                             // Info Card Default
                             <StayPointInfoCard 
-                                status={status} 
+                                statusToko={statusToko} 
+                                statusLokasi={statusLokasi} 
                                 address={address} 
                                 prevAddress={prevAddress} 
                                 hasPrevPosition={!!prevPosition} 
@@ -326,14 +370,6 @@ export default function StayPoint() {
                         )}
                         
                     </div>
-
-                    {showEmptyModal && (
-                        <EmptyRouteModal
-                            title="Waduh!"
-                            description="Anda Belum Memiliki Data Mangkal!"
-                            redirectUrl="/stay-point"
-                        />
-                    )}
 
                     {/* Komponen Modal Global */}
                     <StayPointModal 
