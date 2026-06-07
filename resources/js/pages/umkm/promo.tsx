@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
-import { Plus, Edit, Trash2, X, Ticket, Tag, Calendar, Info } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Ticket, Info } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import {
     Select,
@@ -10,23 +10,28 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import DeleteConfirmationDialog from '@/components/khaslana/delete-confirmation-dialog';
+import type { Promo } from '@/types/promo';
 
-interface Promo {
-    id: number;
-    name: string;
-    type: 'DISKON' | 'PROMO';
-    description: string;
-    start_date: string;
-    end_date: string;
-    status: 'SEGERA HADIR' | 'BERLANGSUNG' | 'BERAKHIR';
-    discount_percent: number | null;
-}
+type PromoStatus = 'SEGERA HADIR' | 'BERLANGSUNG' | 'BERAKHIR';
+type PromoType = 'DISKON' | 'PROMO';
 
 interface Props {
     promos: Promo[];
 }
 
-export default function PromoManagement({ promos }: Props) {
+interface PromoFormData {
+    name: string;
+    type: PromoType;
+    description: string;
+    start_date: string;
+    end_date: string;
+    status: PromoStatus;
+    discount_percent: string;
+}
+
+export default function PromoManagement({
+    promos,
+}: Props) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentId, setCurrentId] = useState<number | null>(null);
@@ -39,7 +44,7 @@ export default function PromoManagement({ promos }: Props) {
 
     const today = getTodayString();
 
-    const { data, setData, post, put, delete: destroy, processing, reset, clearErrors, errors, transform } = useForm({
+    const { data, setData, post, put, delete: destroy, processing, reset, clearErrors, errors, transform } = useForm<PromoFormData>({
         name: '',
         type: 'DISKON',
         description: '',
@@ -49,7 +54,10 @@ export default function PromoManagement({ promos }: Props) {
         discount_percent: '',
     });
 
-    const calculateStatus = (start: string, end: string) => {
+    const calculateStatus = (
+        start: string,
+        end: string
+    ): PromoStatus => {
         if (!start || !end) return 'SEGERA HADIR';
         if (today < start) return 'SEGERA HADIR';
         if (today > end) return 'BERAKHIR';
@@ -68,8 +76,7 @@ export default function PromoManagement({ promos }: Props) {
             ...prevData,
             start_date: newStart,
             end_date: newEnd,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            status: calculateStatus(newStart, newEnd) as any
+            status: calculateStatus(newStart, newEnd)
         }));
     };
 
@@ -78,8 +85,7 @@ export default function PromoManagement({ promos }: Props) {
         setData(prevData => ({
             ...prevData,
             end_date: newEnd,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            status: calculateStatus(prevData.start_date, newEnd) as any
+            status: calculateStatus(prevData.start_date, newEnd)
         }));
     };
 
@@ -113,8 +119,7 @@ export default function PromoManagement({ promos }: Props) {
 
         transform((currentData) => ({
             ...currentData,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            status: calculateStatus(currentData.start_date, currentData.end_date) as any
+            status: calculateStatus(currentData.start_date, currentData.end_date)
         }));
 
         if (isEditing && currentId) {
@@ -226,8 +231,6 @@ export default function PromoManagement({ promos }: Props) {
                                 <div className="grid grid-cols-2 gap-4 cursor-pointer">
                                     <div>
                                         <label className="block text-sm text-zinc-400 mb-2">Tipe Penawaran</label>
-
-                                        {/* Perbaikan: Menggunakan Komponen Select UI Custom */}
                                         <Select
                                             value={data.type}
                                             onValueChange={(value) => setData('type', value as 'DISKON' | 'PROMO')}
@@ -240,7 +243,6 @@ export default function PromoManagement({ promos }: Props) {
                                                 <SelectItem value="PROMO" className="focus:bg-[#99ff33]/20 focus:text-[#99ff33] cursor-pointer">Promo Reguler</SelectItem>
                                             </SelectContent>
                                         </Select>
-
                                     </div>
                                     {data.type === 'DISKON' && (
                                         <div>
@@ -258,7 +260,6 @@ export default function PromoManagement({ promos }: Props) {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm text-zinc-400 mb-2">Tanggal Mulai</label>
-                                        {/* Perbaikan: Inject colorScheme: 'dark' ke kalender OS bawaan */}
                                         <input
                                             type="date"
                                             required
@@ -282,7 +283,6 @@ export default function PromoManagement({ promos }: Props) {
                                         />
                                     </div>
                                 </div>
-
                                 <div className="bg-[#13111a] p-4 rounded-xl border border-zinc-800 flex items-center justify-between mt-2">
                                     <div className="flex items-center gap-2">
                                         <Info className="text-zinc-500 size-5" />
