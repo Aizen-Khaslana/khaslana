@@ -1,5 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import { Eye, PackageOpen } from 'lucide-react';
+import { showSuccessToast, showErrorToast } from '@/lib/toast';
 
 import {
   Select,
@@ -26,10 +27,16 @@ export default function OrderIndex({
         }).format(value);
 
     const handleStatusChange = (orderId: number, newStatus: string) => {
-        router.patch(`/order/${orderId}/update-status`, {
+        router.patch(`/dashboard/order/change-status/${orderId}`, {
             status: newStatus
         }, {
-            preserveScroll: true
+            preserveScroll: true,
+            onSuccess: () => {
+                showSuccessToast('Status order berhasil diubah!')
+            },
+            onError: () => {
+                showErrorToast('Terjadi kesalahan, mohon coba lagi.')
+            }
         });
     };
 
@@ -47,6 +54,9 @@ export default function OrderIndex({
                             </th>
                             <th className="p-4 text-left">
                                 Nama Pembeli
+                            </th>
+                            <th className="p-4 text-left">
+                                Tipe Order
                             </th>
                             <th className="p-4 text-left">
                                 Total Harga
@@ -90,6 +100,9 @@ export default function OrderIndex({
                                     <td className="p-4 font-medium text-sm md:text-base">
                                         {order.user?.name}
                                     </td>
+                                    <td className="p-4 font-medium text-sm md:text-base">
+                                        {order.type}
+                                    </td>
                                     <td className="p-4 text-xs md:text-sm text-muted-foreground max-w-xs">
                                         {formatRupiah(order.total_price)}
                                     </td>
@@ -101,11 +114,11 @@ export default function OrderIndex({
                                                 disabled={['SELESAI', 'DIBATALKAN'].includes(order.status)}
                                             >
                                                 <SelectTrigger 
-                                                    className={`w-[180px] bg-[#131313] rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 focus:ring-0 focus:ring-offset-0 ${
+                                                    className={`w-45 bg-[#131313] rounded-[999px] text-xs font-semibold uppercase tracking-wide transition-all flex justify-betweem text-start px-4 py-5 duration-200 focus:ring-0 focus:ring-offset-0 ${
                                                         order.status === 'TERTUNDA' || order.status === 'MENUNGGU PEMBAYARAN' ? 'border-yellow-500/50 text-yellow-400 focus:border-yellow-500' :
-                                                        order.status === 'DIBAYAR' ? 'border-blue-500/50 text-blue-400 focus:border-blue-500' :
-                                                        order.status === 'DIKIRIM' ? 'border-indigo-500/50 text-indigo-400 focus:border-indigo-500' :
-                                                        order.status === 'SELESAI' ? 'border-[#99FF33]/50 text-[#99FF33] focus:border-[#99FF33]' :
+                                                        order.status === 'DIBAYAR' ? 'border-yellow-500/50 text-yellow-400 focus:border-yellow-500' :
+                                                        order.status === 'DIKIRIM' ? 'border-yellow-500/50 text-yellow-400 focus:border-yellow-500' :
+                                                        order.status === 'SELESAI' ? 'border-[#99FF33]/80 text-[#99FF33] focus:border-[#99FF33]' :
                                                         'border-red-500/50 text-red-400 focus:border-red-500'
                                                     }`}
                                                 >
@@ -114,11 +127,11 @@ export default function OrderIndex({
                                                 
                                                 <SelectContent className="bg-[#1E1B26] border-white/10 text-xs font-bold uppercase">
                                                     <SelectItem value="TERTUNDA" className="text-yellow-400 focus:bg-white/5 focus:text-yellow-400 cursor-pointer">TERTUNDA</SelectItem>
-                                                    <SelectItem value="MENUNGGU PEMBAYARAN" className="text-yellow-400 focus:bg-white/5 focus:text-yellow-400 cursor-pointer">MENUNGGU PEMBAYARAN</SelectItem>
-                                                    <SelectItem value="DIBAYAR" className="text-blue-400 focus:bg-white/5 focus:text-blue-400 cursor-pointer">DIBAYAR</SelectItem>
-                                                    <SelectItem value="DALAM PROSES" className="text-purple-400 focus:bg-white/5 focus:text-purple-400 cursor-pointer">DALAM PROSES</SelectItem>
-                                                    <SelectItem value="DIKIRIM" className="text-indigo-400 focus:bg-white/5 focus:text-indigo-400 cursor-pointer">DIKIRIM</SelectItem>
-                                                    <SelectItem value="SELESAI" className="text-[#99FF33] focus:bg-white/5 focus:text-[#99FF33] cursor-pointer">SELESAI</SelectItem>
+                                                    <SelectItem value="MENUNGGU PEMBAYARAN" className="text-yellow-400 focus:bg-white/5 focus:text-yellow-400 cursor-pointer hidden">MENUNGGU PEMBAYARAN</SelectItem>
+                                                    <SelectItem value="DIBAYAR" className="text-yellow-400 focus:bg-white/5 focus:text-yellow-400 cursor-pointer hidden">DIBAYAR</SelectItem>
+                                                    <SelectItem value="DALAM PROSES" className="text-yellow-400 focus:bg-white/5 focus:text-yellow-400 cursor-pointer">DALAM PROSES</SelectItem>
+                                                    <SelectItem value="DIKIRIM" className="text-yellow-400 focus:bg-white/5 focus:text-yellow-400 cursor-pointer">DIKIRIM</SelectItem>
+                                                    <SelectItem value="SELESAI" className="text-[#99FF33] focus:bg-white/5 focus:text-[#99FF33] cursor-pointer hidden">SELESAI</SelectItem>
                                                     <SelectItem value="DIBATALKAN" className="text-red-400 focus:bg-white/5 focus:text-red-400 cursor-pointer">DIBATALKAN</SelectItem>
                                                 </SelectContent>
                                             </Select>
@@ -128,7 +141,7 @@ export default function OrderIndex({
                                     <td className="p-4">
                                         <div className="flex justify-center gap-2">
                                             <Link
-                                                href={`#`}
+                                                href={`/dashboard/order/${order.id}`}
                                                 className="p-2 rounded-md group hover:bg-[#99FF33]/20 transition-colors duration-200"
                                             >
                                                 <Eye size={16} className='group-hover:text-[#99FF33]' />

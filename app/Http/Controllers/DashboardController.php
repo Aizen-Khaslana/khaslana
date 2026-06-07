@@ -101,6 +101,31 @@ class DashboardController extends Controller
         ])->orderBy('created_at', 'desc')
           ->paginate(20);
 
-        return Inertia::render('umkm/order', ['orders' => $orders]);
+        return Inertia::render('umkm/order/index', ['orders' => $orders]);
+    }
+
+    public function changeOrderStatus(Request $request, Order $order) {
+        $request->validate([
+            'status' => 'required'
+        ]);
+
+        $order->update([
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('dashboard.order')->with('success', 'Status order berhasil diubah!');
+    }
+
+    public function showOrder(Order $order) {
+        $order->loadMissing([
+            'user',
+            'orderItems',
+            'payment',
+            'umkm'
+        ]);
+
+        return Inertia::render('umkm/order/show', [
+            'order' => $order
+        ]);
     }
 }
