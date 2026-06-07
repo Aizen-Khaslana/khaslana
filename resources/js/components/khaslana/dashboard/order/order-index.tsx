@@ -104,7 +104,6 @@ export default function OrderIndex({
                                                     className={`w-[180px] bg-[#131313] rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 focus:ring-0 focus:ring-offset-0 ${
                                                         order.status === 'TERTUNDA' || order.status === 'MENUNGGU PEMBAYARAN' ? 'border-yellow-500/50 text-yellow-400 focus:border-yellow-500' :
                                                         order.status === 'DIBAYAR' ? 'border-blue-500/50 text-blue-400 focus:border-blue-500' :
-                                                        order.status === 'DALAM PROSES' ? 'border-purple-500/50 text-purple-400 focus:border-purple-500' :
                                                         order.status === 'DIKIRIM' ? 'border-indigo-500/50 text-indigo-400 focus:border-indigo-500' :
                                                         order.status === 'SELESAI' ? 'border-[#99FF33]/50 text-[#99FF33] focus:border-[#99FF33]' :
                                                         'border-red-500/50 text-red-400 focus:border-red-500'
