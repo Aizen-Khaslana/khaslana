@@ -229,14 +229,14 @@ class OrderController extends Controller
             $paymentType = $notification->payment_type;
             $fraudStatus = $notification->fraud_status;
             $grossAmount = $notification->gross_amount;
+    
+            $order = Order::where('invoice_number', $orderId)->first();
+            $payment = Payment::where('midtrans_order_id', $orderId)->first();
 
             return response()->json([
                 'payload' => $request->all(),
                 'method' => $request->method(),
             ]);
-    
-            $order = Order::where('invoice_number', $orderId)->first();
-            $payment = Payment::where('midtrans_order_id', $orderId)->first();
 
             if (!$order) {
                 return response()->json([
