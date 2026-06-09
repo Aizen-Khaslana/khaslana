@@ -263,6 +263,11 @@ class OrderController extends Controller
             ) {
                 $order->load('orderItems.variant');
                 foreach ($order->orderItems as $item) {
+                    if (!$item->variant) {
+                        throw new \Exception(
+                            "VARIANT NOT FOUND: {$item->variant_id}"
+                        );
+                    }
                     $item->variant->decrement('stock', $item->quantity);
     
                     CartItem::where('variant_id', $item->variant_id)
@@ -318,7 +323,13 @@ class OrderController extends Controller
                 'success' => true,
             ]);
         } catch (\Throwable $e) {
-            throw $e;
+            return response()->json([
+                'message' => $e->getMessage(),
+                'file' => basename($e->getFile()),
+                'line' => $e->getLine(),
+                'order_id' => $orderId ?? null,
+                'transaction_status' => $transactionStatus ?? null,
+            ], 500);
         }
     }
 
