@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 
 use App\Models\Product\Product;
 use App\Models\Product\ProductVariant;
+use App\Models\Cart\CartItem;
 use App\Models\Order\Order;
 use App\Models\Order\Payment;
 
@@ -40,7 +41,9 @@ class OrderController extends Controller
     public function list() {
         $orders = Order::where('user_id', Auth::user()->id)->with([
             'umkm',
-            'orderItems',
+            'payment',
+            'orderItems.variant',
+            'orderItems.product.productImages',
         ])->orderBy('created_at', 'desc')->get();
         return Inertia::render('user/order/list', [
             'orders' => $orders,
@@ -49,8 +52,11 @@ class OrderController extends Controller
 
     public function show(Order $order) {
         $order->loadMissing([
+            'orderItems.variant',
             'orderItems.product.productImages',
-            'user'
+            'user',
+            'umkm',
+            'payment',
         ]);
 
         return Inertia::render('user/order/show', [
@@ -209,85 +215,130 @@ class OrderController extends Controller
     }
 
     public function callback(Request $request) {
-        Log::info('MIDTRANS CALLBACK', $request->all());
+        try {
+            Config::$serverKey = config('services.midtrans.server_key');
+            Config::$isProduction = config('services.midtrans.is_production');
+    
+            try {
+                $notification = new Notification();
+            } catch (\Throwable $e) {
+                Log::error('MIDTRANS NOTIFICATION ERROR', [
+                    'message' => $e->getMessage(),
+                ]);
+            }
+    
+            $orderId = $notification->order_id;
+            $transactionStatus = $notification->transaction_status;
+            $paymentType = $notification->payment_type;
+            $fraudStatus = $notification->fraud_status;
+            $grossAmount = $notification->gross_amount;
+    
+            $order = Order::where('invoice_number', $orderId)->first();
+            $payment = Payment::where('midtrans_order_id', $orderId)->first();
 
-        Config::$serverKey = config('services.midtrans.server_key');
-        Config::$isProduction = config('services.midtrans.is_production');
-
-        $notification = new Notification();
-
-        $orderId = $notification->order_id;
-        $transactionStatus = $notification->transaction_status;
-        $paymentType = $notification->payment_type;
-        $fraudStatus = $notification->fraud_status;
-        $grossAmount = $notification->gross_amount;
-
-        $order = Order::where('invoice_number', $orderId)->first();
-        $payment = Payment::where('midtrans_order_id', $orderId)->first();
-
-        if (
-            $order->payment_status !== 'DIBAYAR' &&
-            (
-                $transactionStatus === 'settlement' ||
-                (
-                    $transactionStatus === 'capture' &&
-                    $fraudStatus === 'accept'
-                )
-            )
-        ) {
-            $order->load('orderItems.variant');
-            foreach ($order->orderItems as $item) {
-                $item->variant->decrement('stock', $item->quantity);
+            if (!$order) {
+                return response()->json([
+                    'error' => 'ORDER NOT FOUND',
+                    'order_id' => $orderId,
+                ], 500);
             }
 
-            $order->update([
-                'payment_status' => 'DIBAYAR',
-                'status' => 'DIBAYAR',
-                'paid_at' => now(),
-            ]);
+            if (!$payment) {
+                return response()->json([
+                    'error' => 'PAYMENT NOT FOUND',
+                    'order_id' => $orderId,
+                ], 500);
+            }
+    
+            if (
+                $order->payment_status !== 'DIBAYAR' &&
+                (
+                    $transactionStatus === 'settlement' ||
+                    (
+                        $transactionStatus === 'capture' &&
+                        $fraudStatus === 'accept'
+                    )
+                    
+                )
+                
+            ) {
+                $order->load('orderItems.variant');
+                foreach ($order->orderItems as $item) {
+                    if (!$item->variant) {
+                        throw new \Exception(
+                            "VARIANT NOT FOUND: {$item->variant_id}"
+                        );
+                    }
+                    $item->variant->decrement('stock', $item->quantity);
+    
+                    CartItem::where('variant_id', $item->variant_id)
+                        ->whereHas('cart', function ($q) use ($order) {
+                            $q->where('user_id', $order->user_id);
+                        })
+                        ->delete();
+                }
 
-            $payment->update([
-                'transaction_status' => $transactionStatus,
-                'payment_type' => $paymentType,
-                'fraud_status' => $fraudStatus,
-                'gross_amount' => $grossAmount,
-                'paid_at' => now(),
-                'raw_response' => json_encode($notification),
+                // return response()->json([
+                //     'payload' => $request->all(),
+                //     'method' => $request->method(),
+                // ]);
+    
+                $order->update([
+                    'payment_status' => 'DIBAYAR',
+                    'status' => 'DIBAYAR',
+                    'paid_at' => now(),
+                ]);
+    
+                $payment->update([
+                    'transaction_status' => $transactionStatus,
+                    'payment_type' => $paymentType,
+                    'fraud_status' => $fraudStatus,
+                    'gross_amount' => $grossAmount,
+                    'paid_at' => now(),
+                ]);
+            }
+            
+            if ($transactionStatus === 'pending') {
+                $order->update([
+                    'payment_status' => 'BELUM DIBAYAR',
+                    'status' => 'MENUNGGU PEMBAYARAN',
+                ]);
+                $payment->update([
+                    'transaction_status' => 'pending',
+                ]);
+            }
+    
+            if ($transactionStatus === 'expire') {
+                $order->update([
+                    'payment_status' => 'KADALUWARSA',
+                    'status' => 'DIBATALKAN',
+                ]);
+            }
+    
+            if (
+                $transactionStatus === 'cancel' ||
+                $transactionStatus === 'deny'
+            ) {
+                $order->update([
+                    'payment_status' => 'GAGAL',
+                    'status' => 'DIBATALKAN',
+                ]);
+            }
+            return response()->json([
+                'success' => true,
             ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+                'file' => basename($e->getFile()),
+                'line' => $e->getLine(),
+                'order_id' => $orderId ?? null,
+                'transaction_status' => $transactionStatus ?? null,
+            ], 500);
         }
-        
-        if ($transactionStatus === 'pending') {
-            $order->update([
-                'payment_status' => 'BELUM DIBAYAR',
-                'status' => 'MENUNGGU PEMBAYARAN',
-            ]);
-            $payment->update([
-                'transaction_status' => 'pending',
-            ]);
-        }
-
-        if ($transactionStatus === 'expire') {
-            $order->update([
-                'payment_status' => 'KADALUWARSA',
-                'status' => 'DIBATALKAN',
-            ]);
-        }
-
-        if (
-            $transactionStatus === 'cancel' ||
-            $transactionStatus === 'deny'
-        ) {
-            $order->update([
-                'payment_status' => 'GAGAL',
-                'status' => 'DIBATALKAN',
-            ]);
-        }
-        return response()->json([
-            'success' => true,
-        ]);
     }
 
-    public function complete(Request $request, Order $order) {
+    public function complete(Order $order) {
         $order->update([
             'status' => 'SELESAI'
         ]);

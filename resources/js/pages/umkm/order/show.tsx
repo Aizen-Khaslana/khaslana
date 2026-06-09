@@ -1,31 +1,31 @@
 import { Head } from '@inertiajs/react';
 
-import ShowIndex from '@/components/khaslana/order/show/show-index';
-import UnusedNavLayout from '@/layouts/unused-nav-layout';
-import { list, show } from '@/routes/order';
+import AppLayout from '@/layouts/app-layout';
 import type { Order } from '@/types/order';
-import type { BreadcrumbItem } from '@/types';
+import ShowDashoardOrder from '@/components/khaslana/dashboard/order/show-index';
+import { BreadcrumbItem } from '@/types';
+import { order as orderRoute } from '@/routes/dashboard';
+import { show } from '@/routes/dashboard/order';
 
 interface ShowProps {
     order: Order;
 }
 
-export default function About({
+export default function ShowOrder({
     order,
 }: ShowProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: 'Riwayat Pesanan',
-            href: list().url,
+            title: 'Order',
+            href: orderRoute().url,
         },
         {
-            title: 'Detail Pesanan',
+            title: 'Detail Order',
             href: show(order.id).url,
         },
     ];
-
     return (
-        <UnusedNavLayout backHref='/order/list' breadcrumbs={breadcrumbs}>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title='Show Order'>
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link
@@ -33,7 +33,7 @@ export default function About({
                     rel="stylesheet"
                 />
             </Head>
-            <ShowIndex order={order} />
-        </UnusedNavLayout>
+            <ShowDashoardOrder order={order} />
+        </AppLayout>
     );
 }
