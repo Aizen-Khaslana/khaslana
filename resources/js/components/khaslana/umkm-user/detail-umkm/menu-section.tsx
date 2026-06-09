@@ -37,7 +37,7 @@ export default function MenuSection({
                     </p>
                 </div>
             ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 place-items-start gap-6 mt-8">
                     {products.map((product) => (
                         <div
                             key={product.id}

@@ -234,6 +234,20 @@ class OrderController extends Controller
     
             $order = Order::where('invoice_number', $orderId)->first();
             $payment = Payment::where('midtrans_order_id', $orderId)->first();
+
+            if (!$order) {
+                return response()->json([
+                    'error' => 'ORDER NOT FOUND',
+                    'order_id' => $orderId,
+                ], 500);
+            }
+
+            if (!$payment) {
+                return response()->json([
+                    'error' => 'PAYMENT NOT FOUND',
+                    'order_id' => $orderId,
+                ], 500);
+            }
     
             if (
                 $order->payment_status !== 'DIBAYAR' &&
@@ -249,6 +263,11 @@ class OrderController extends Controller
             ) {
                 $order->load('orderItems.variant');
                 foreach ($order->orderItems as $item) {
+                    if (!$item->variant) {
+                        throw new \Exception(
+                            "VARIANT NOT FOUND: {$item->variant_id}"
+                        );
+                    }
                     $item->variant->decrement('stock', $item->quantity);
     
                     CartItem::where('variant_id', $item->variant_id)
@@ -304,9 +323,14 @@ class OrderController extends Controller
                 'success' => true,
             ]);
         } catch (\Throwable $e) {
-            throw $e;
+            return response()->json([
+                'message' => $e->getMessage(),
+                'file' => basename($e->getFile()),
+                'line' => $e->getLine(),
+                'order_id' => $orderId ?? null,
+                'transaction_status' => $transactionStatus ?? null,
+            ], 500);
         }
-
     }
 
     public function complete(Order $order) {
