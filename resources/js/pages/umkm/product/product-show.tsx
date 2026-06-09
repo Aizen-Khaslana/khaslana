@@ -1,28 +1,21 @@
 import { Head, Link } from '@inertiajs/react';
 import { ChevronLeft } from 'lucide-react';
-
 import CtaCard from '@/components/khaslana/dashboard/cta-card';
-import CreateIndex from '@/components/khaslana/product/create/create-index';
 import { useAuth } from '@/hooks/use-auth';
 import AppLayout from '@/layouts/app-layout';
 import { product as productRoute } from '@/routes';
-import { create } from '@/routes/product';
-import type { BreadcrumbItem } from '@/types';
+import { show } from '@/routes/product';
+import type { BreadcrumbItem } from "@/types"
 import type { Product } from '@/types/product';
+import ShowIndex from '@/components/khaslana/product/show/show-index';
 
-interface CreateProductProps {
-    products: Product[];
-    categories: {
-        id: number;
-        name: string;
-    }[];
-    product?: Product;
+interface ProductShowProps {
+    product: Product;
 }
 
-export default function CreateProduct({
-    categories,
+export default function ProductShow({
     product,
-}: CreateProductProps) {
+}: ProductShowProps) {
     const { user } = useAuth();
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -30,14 +23,14 @@ export default function CreateProduct({
             href: productRoute().url,
         },
         {
-            title: product ? 'Edit Produk' : 'Tambah Produk',
-            href: create().url,
+            title: 'Detail Produk',
+            href: show(product.id).url,
         },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title='Products' />
+            <Head title='Detail Produk' />
             {!user.is_umkm ? (
                 <CtaCard />   
             ) : (
@@ -60,10 +53,7 @@ export default function CreateProduct({
                     </div>
         
                     {/* content */}
-                    <CreateIndex
-                        categories={categories}
-                        product={product}
-                    />
+                    <ShowIndex product={product} />
                 </>
             )}
         </AppLayout>
