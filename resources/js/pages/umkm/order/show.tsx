@@ -4,22 +4,26 @@ import AppLayout from '@/layouts/app-layout';
 import type { Order } from '@/types/order';
 import ShowDashoardOrder from '@/components/khaslana/dashboard/order/show-index';
 import { BreadcrumbItem } from '@/types';
-import { order } from '@/routes/dashboard';
+import { order as orderRoute } from '@/routes/dashboard';
+import { show } from '@/routes/dashboard/order';
 
 interface ShowProps {
     order: Order;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Detail Order',
-        href: order().url,
-    },
-];
-
 export default function ShowOrder({
     order,
 }: ShowProps) {
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Order',
+            href: orderRoute().url,
+        },
+        {
+            title: 'Detail Order',
+            href: show(order.id).url,
+        },
+    ];
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title='Show Order'>

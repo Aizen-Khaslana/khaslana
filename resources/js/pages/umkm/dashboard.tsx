@@ -52,6 +52,7 @@ interface CategoryData {
 interface ProductImage {
     id: number;
     product_id: number;
+    image: string;
     image_path: string;
 }
 
@@ -205,8 +206,11 @@ export default function Dashboard({
                             {top_products.map((item) => (
                                 <div className='flex justify-between gap-3' key={item.id}>
                                     <div className='flex gap-4'>
-                                        <img src={`storage/${item.product_images}`} alt="tes" className='size-13 bg-white rounded-[999px]' />
-
+                                        <img
+                                            src={`storage/${item.product_images?.[0].image}`}
+                                            alt="tes"
+                                            className='size-13 bg-white rounded-[999px]'
+                                        />
                                         <div className='flex flex-col justify-center'>
                                             <span className='text-lg font-medium'>{item.name}</span>
                                             <span className='text-sm text-[#adaaaa] tracking-wider'>{item.category?.name}</span>
