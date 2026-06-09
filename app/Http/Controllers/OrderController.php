@@ -234,6 +234,20 @@ class OrderController extends Controller
     
             $order = Order::where('invoice_number', $orderId)->first();
             $payment = Payment::where('midtrans_order_id', $orderId)->first();
+
+            if (!$order) {
+                return response()->json([
+                    'error' => 'ORDER NOT FOUND',
+                    'order_id' => $orderId,
+                ], 500);
+            }
+
+            if (!$payment) {
+                return response()->json([
+                    'error' => 'PAYMENT NOT FOUND',
+                    'order_id' => $orderId,
+                ], 500);
+            }
     
             if (
                 $order->payment_status !== 'DIBAYAR' &&
@@ -306,7 +320,6 @@ class OrderController extends Controller
         } catch (\Throwable $e) {
             throw $e;
         }
-
     }
 
     public function complete(Order $order) {
