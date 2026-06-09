@@ -41,7 +41,9 @@ class OrderController extends Controller
     public function list() {
         $orders = Order::where('user_id', Auth::user()->id)->with([
             'umkm',
-            'orderItems',
+            'payment',
+            'orderItems.variant',
+            'orderItems.product.productImages',
         ])->orderBy('created_at', 'desc')->get();
         return Inertia::render('user/order/list', [
             'orders' => $orders,
@@ -50,8 +52,11 @@ class OrderController extends Controller
 
     public function show(Order $order) {
         $order->loadMissing([
+            'orderItems.variant',
             'orderItems.product.productImages',
-            'user'
+            'user',
+            'umkm',
+            'payment',
         ]);
 
         return Inertia::render('user/order/show', [
@@ -220,8 +225,6 @@ class OrderController extends Controller
                 Log::error('MIDTRANS NOTIFICATION ERROR', [
                     'message' => $e->getMessage(),
                 ]);
-    
-                dd('test');
             }
     
             $orderId = $notification->order_id;

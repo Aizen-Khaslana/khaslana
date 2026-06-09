@@ -145,7 +145,8 @@ class DashboardController extends Controller
     public function showOrder(Order $order) {
         $order->loadMissing([
             'user',
-            'orderItems',
+            'orderItems.variant',
+            'orderItems.product.productImages',
             'payment',
             'umkm'
         ]);
