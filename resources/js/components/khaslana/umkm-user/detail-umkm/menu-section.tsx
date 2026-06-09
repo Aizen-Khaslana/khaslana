@@ -37,14 +37,14 @@ export default function MenuSection({
                     </p>
                 </div>
             ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 place-items-start gap-6 mt-8">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 place-items-start gap-6 mt-8 w-full">
                     {products.map((product) => (
                         <div
                             key={product.id}
                             className="
                                 bg-[#262626]
                                 rounded-3xl
-                                overflow-hidden
+                                overflow-hidden w-full
                                 border
                                 transition-all
                                 duration-300
