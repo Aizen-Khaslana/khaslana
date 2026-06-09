@@ -345,12 +345,10 @@ export default function CreateIndex({
         }
     };
 
-    const formatRupiah = (value: string) => {
-        const number = value.replace(/\D/g, "");
-
+    const formatRupiah = (value: string | number) => {
         return new Intl.NumberFormat(
             "id-ID"
-        ).format(Number(number));
+        ).format(Number(value));
     };
 
     const parseRupiah = (value: string) => {

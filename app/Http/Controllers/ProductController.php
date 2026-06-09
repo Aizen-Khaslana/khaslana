@@ -167,6 +167,18 @@ class ProductController extends Controller
         }
     }
 
+    public function show(Product $product) {
+        $product->load([
+            'category',
+            'productImages',
+            'productVariants.attributeValues.attribute',
+        ]);
+
+        return Inertia::render('umkm/product/product-show', [
+            'product' => $product,
+        ]);
+    }
+
     public function edit(Product $product) {
         $product->load([
             'productImages',
