@@ -1,4 +1,5 @@
 import { Head } from "@inertiajs/react"
+
 import StoreIndex from "@/components/khaslana/settings/store/store-index";
 import { useAuth } from "@/hooks/use-auth";
 import AppLayout from "@/layouts/app-layout";

@@ -1,8 +1,16 @@
 import { Head } from '@inertiajs/react';
+
 import CommunityIndex from '@/components/khaslana/community/community-index';
 import UserLayout from '@/layouts/user-layout';
+import type { Post } from '@/types/post';
 
-export default function Community() {
+interface IndexProps {
+    posts: Post[];
+}
+
+export default function Community({
+    posts,
+}: IndexProps) {
     return (
         <UserLayout>
             <Head title='Komunitas'>
@@ -12,7 +20,7 @@ export default function Community() {
                     rel="stylesheet"
                 />
             </Head>
-            <CommunityIndex />
+            <CommunityIndex posts={posts} />
         </UserLayout>
     );
 }

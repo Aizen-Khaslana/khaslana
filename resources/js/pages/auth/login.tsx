@@ -1,6 +1,7 @@
 import { Form, Head } from '@inertiajs/react';
 import { Eye, EyeOff, ChevronLeft } from "lucide-react";
 import React from 'react';
+
 import Google from '@/assets/icons/login/google.svg';
 import KhaslanaLogo from '@/assets/images/khaslana.svg';
 import InputError from '@/components/input-error';

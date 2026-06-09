@@ -1,6 +1,7 @@
 import type { InertiaFormProps } from "@inertiajs/react";
 import { MapPin } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
+
 import { type StoreFormData } from "@/components/khaslana/settings/store/types";
 import { Button } from "@/components/ui/button";
 import { Label } from '@/components/ui/label';

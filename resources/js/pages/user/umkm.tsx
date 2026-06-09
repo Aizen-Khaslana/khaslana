@@ -1,4 +1,5 @@
 import { Head } from '@inertiajs/react';
+
 import UmkmIndex from '@/components/khaslana/umkm-user/umkm-index';
 import UserLayout from '@/layouts/user-layout';
 import type { Umkm } from '@/types/umkm';

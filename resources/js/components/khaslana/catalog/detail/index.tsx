@@ -1,5 +1,6 @@
 import HeroSection from "@/components/khaslana/catalog/detail/hero-section";
 import type { Product } from "@/types/product"
+
 import ReviewSection from "./review-section";
 
 interface IndexProps {

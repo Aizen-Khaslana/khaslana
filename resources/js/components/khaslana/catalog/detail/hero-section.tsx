@@ -1,5 +1,6 @@
 import { ShieldCheck, Truck } from "lucide-react";
 import { useState } from "react";
+
 import AddToCartIcon from "@/assets/images/catalog/addtocart.svg";
 import DefaultProduct from "@/assets/images/product/default-product.png";
 import VariantDialog from "@/components/khaslana/catalog/detail/variant-dialog";

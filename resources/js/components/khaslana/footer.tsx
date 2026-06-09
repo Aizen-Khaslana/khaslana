@@ -1,5 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+
 import Instagram from '@/assets/icons/footer/instagram.png';
 import Linkedin from '@/assets/icons/footer/linkedin.png';
 import Location from '@/assets/icons/footer/location_icon.png';

@@ -1,6 +1,7 @@
 import { usePage, router } from "@inertiajs/react";
 import { ThumbsUp, Trash } from "lucide-react";
 import { useState } from "react";
+
 import ProfileIcon from "@/assets/icons/default-profile.png";
 import { useAuth } from "@/hooks/use-auth";
 

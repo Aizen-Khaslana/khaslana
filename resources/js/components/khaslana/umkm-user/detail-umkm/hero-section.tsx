@@ -3,6 +3,7 @@ import {
     MapPin,
     Star,
 } from "lucide-react";
+
 import DefaultStore from "@/assets/images/umkm-user/default-store.png";
 import type { Umkm } from "@/types/umkm";
 

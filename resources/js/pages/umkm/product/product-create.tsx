@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { ChevronLeft } from 'lucide-react';
+
 import CtaCard from '@/components/khaslana/dashboard/cta-card';
 import CreateIndex from '@/components/khaslana/product/create/create-index';
 import { useAuth } from '@/hooks/use-auth';

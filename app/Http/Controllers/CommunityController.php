@@ -14,13 +14,13 @@ use Exception;
 class CommunityController extends Controller
 {
     public function index() {
-        $currentUserId = Auth::id();
+        $user_id = Auth::id();
 
         $posts = Post::with(['user', 'postImages', 'postLikes', 'comments.user'])
             ->latest()
             ->get()
-            ->map(function ($post) use ($currentUserId) {
-                $post->is_liked = $post->postLikes->contains('user_id', $currentUserId);
+            ->map(function ($post) use ($user_id) {
+                $post->is_liked = $post->postLikes->contains('user_id', $user_id);
                 return $post;
             });
 
@@ -34,11 +34,12 @@ class CommunityController extends Controller
             'user',
             'postImages',
             'postLikes',
-            'comments.user',
+            'comments.user.profile',
             'comments.commentLikes'
         ]);
 
         $post->is_liked = $post->postLikes->contains('user_id', Auth::id());
+        $post->has_comment = $post->comments->contains('user_id', Auth::id());
 
         $post->comments->map(function ($comment) {
             $comment->is_liked = $comment->commentLikes->contains('user_id', Auth::id());

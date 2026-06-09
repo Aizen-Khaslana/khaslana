@@ -1,6 +1,7 @@
 import { Transition } from "@headlessui/react";
 import { Head, Link, usePage, useForm } from "@inertiajs/react";
 import React, { useEffect } from "react";
+
 import ProfileController from "@/actions/App/Http/Controllers/Settings/ProfileController";
 import DefaultProfile from "@/assets/icons/default-profile.png";
 import InputError from "@/components/input-error";

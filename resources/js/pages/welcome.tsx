@@ -1,4 +1,5 @@
 import { Head } from '@inertiajs/react';
+
 import WelcomeIndex from '@/components/khaslana/welcome/welcome-index';
 import UserLayout from '@/layouts/user-layout';
 

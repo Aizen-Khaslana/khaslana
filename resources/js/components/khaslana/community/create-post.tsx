@@ -1,9 +1,13 @@
 import { router } from "@inertiajs/react";
 import { Image, X } from "lucide-react";
 import { useState, type ChangeEvent } from "react";
+
 import ProfileIcon from "@/assets/icons/default-profile.png";
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/hooks/use-auth";
 
 export function CreatePost() {
+    const { user } = useAuth();
     const [content, setContent] = useState("");
     const [mediaFile, setMediaFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -11,7 +15,12 @@ export function CreatePost() {
     const [isUploaded, setIsUploaded] = useState(false);
 
     const PostOptions = [
-        { id: 1, label: "Gambar", src: <Image className="w-5"/>, accept: "image/*"},
+        {
+            id: 1,
+            label: "Upload Gambar",
+            src: <Image className="w-5 group-hover:-rotate-20 group-hover:scale-110 transition-all duration-300"/>,
+            accept: "image/*"
+        },
     ]
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -67,21 +76,40 @@ export function CreatePost() {
         }
 
     return (
-        <div className="relative flex flex-col px-6 w-full">
-            <section className="community-header flex flex-col w-full pt-8 pb-10 max-md:pb-5 gap-2">
-                <h2 className="text-[#99ff33] font-medium text-2xl md:text-5xl">Buat Postingan</h2>
+        <div className="flex flex-col w-full mx-auto">
+            <section className="flex flex-col w-full pb-10 max-md:pb-5 gap-2">
+                <h2 className="text-[#99ff33] font-medium text-2xl md:text-5xl">
+                    Buat Postingan
+                </h2>
             </section>
 
             {isUploaded &&  (
                 <div className="w-full bg-[#99FF33]/20 border border-[#99FF33] text-[#99FF33] p-4 rounded-[15px] text-sm font-medium">Postingan berhasil diupload!</div>
             )}
 
-            <div className="create-post flex flex-col w-full bg-[#222] md:p-8 p-5 gap-10 rounded-[15px] mb-20">
-                <div className="post-top flex items-center gap-3.75">
-                    <img src={ProfileIcon} alt="Profile" className="w-12 max-md:w-8" />
-                    <input type="text" placeholder="Bagikan strategi pertumbuhan Anda hari ini..." className="main-input flex flex-1 bg-transparent border-0 outline-0 text-white"
-                    value={content} 
-                    onChange={(e) => setContent(e.target.value)}/>
+            <div className="flex flex-col w-full bg-[#222] md:p-8 gap-10 rounded-[15px] mb-20">
+                <div className="flex items-start gap-3.75">
+                    <img
+                        src={user.profile_photo ?? ProfileIcon}
+                        alt="Profile"
+                        className="w-12 aspect-square border border-white/10 rounded-full max-md:w-8"
+                    />
+                    <Textarea
+                        placeholder="Bagikan strategi pertumbuhan Anda hari ini..."
+                        className="
+                            flex flex-1
+                            bg-transparent! rounded-none
+                            border-0 border-b border-b-white/10 outline-0
+                            text-white text-sm md:text-base
+                            focus-visible:ring-0
+                            focus-visible:border-b
+                            focus-visible:border-b-[#99FF33]/50
+                            transition-colors duration-200
+                        "
+                        value={content} 
+                        onChange={(e) => setContent(e.target.value)}
+                        autoFocus
+                    />
                 </div>
 
                 {previewUrl && (
@@ -101,13 +129,41 @@ export function CreatePost() {
                 <div className="post-bottom flex justify-between items-center">
                     <div className="post-options flex gap-3.75">
                         {PostOptions.map((item) => (
-                            <label key={item.id} className="opt-btn bg-transparent border-0 text-[#888] cursor-pointer flex items-center gap-1.75 text-[12px] md:text-[15px]">
-                                <input type="file" className="hidden" accept={item.accept} onChange={handleFileChange}/>
-                                {item.src} {item.label}
+                            <label
+                                key={item.id}
+                                className="bg-transparent border-0 text-[#888] cursor-pointer flex items-center gap-1.75 text-[12px] md:text-[15px]"
+                            >
+                                <input
+                                    type="file"
+                                    className="hidden"
+                                    accept={item.accept}
+                                    onChange={handleFileChange}
+                                />
+                                <div
+                                    className="
+                                        group
+                                        flex items-center gap-2
+                                        px-3 py-2
+                                        rounded-xl
+                                        text-sm font-medium
+                                        cursor-pointer
+                                        transition-all duration-300
+                                        hover:bg-[#99FF33]/10
+                                        active:scale-95
+                                    "
+                                >
+                                    {item.src} {item.label}
+                                </div>
                             </label>
                         ))}
                     </div>
-                    <button type="button" onClick={handlePublish} className="btn-publish bg-[#99FF33] border border-[#99FF33] py-2.5 px-6.25 font-medium cursor-pointer rounded-[20px] text-black hover:bg-transparent hover:text-[#99ff33] transition-all duration-200">Terbitkan</button>
+                    <button
+                        type="submit"
+                        onClick={handlePublish}
+                        className="bg-[#99FF33] border border-[#99FF33] py-2.5 px-6.25 font-medium cursor-pointer rounded-[20px] text-black hover:bg-transparent hover:text-[#99ff33] transition-all duration-200"
+                    >
+                        Terbitkan
+                    </button>
                 </div>
             </div>
         </div>

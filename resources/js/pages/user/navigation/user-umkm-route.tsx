@@ -6,7 +6,6 @@ import React, { useState, useEffect } from 'react';
 
 import EmptyRouteModal from '@/components/khaslana/live-tracking/empty-route-modal';
 import UserMapViewer from '@/components/khaslana/live-tracking/user-map-viewer';
-
 import type { Umkm } from '@/types/umkm';
 
 // ================== TYPES ==================

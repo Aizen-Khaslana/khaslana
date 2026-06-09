@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
+
 import Illustration from '@/pages/errors/components/illustration';
 
 export default function NotFound() {

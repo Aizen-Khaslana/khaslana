@@ -1,5 +1,6 @@
 import { Link } from "@inertiajs/react"
 import { Store, ChevronRight } from "lucide-react"
+
 import { storeManagement } from "@/routes"
 
 export default function CtaCard() {

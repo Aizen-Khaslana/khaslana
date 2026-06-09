@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react';
+
 import ListIndex from '@/components/khaslana/order/list/list-index';
-import UserLayout from '@/layouts/user-layout';
+import UnusedNavLayout from '@/layouts/unused-nav-layout';
 import type { Order } from '@/types/order';
 
 interface ShowProps {
@@ -11,7 +12,7 @@ export default function About({
     orders,
 }: ShowProps) {
     return (
-        <UserLayout>
+        <UnusedNavLayout backHref='/'>
             <Head title='History Order'>
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link
@@ -20,6 +21,6 @@ export default function About({
                 />
             </Head>
             <ListIndex orders={orders} />
-        </UserLayout>
+        </UnusedNavLayout>
     );
 }

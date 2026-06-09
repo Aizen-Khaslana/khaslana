@@ -1,4 +1,5 @@
 import { Head, usePage } from "@inertiajs/react";
+
 import OrderIndex from "@/components/khaslana/order/order-index";
 import UnusedNavLayout from "@/layouts/unused-nav-layout";
 import { catalog } from "@/routes";
