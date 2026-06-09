@@ -233,11 +233,6 @@ class OrderController extends Controller
             $order = Order::where('invoice_number', $orderId)->first();
             $payment = Payment::where('midtrans_order_id', $orderId)->first();
 
-            return response()->json([
-                'payload' => $request->all(),
-                'method' => $request->method(),
-            ]);
-
             if (!$order) {
                 return response()->json([
                     'error' => 'ORDER NOT FOUND',
@@ -279,6 +274,11 @@ class OrderController extends Controller
                         })
                         ->delete();
                 }
+
+                // return response()->json([
+                //     'payload' => $request->all(),
+                //     'method' => $request->method(),
+                // ]);
     
                 $order->update([
                     'payment_status' => 'DIBAYAR',
@@ -292,7 +292,6 @@ class OrderController extends Controller
                     'fraud_status' => $fraudStatus,
                     'gross_amount' => $grossAmount,
                     'paid_at' => now(),
-                    'raw_response' => json_encode($notification),
                 ]);
             }
             
