@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { show } from "@/routes/product";
 
 interface ShowIndexProps {
     order: Order;
@@ -16,6 +17,7 @@ interface ShowIndexProps {
 export default function ShowDashoardOrder({
     order,
 }: ShowIndexProps) {
+    const productId = order.order_items?.[0]?.product_id;
     const formatRupiah = (value: number | undefined) =>
         new Intl.NumberFormat("id-ID", {
             style: "currency",
@@ -50,18 +52,18 @@ export default function ShowDashoardOrder({
     }
 
     const handleStatusChange = (orderId: number, newStatus: string) => {
-            router.patch(`/dashboard/order/change-status/${orderId}`, {
-                status: newStatus
-            }, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    showSuccessToast('Status order berhasil diubah!')
-                },
-                onError: () => {
-                    showErrorToast('Terjadi kesalahan, mohon coba lagi.')
-                }
-            });
-        };
+        router.patch(`/dashboard/order/change-status/${orderId}`, {
+            status: newStatus
+        }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                showSuccessToast('Status order berhasil diubah!')
+            },
+            onError: () => {
+                showErrorToast('Terjadi kesalahan, mohon coba lagi.')
+            }
+        });
+    };
 
     return (
         <div className="flex flex-col gap-6 mb-8">
@@ -137,7 +139,9 @@ export default function ShowDashoardOrder({
                         </div>
                     </div>
                     <div className="flex max-md:hidden flex-col justify-end">
-                        <a href={`/catalog/${order.order_items?.[0].product_id}`}
+                        <a href={
+                            productId ? show(productId).url : ''
+                        }
                             className="flex border border-[#99ff33] justify-center text-[#99ff33] font-semibold py-2 px-6 rounded-[999px] text-sm hover:text-black hover:bg-[#99ff33] duration-200 transition-all">
                             Lihat Produk
                         </a>

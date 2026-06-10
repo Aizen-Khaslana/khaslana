@@ -2,7 +2,7 @@ import { Link, router } from '@inertiajs/react';
 import { Eye, Pencil, Trash2, PackageOpen } from 'lucide-react';
 
 import DeleteDialog from '@/components/khaslana/product/delete-dialog';
-import { create, destroy, edit } from '@/routes/product';
+import { create, destroy, edit, show } from '@/routes/product';
 import type { PaginatedProducts } from "@/types/paginated-product";
 
 interface ProductIndexProps {
@@ -105,7 +105,7 @@ export default function ProductIndex({
                                     <td className="p-4">
                                         <div className="flex justify-center gap-2">
                                             <Link
-                                                href={`/products/${product.id}`}
+                                                href={show(product.id).url}
                                                 className="p-2 rounded-md group hover:bg-[#99FF33]/20 transition-colors duration-200"
                                             >
                                                 <Eye size={16} className='group-hover:text-[#99FF33]' />
@@ -121,9 +121,15 @@ export default function ProductIndex({
                                                 onDelete={() => handleDelete(product.id)}
                                             >
                                                 <button
+                                                    disabled={product.sold_count != 0}
                                                     type="button"
-                                                    className="p-2 rounded-md hover:bg-red-500/20 cursor-pointer transition-colors duration-200">
-                                                    <Trash2 size={16} className="text-red-500" />
+                                                    className="p-2 rounded-md hover:bg-red-500/20 disabled:hover:bg-transparent cursor-pointer disabled:cursor-not-allowed transition-colors duration-200"
+                                                >
+                                                    {product.sold_count != 0 ? (
+                                                        <Trash2 size={16} className="text-red-500/20" />
+                                                    ) : (
+                                                        <Trash2 size={16} className="text-red-500" />
+                                                    )}
                                                 </button>
                                             </DeleteDialog>
                                         </div>

@@ -37,6 +37,7 @@ class ProductController extends Controller
                 'umkm',
                 'umkm.city',
             ])
+            ->withSum('orderItems as sold_count', 'quantity')
             ->latest()
             ->paginate(20);
             $categories = Category::all();
@@ -165,6 +166,18 @@ class ProductController extends Controller
             }
             return redirect()->back()->withErrors(['message' => $th->getMessage()]);
         }
+    }
+
+    public function show(Product $product) {
+        $product->load([
+            'category',
+            'productImages',
+            'productVariants.attributeValues.attribute',
+        ]);
+
+        return Inertia::render('umkm/product/product-show', [
+            'product' => $product,
+        ]);
     }
 
     public function edit(Product $product) {
