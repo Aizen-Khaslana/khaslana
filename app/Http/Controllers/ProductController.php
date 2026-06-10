@@ -37,6 +37,7 @@ class ProductController extends Controller
                 'umkm',
                 'umkm.city',
             ])
+            ->withSum('orderItems as sold_count', 'quantity')
             ->latest()
             ->paginate(20);
             $categories = Category::all();

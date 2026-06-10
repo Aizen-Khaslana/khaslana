@@ -121,9 +121,15 @@ export default function ProductIndex({
                                                 onDelete={() => handleDelete(product.id)}
                                             >
                                                 <button
+                                                    disabled={product.sold_count != 0}
                                                     type="button"
-                                                    className="p-2 rounded-md hover:bg-red-500/20 cursor-pointer transition-colors duration-200">
-                                                    <Trash2 size={16} className="text-red-500" />
+                                                    className="p-2 rounded-md hover:bg-red-500/20 disabled:hover:bg-transparent cursor-pointer disabled:cursor-not-allowed transition-colors duration-200"
+                                                >
+                                                    {product.sold_count != 0 ? (
+                                                        <Trash2 size={16} className="text-red-500/20" />
+                                                    ) : (
+                                                        <Trash2 size={16} className="text-red-500" />
+                                                    )}
                                                 </button>
                                             </DeleteDialog>
                                         </div>
