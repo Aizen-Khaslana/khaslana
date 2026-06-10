@@ -47,6 +47,9 @@ export default function ProductIndex({
                             <th className="p-4 text-left">
                                 Kategori
                             </th>
+                            <th className="p-4 text-lef">
+                                Stok
+                            </th>
                             <th className="p-4 text-center">
                                 Aksi
                             </th>
@@ -101,7 +104,9 @@ export default function ProductIndex({
                                     <td className="p-4 text-sm md:text-base">
                                         {product.category?.name}
                                     </td>
-
+                                    <td className="p-4 text-sm md:text-base item-center justify-center flex translate-y-5">
+                                        {product.product_variants?.[0].stock}
+                                    </td>
                                     <td className="p-4">
                                         <div className="flex justify-center gap-2">
                                             <Link
