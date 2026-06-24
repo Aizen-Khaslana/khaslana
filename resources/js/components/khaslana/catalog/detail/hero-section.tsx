@@ -1,9 +1,11 @@
 import { ShieldCheck, Truck } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
 
 import AddToCartIcon from "@/assets/images/catalog/addtocart.svg";
 import DefaultProduct from "@/assets/images/product/default-product.png";
 import VariantDialog from "@/components/khaslana/catalog/detail/variant-dialog";
+import LoginRequiredDialog from '@/components/khaslana/login-required-dialog';
 import type { Product } from "@/types/product";
 
 interface HeroSectionProps {
@@ -26,15 +28,27 @@ export default function HeroSection({
     const isShippingFeature = product.umkm?.is_shipping_feature === 1;
     const isOrderFeature = product.umkm?.is_order_feature === 1;
     const canOrder = isOrderFeature || isShippingFeature;
+    const [showLoginDialog, setShowLoginDialog] = useState(false);
+    const { user } = useAuth();
 
     const handleBuyNowClicked = () => {
-        setActionType("buy-now");
-        setOpenVariant(true);
+        if (!user) {
+            setShowLoginDialog(true);
+            return;
+        } else {
+            setActionType("buy-now");
+            setOpenVariant(true);
+        }
     };
 
     const handleAddCartClicked = () => {
-        setActionType("add-cart");
-        setOpenVariant(true);
+        if (!user) {
+            setShowLoginDialog(true);
+            return;
+        } else {
+            setActionType("add-cart");
+            setOpenVariant(true);
+        }
     };
 
     return (
@@ -214,17 +228,22 @@ export default function HeroSection({
                     </div>
                 </div>
             </div>
-            {
-                openVariant && (
-                    <VariantDialog
-                        key={`${product.id}-${actionType}`}
-                        product={product}
-                        open={openVariant}
-                        onClose={() => setOpenVariant(false)}
-                        actionType={actionType}
-                    />
-                )
-            }
+
+            {/* dialogs */}
+            {openVariant && (
+                <VariantDialog
+                    key={`${product.id}-${actionType}`}
+                    product={product}
+                    open={openVariant}
+                    onClose={() => setOpenVariant(false)}
+                    actionType={actionType}
+                />
+            )}
+            
+            <LoginRequiredDialog
+                open={showLoginDialog}
+                onClose={() => setShowLoginDialog(false)}
+            />
         </section>
     )
 }
