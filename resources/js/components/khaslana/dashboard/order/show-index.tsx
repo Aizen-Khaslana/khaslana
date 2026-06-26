@@ -1,5 +1,5 @@
 import { router, Link } from "@inertiajs/react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Copy } from "lucide-react";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Order } from "@/types/order";
 import { Button } from "@/components/ui/button";
@@ -84,9 +84,18 @@ export default function ShowDashoardOrder({
         });
     };
 
+    const handleCopyInvoice = async (invoice: string) => {
+        try {
+            await navigator.clipboard.writeText(invoice);
+            showSuccessToast("Nomor invoice berhasil disalin.");
+        } catch {
+            showErrorToast("Gagal menyalin nomor invoice.");
+        }
+    };
+
     return (
         <div className="flex flex-col gap-6 mb-8">
-            <div className="flex max-md:flex-col justify-between max-md:items-start items-end mb-8 max-md:mb-3">
+            <div className="flex justify-between max-md:items-center items-end max-md:mb-3">
                 <div className="flex flex-col gap-4">
                     <Link
                         href={orderRoute()}
@@ -96,10 +105,9 @@ export default function ShowDashoardOrder({
                         <span className='text-base text-[#99FF33] group-hover:text-white transition-colors duration-200'>Kembali</span>
                     </Link>
                     <div className="flex max-md:flex-col max-md:items-start items-end gap-2 max-md:mb-3">
-                        <span className="text-4xl font-semibold flex gap-2">Detail 
-                        <span className="text-[#99ff33]">Pesanan</span>
+                        <span className="text-4xl font-semibold flex gap-2">
+                            Detail <span className="text-[#99ff33]">Pesanan</span>
                         </span>
-                        <span className="mb-1 font-semibold text-sm text-[#adaaaa]">{order.invoice_number}</span>
                     </div>
                 </div>
 
@@ -191,34 +199,61 @@ export default function ShowDashoardOrder({
                         Rincian Pembayaran
                     </span>
                     <div className="flex flex-col gap-1">
-                        <div className="flex justify-between w-full text-lg">
+                        <div className="flex justify-between w-full text-base md:text-lg">
+                            <span>Nomor Invoice</span>
+                            <div className="flex items-center gap-2">
+                                <span>{order.invoice_number}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => handleCopyInvoice(order.invoice_number)}
+                                    className="
+                                        p-1.5
+                                        rounded-md
+                                        hover:bg-white/10
+                                        transition-colors
+                                        cursor-pointer
+                                    "
+                                    title="Salin nomor invoice"
+                                >
+                                    <Copy className="size-4" />
+                                </button>
+                            </div>
+                        </div>
+                        <div className="h-0.5 w-full bg-white/20 my-2"></div>
+                        <div className="flex justify-between w-full text-base md:text-lg">
                             <span>Status Pesanan</span>
                             {order.status}
                         </div>
-                        <div className="flex justify-between w-full text-lg">
+                        <div className="flex justify-between w-full text-base md:text-lg">
                             <span>Metode Pembayaran</span>
                             {order.payment?.payment_type}
                         </div>
-                        <div className="flex justify-between w-full text-lg">
+                        <div className="flex justify-between w-full text-base md:text-lg">
                             <span>Status Pembayaran</span>
                             {order.payment_status}
                         </div>
                         <div className="h-0.5 w-full bg-white/20 my-2"></div>
-                        <div className="flex justify-between w-full text-lg">
+                        <div className="flex justify-between w-full text-base md:text-lg">
                             <span>Subtotal</span>
                             {formatRupiah(order.order_items?.[0].price)}
                         </div>
-                        <div className="flex justify-between w-full text-lg">
+                        <div className="flex justify-between w-full text-base md:text-lg">
                             <span>Biaya Jasa Aplikasi</span>
                             {formatRupiah(2000)}
                         </div>
                         {order.shipping_cost > 0 ? (
-                            <div className="flex justify-between w-full text-lg">
+                            <div className="flex justify-between w-full text-base md:text-lg">
                                 <span>Biaya Pengiriman</span>
                                 {formatRupiah(order.shipping_cost)}
                             </div>
                         ) : (
                             <div className="hidden"></div>
+                        )}
+                        {order.notes && (
+                            <div className="flex justify-between w-full text-base md:text-lg">
+                                <span>Catatan</span>
+                                {order.notes}
+                            </div>
                         )}
                         <div className="h-0.5 w-full bg-white/20 my-2"></div>
                         <div className="flex text-[#99ff33] font-medium justify-between w-full text-xl">
