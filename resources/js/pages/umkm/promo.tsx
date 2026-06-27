@@ -153,7 +153,7 @@ export default function PromoManagement({
         }
     };
 
-    const inputStyle = "w-full bg-[#1e1b26] border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#99ff33]/70 focus:ring-1 focus:ring-[#99ff33]/70 transition-all";
+    const inputStyle = "w-full bg-[#1e1b26] border border-zinc-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#99ff33]/70 focus:ring-1 focus:ring-[#99ff33]/70 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none] [&::-webkit-inner-spin-button]:appearance-none";
 
     return (
         <AppLayout breadcrumbs={[{ title: 'Manajemen Promo', href: '/store-management/promo' }]}>
@@ -198,28 +198,63 @@ export default function PromoManagement({
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {promos.map((promo) => (
-                                <div key={promo.id} className="bg-[#191720] border border-zinc-800 rounded-2xl p-6 flex flex-col justify-between hover:border-[#99ff33]/50 transition-colors">
+                                <div
+                                    key={promo.id}
+                                    onClick={() => handleOpenEdit(promo)}
+                                    className="
+                                        bg-[#191720]
+                                        border border-zinc-800
+                                        rounded-2xl p-6
+                                        flex flex-col justify-between
+                                        hover:border-[#99ff33]/50 transition-colors
+                                        cursor-pointer
+                                    "
+                                >
                                     <div>
                                         <div className="flex justify-between items-start mb-3">
-                                            <span className={`text-xs font-bold px-3 py-1 rounded-full ${promo.status === 'BERLANGSUNG' ? 'bg-[#99ff33]/20 text-[#99ff33]' :
-                                                promo.status === 'SEGERA HADIR' ? 'bg-blue-500/20 text-blue-400' : 'bg-red-500/20 text-red-400'
-                                                }`}>
+                                            <span
+                                                className={`
+                                                    text-xs font-bold
+                                                    px-3 py-1
+                                                    rounded-full
+                                                    ${promo.status === 'BERLANGSUNG'
+                                                        ? 'bg-[#99ff33]/20 text-[#99ff33]'
+                                                        : promo.status === 'SEGERA HADIR'
+                                                            ? 'bg-blue-500/20 text-blue-400'
+                                                            : 'bg-red-500/20 text-red-400'
+                                                    }
+                                                `}>
                                                 {promo.status}
                                             </span>
                                             {promo.type === 'DISKON' && promo.discount_percent && (
                                                 <span className="font-bold text-[#99ff33] bg-[#99ff33]/10 px-2 py-0.5 rounded">-{promo.discount_percent}%</span>
                                             )}
                                         </div>
-                                        <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">{promo.name}</h3>
-                                        <p className="text-[#adaaaa] text-sm line-clamp-2 mb-4">{promo.description}</p>
+                                        <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">
+                                            {promo.name}
+                                        </h3>
+                                        <p className="text-[#adaaaa] text-sm line-clamp-2 mb-4">
+                                            {promo.description}
+                                        </p>
                                     </div>
-        
                                     <div className="border-t border-zinc-800 pt-4 flex gap-2">
-                                        <button onClick={() => handleOpenEdit(promo)} className="flex-1 bg-[#222] hover:bg-[#333] text-white py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer">
+                                        <button
+                                            onClick={() => handleOpenEdit(promo)}
+                                            className="
+                                                flex-1
+                                                bg-[#222] hover:bg-[#333]
+                                                text-white py-2 rounded-lg
+                                                flex items-center justify-center gap-2
+                                                transition cursor-pointer
+                                            "
+                                        >
                                             <Edit className="size-4" /> Edit
                                         </button>
                                         <button
-                                            onClick={() => openDeleteDialog(promo.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                openDeleteDialog(promo.id);
+                                            }}
                                             className="flex-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer"
                                         >
                                             <Trash2 className="size-4" /> Hapus
@@ -234,14 +269,20 @@ export default function PromoManagement({
                         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
                             <div className="bg-[#191720] border border-zinc-800 rounded-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] shadow-2xl">
                                 <div className="flex justify-between items-center p-6 border-b border-zinc-800 shrink-0 bg-[#1e1b26]">
-                                    <h2 className="text-xl font-bold text-white">{isEditing ? 'Edit Promo' : 'Buat Promo Baru'}</h2>
+                                    <h2 className="text-xl font-bold text-white">
+                                        {isEditing ? 'Edit Promo' : 'Buat Promo Baru'}
+                                    </h2>
                                     <button onClick={() => setIsModalOpen(false)} className="text-zinc-500 transition cursor-pointer">
                                         <X className="size-6" />
                                     </button>
                                 </div>
         
                                 <div className="p-6 overflow-y-auto custom-scrollbar bg-[#191720]">
-                                    <form id="promoForm" onSubmit={handleSubmit} className="space-y-5">
+                                    <form
+                                        id="promoForm"
+                                        onSubmit={handleSubmit}
+                                        className="space-y-5"
+                                    >
                                         <div>
                                             <label className="block text-sm text-zinc-400 mb-2">
                                                 Nama Promo <span className="text-red-400"> *</span>
@@ -282,16 +323,30 @@ export default function PromoManagement({
                                                     <label className="block text-sm text-zinc-400 mb-2">
                                                         Nilai Diskon (%) <span className="text-red-400"> *</span>
                                                     </label>
-                                                    <input
-                                                        type="number"
-                                                        min="1"
-                                                        max="100"
-                                                        value={data.discount_percent}
-                                                        onChange={e => setData('discount_percent', e.target.value)}
-                                                        className={inputStyle}
-                                                        placeholder="1 - 100"
-                                                        required
-                                                    />
+                                                    <div className="relative">
+                                                        <input
+                                                            type="number"
+                                                            min="1"
+                                                            max="100"
+                                                            pattern="[0-9]*"
+                                                            value={data.discount_percent}
+                                                            onChange={(e) => setData('discount_percent', e.target.value)}
+                                                            className={`${inputStyle} pr-12`}
+                                                            placeholder="1 - 100"
+                                                            required
+                                                        />
+                                                        <span
+                                                            className="
+                                                                absolute
+                                                                right-4 top-1/2
+                                                                -translate-y-1/2
+                                                                text-zinc-400 font-medium
+                                                                pointer-events-none select-none
+                                                            "
+                                                        >
+                                                            %
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>
@@ -355,8 +410,32 @@ export default function PromoManagement({
                                 </div>
         
                                 <div className="p-6 border-t border-zinc-800 flex justify-end gap-3 shrink-0 bg-[#1e1b26]">
-                                    <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 rounded-xl border border-zinc-700 text-white hover:bg-zinc-800 transition cursor-pointer">Batal</button>
-                                    <button type="submit" form="promoForm" disabled={processing} className="px-5 py-2.5 rounded-xl bg-[#99ff33] text-black font-bold hover:bg-[#88ee22] disabled:opacity-50 transition cursor-pointer">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsModalOpen(false)}
+                                        className="
+                                            px-5 py-2.5
+                                            rounded-xl border border-zinc-700
+                                            text-white hover:bg-zinc-800
+                                            transition cursor-pointer
+                                        "
+                                    >
+                                        Batal
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        form="promoForm"
+                                        disabled={processing}
+                                        className="
+                                            px-5 py-2.5
+                                            border border-[#99FF33]
+                                            rounded-xl bg-[#99ff33]
+                                            text-[#1E1B26] font-medium
+                                            hover:text-[#99FF33]
+                                            hover:bg-[#1E1B26] disabled:opacity-50
+                                            transition cursor-pointer
+                                        "
+                                    >
                                         {processing ? 'Menyimpan...' : 'Simpan Promo'}
                                     </button>
                                 </div>
