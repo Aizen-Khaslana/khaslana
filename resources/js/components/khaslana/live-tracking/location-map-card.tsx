@@ -31,10 +31,15 @@ export default function LocationMapCard({ umkmData, locationData }: Props) {
     // Get Data Umkm keliling aktif
     const activeLocation = umkmData.umkm_locations?.find(loc => loc.is_active === true);
     // Get Data Terakhir, Klo Gak ada data UMKM Yang Aktif
-    const latestLocation = umkmData.umkm_locations?.[umkmData.umkm_locations.length - 1];
+    const latestLocation = umkmData.umkm_locations?.[umkmData.umkm_locations.length - 1 ] ?? null;
     
     // Priority : Lokasi Aktif -> Lokasi Terbaru -> Prop bawaan 
-    const realLocationData = activeLocation || latestLocation || locationData;
+    const realLocationData =
+    umkmData.type === 'KELILING'
+        ? latestLocation?.status === null
+            ? null
+            : activeLocation ?? latestLocation
+        : locationData;
 
     // Validasi pake realLocationData
     if (!realLocationData || realLocationData.latitude === null || realLocationData.longitude === null) {
@@ -52,15 +57,23 @@ export default function LocationMapCard({ umkmData, locationData }: Props) {
         if (umkmData.type === 'TETAP') {
             return `/umkm/navigasi/${umkmData.id}`;
         }
-        
+    
         if (umkmData.type === 'KELILING') {
-            // Cek Status Aktif Pake realLocationData
+    
+            // Belum pernah membuka Stay Point
+            if (!realLocationData) {
+                return '#';
+            }
+    
+            // Sedang aktif
             if (realLocationData.is_active) {
                 return `/umkm/tracking/${umkmData.id}`;
             }
+    
+            // Sudah pernah mangkal tetapi sedang tutup
             return `/umkm/rute/${umkmData.id}`;
         }
-
+    
         return '#';
     };
 
