@@ -147,7 +147,7 @@ export default function UserStayPoint({ activeMerchants, initialSelectedId, hasF
                 );
                 
                 if (selectedMerchant.status === 'KELILING') {
-                    showErrorToast("UMKM ini sedang berkeliling. Hubungi via chat untuk pastikan posisi!");
+                    showErrorToast("UMKM ini sedang berkeliling. Lokasi yang ditampilkan adalah lokasi terkhir UMKM!");
                 }
             })();
         }
@@ -293,7 +293,7 @@ export default function UserStayPoint({ activeMerchants, initialSelectedId, hasF
                                 handleFetchRoute(selectedMerchant.latitude, selectedMerchant.longitude);
                                 
                                 if (selectedMerchant.status === 'KELILING') {
-                                    showErrorToast("UMKM ini sedang berkeliling. Hubungi via chat untuk pastikan posisi!");
+                                    showErrorToast("UMKM ini sedang berkeliling. Lokasi yang ditampilkan adalah lokasi terkhir UMKM!");
                                 }
                             }}
                             onCancelClick={handleCancelTracking}
