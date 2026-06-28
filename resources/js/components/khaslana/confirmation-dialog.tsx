@@ -26,7 +26,7 @@ export default function ConfirmationDialog({
                 fixed inset-0
                 bg-black/80
                 backdrop-blur-sm
-                z-50
+                z-9999
                 flex items-center justify-center
                 px-4
             "

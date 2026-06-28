@@ -52,6 +52,7 @@ export default function UserStayPoint({ activeMerchants, initialSelectedId, hasF
     const [dataReady, setDataReady] = useState(false);
 
     // GPS
+    // GPS Auto-Fetch & Synchronizer
     const [hasFetched, setHasFetched] = useState(false);
     useEffect(() => {
         if (hasFetched) return;
@@ -64,10 +65,20 @@ export default function UserStayPoint({ activeMerchants, initialSelectedId, hasF
                 const lng = pos.coords.longitude;
 
                 setUserLoc([lat, lng]);
-                router.get('/umkm/tracking', {
-                    lat,
-                    lng
-                }, {
+
+                // 1. Kunci URL: Jika ada ID UMKM yang sedang ditarget, tetap gunakan rute spesifiknya
+                const url = initialSelectedId ? `/umkm/tracking/${initialSelectedId}` : '/umkm/tracking';
+                
+                // 2. Kunci Parameter: Pertahankan parameter 'force' agar tidak di-wipe oleh Inertia
+                const queryParams: { lat: number; lng: number; force?: boolean } = { 
+                    lat, 
+                    lng 
+                };
+                if (initialSelectedId) {
+                    queryParams.force = true;
+                }
+
+                router.get(url, queryParams, {
                     preserveState: true,
                     replace: true,
                     preserveScroll: true,
@@ -83,7 +94,7 @@ export default function UserStayPoint({ activeMerchants, initialSelectedId, hasF
             },
             { enableHighAccuracy: true }
         );
-    }, [hasFetched]);
+    }, [hasFetched, initialSelectedId]); // <-- Tambahkan initialSelectedId ke dependency array
 
     useEffect(() => {
         if (!dataReady) return;
