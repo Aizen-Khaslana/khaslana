@@ -49,7 +49,7 @@ export default function LocationMapCard({ umkmData, locationData }: Props) {
     if (!realLocationData || realLocationData.latitude === null || realLocationData.longitude === null) {
         return (
             <div className="w-full h-[300px] bg-[#2A2A2A] rounded-3xl flex items-center justify-center border border-white/10 text-gray-400">
-                Data lokasi belum tersedia
+                Waduh, UMKM Belum Pernah Mangkal!
             </div>
         );
     }

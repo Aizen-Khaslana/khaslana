@@ -51,7 +51,6 @@ export default function UserStayPoint({ activeMerchants, initialSelectedId, hasF
     const selectedMerchant = activeMerchants.find(m => m.id === selectedId);
     const [dataReady, setDataReady] = useState(false);
 
-    // GPS
     // GPS Auto-Fetch & Synchronizer
     const [hasFetched, setHasFetched] = useState(false);
     useEffect(() => {
@@ -94,7 +93,7 @@ export default function UserStayPoint({ activeMerchants, initialSelectedId, hasF
             },
             { enableHighAccuracy: true }
         );
-    }, [hasFetched, initialSelectedId]); // <-- Tambahkan initialSelectedId ke dependency array
+    }, [hasFetched, initialSelectedId]); 
 
     useEffect(() => {
         if (!dataReady) return;
@@ -146,6 +145,10 @@ export default function UserStayPoint({ activeMerchants, initialSelectedId, hasF
                     selectedMerchant.latitude,
                     selectedMerchant.longitude
                 );
+                
+                if (selectedMerchant.status === 'KELILING') {
+                    showErrorToast("UMKM ini sedang berkeliling. Hubungi via chat untuk pastikan posisi!");
+                }
             })();
         }
     }, [initialSelectedId, userLoc, selectedMerchant, isTracking, handleFetchRoute]);
@@ -254,7 +257,7 @@ export default function UserStayPoint({ activeMerchants, initialSelectedId, hasF
                 selectedMerchantId={selectedId}
                 onMerchantClick={(id) => {
                     if (id !== selectedId) {
-                        resetRouteOnly();   // 🔥 penting
+                        resetRouteOnly();   
                         setSelectedId(id);
                     }
                 }}
@@ -269,7 +272,7 @@ export default function UserStayPoint({ activeMerchants, initialSelectedId, hasF
                         selectedMerchantId={selectedId}
                         onSelectMerchant={(id) => {
                             if (id !== selectedId) {
-                                resetRouteOnly(); // 🔥 penting
+                                resetRouteOnly(); 
                                 setSelectedId(id);
                             }
                         }}
@@ -286,7 +289,13 @@ export default function UserStayPoint({ activeMerchants, initialSelectedId, hasF
                                 rating: selectedMerchant.rating
                             }}
                             isTracking={isTracking}
-                            onTrackClick={() => handleFetchRoute(selectedMerchant.latitude, selectedMerchant.longitude)}
+                            onTrackClick={() => {
+                                handleFetchRoute(selectedMerchant.latitude, selectedMerchant.longitude);
+                                
+                                if (selectedMerchant.status === 'KELILING') {
+                                    showErrorToast("UMKM ini sedang berkeliling. Hubungi via chat untuk pastikan posisi!");
+                                }
+                            }}
                             onCancelClick={handleCancelTracking}
                             onClose={handleCloseCard}
                         />

@@ -133,7 +133,7 @@ class UmkmController extends Controller
         $activeMerchants = Umkm::where('type', 'KELILING')
             ->whereHas('umkmLocations', function ($q) {
                 $q->where('is_active', true);
-                $q->where('status', 'MANGKAL');
+                $q->whereIn('status', ['MANGKAL', 'KELILING']);
             })
             ->with(['user.profile', 'umkmLocations' => function ($q) {
                 $q->where('is_active', true)->latest('id');
