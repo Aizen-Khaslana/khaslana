@@ -125,6 +125,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // verification routes
     Route::controller(AdditionalVerificationController::class)->group(function() {
         Route::get('/additional/verification', 'index')->name('additionalVerification');
+        Route::post('/additional/verification/store',[AdditionalVerificationController::class, 'store'])->name('additionalVerification.store');
     });
 });
 

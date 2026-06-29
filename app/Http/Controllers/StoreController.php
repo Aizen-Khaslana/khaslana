@@ -478,4 +478,77 @@ class StoreController extends Controller
         $promo->delete();
         return back();
     }
+
+    private function checkStoreCompletion(?Umkm $umkm): array
+    {
+        if (!$umkm) {
+            return [
+                'completed' => false,
+                'missing' => [
+                    'Informasi',
+                    'Alamat',
+                    'Operasional',
+                    'Foto',
+                    'Lokasi',
+                    'Fitur',
+                ],
+            ];
+        }
+
+        $missing = [];
+
+        // Informasi
+        if (
+            blank($umkm->store_name) ||
+            blank($umkm->description) ||
+            blank($umkm->phone_number) ||
+            blank($umkm->type) ||
+            blank($umkm->status)
+        ) {
+            $missing[] = 'Informasi';
+        }
+
+        // Alamat
+        if (
+            blank($umkm->province_id) ||
+            blank($umkm->city_id) ||
+            blank($umkm->district_id) ||
+            blank($umkm->village_id) ||
+            blank($umkm->address)
+        ) {
+            $missing[] = 'Alamat';
+        }
+
+        // Operasional
+        if (
+            blank($umkm->open_days) ||
+            blank($umkm->open_time) ||
+            blank($umkm->close_time)
+        ) {
+            $missing[] = 'Operasional';
+        }
+
+        // Foto
+        if (!$umkm->umkmImages()->exists()) {
+            $missing[] = 'Foto';
+        }
+
+        // Lokasi
+        if (!$umkm->umkmLocations()->exists()) {
+            $missing[] = 'Lokasi';
+        }
+
+        // Fitur
+        if (
+            !$umkm->is_order_feature &&
+            !$umkm->is_shipping_feature
+        ) {
+            $missing[] = 'Fitur';
+        }
+
+        return [
+            'completed' => empty($missing),
+            'missing' => $missing,
+        ];
+    }
 }

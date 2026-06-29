@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import DefaultStore from '@/assets/images/umkm-user/default-store.png';
 import { detail } from '@/routes/umkm';
 import type { Umkm } from "@/types/umkm";
+import VerifiedBadge from "@/components/khaslana/verified-badge";
 
 interface UmkmSectionProps {
     umkms: Umkm[];
@@ -191,6 +192,12 @@ export default function UmkmSection({
                             <h3 className="text-white text-[18px] lg:text-[28px] font-bold leading-tight line-clamp-1">
                                 {umkm.store_name}
                             </h3>
+
+                            {umkm.umkm_data?.is_verified === "VERIFIED" && (
+                                <div className="mt-2">
+                                    <VerifiedBadge />
+                                </div>
+                            )}
 
                             <div
                                 className="

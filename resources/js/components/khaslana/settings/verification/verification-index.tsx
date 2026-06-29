@@ -1,0 +1,119 @@
+import { useForm } from "@inertiajs/react";
+
+import Heading from "@/components/heading";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { store } from "@/routes/additionalVerification";
+import VerificationForm from "./sections/verification-info";
+import VerificationStatus from "./sections/verification-status";
+import { VerificationData } from "./types";
+
+interface Props {
+    storeCompletion: {
+        completed: boolean;
+        missing: string[];
+    };
+
+    verification?: VerificationData;
+}
+
+export default function VerificationIndex({
+    storeCompletion,
+    verification,
+}: Props) {
+
+    const form = useForm({
+
+        owner_name: verification?.owner_name ?? "",
+
+        nik: verification?.nik ?? "",
+
+        npwp: verification?.npwp ?? "",
+
+        nib: verification?.nib ?? "",
+
+        file_path: null as File | null,
+
+    });
+
+    const disabled =
+        !storeCompletion.completed ||
+        verification?.verification_status === "pending" ||
+        verification?.verification_status === "verified";
+
+    const handleSubmit = () => {
+
+        form.post(store().url, {
+
+            forceFormData: true,
+
+            preserveScroll: true,
+
+            onSuccess: () => {
+
+                form.reset("file_path");
+
+            },
+
+        });
+
+    };
+
+    return (
+
+        <div className="space-y-6">
+
+            <Heading
+                variant="default"
+                title="Verifikasi UMKM"
+                description="Lengkapi data verifikasi agar tokomu mendapatkan badge UMKM Terverifikasi."
+            />
+
+            <VerificationStatus
+                completed={storeCompletion.completed}
+                verificationStatus={
+                    verification?.verification_status ??
+                    "not_submitted"
+                }
+                missing={storeCompletion.missing}
+                adminReviewNote={
+                    verification?.admin_review_note
+                }
+            />
+
+            <Card className="border-[#99FF33]/40">
+
+                <CardContent className="space-y-8 py-8">
+
+                    <VerificationForm
+                        data={form.data}
+                        setData={form.setData}
+                        errors={form.errors}
+                        disabled={disabled}
+                    />
+
+                    <div className="flex justify-end">
+
+                        <Button
+                            type="button"
+                            disabled={disabled || form.processing}
+                            onClick={handleSubmit}
+                        >
+                            {form.processing
+                                ? "Mengirim..."
+                                : verification?.verification_status === "rejected"
+                                    ? "Kirim Ulang Verifikasi"
+                                    : "Kirim Verifikasi"}
+                        </Button>
+
+                    </div>
+
+                </CardContent>
+
+            </Card>
+
+        </div>
+
+    );
+
+}
