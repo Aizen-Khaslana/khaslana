@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class UmkmData extends Model
 {
-
     protected $table = 'umkm_datas';
     protected $fillable = [
         'umkm_id',

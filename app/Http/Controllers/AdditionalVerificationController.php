@@ -13,8 +13,7 @@ use Inertia\Inertia;
 
 class AdditionalVerificationController extends Controller
 {
-    public function index()
-    {
+    public function index() {
         $umkm = Umkm::with([
             'user',
             'umkmData',
@@ -54,20 +53,18 @@ class AdditionalVerificationController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $request->validate([
             'owner_name' => ['required', 'string', 'max:255'],
             'nik' => ['required', 'digits:16'],
             'npwp' => ['required', 'string', 'max:30'],
             'nib' => ['required', 'string', 'max:30'],
-            'file_path' => ['required', 'image', 'max:4096'],
+            'file_path' => ['required', 'image', 'max:1024'],
         ]);
 
         DB::beginTransaction();
 
         try {
-
             $umkm = Umkm::where(
                 'user_id',
                 Auth::id()
@@ -79,7 +76,6 @@ class AdditionalVerificationController extends Controller
             $hash = null;
 
             if ($request->hasFile('file_path')) {
-
                 if (
                     $oldDocument &&
                     Storage::disk('public')->exists($oldDocument)
@@ -103,23 +99,17 @@ class AdditionalVerificationController extends Controller
             }
 
             UmkmData::updateOrCreate(
-
                 [
                     'umkm_id' => $umkm->id,
                 ],
-
                 [
-                    'owner_name' => $request->owner_name,
                     'nik' => $request->nik,
                     'npwp' => $request->npwp,
                     'nib' => $request->nib,
-
                     'file_path' => $documentPath,
                     'image_hash' => $hash,
-
                     'is_verified' => 'PENDING',
                 ]
-
             );
 
             DB::commit();
@@ -128,27 +118,21 @@ class AdditionalVerificationController extends Controller
                 'success',
                 'Verifikasi berhasil dikirim.'
             );
-
         } catch (\Throwable $e) {
-
             DB::rollBack();
 
             if ($documentPath) {
-                Storage::disk('public')
-                    ->delete($documentPath);
+                Storage::disk('public')->delete($documentPath);
             }
 
             report($e);
             return back()->withErrors([
-                'verification' =>
-                    $e->getMessage(),
+                'verification' => $e->getMessage(),
             ]);
-
         }
     }
 
-    private function checkStoreCompletion(?Umkm $umkm): array
-    {
+    private function checkStoreCompletion(?Umkm $umkm): array {
         if (!$umkm) {
             return [
                 'completed' => false,
@@ -158,7 +142,6 @@ class AdditionalVerificationController extends Controller
                     'Operasional',
                     'Foto',
                     'Lokasi',
-                    'Fitur',
                 ],
             ];
         }
@@ -197,16 +180,8 @@ class AdditionalVerificationController extends Controller
             $missing[] = 'Foto';
         }
 
-        // Penting: gunakan exists() saja
         if (!$umkm->umkmLocations()->exists()) {
             $missing[] = 'Lokasi';
-        }
-
-        if (
-            !$umkm->is_order_feature &&
-            !$umkm->is_shipping_feature
-        ) {
-            $missing[] = 'Fitur';
         }
 
         return [
