@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react';
 import DefaultStore from '@/assets/images/umkm-user/default-store.png';
 import { detail } from '@/routes/umkm';
 import type { Umkm } from "@/types/umkm";
+import VerifiedBadge from "@/components/khaslana/verified-badge";
 
 interface UmkmSectionProps {
     umkms: Umkm[];
@@ -206,7 +207,15 @@ export default function UmkmSection({
                                 <Star className="w-3 h-3 lg:w-4 lg:h-4 fill-[#99FF33]" />
                                 {umkm.average_rating}
                             </div>
+
                         </div>
+
+                             {umkm.umkm_data?.is_verified === "VERIFIED" && (
+                                <div className="mt-2">
+                                    <VerifiedBadge />
+                                </div>
+                            )}
+
                         <div className="flex items-center gap-1 mt-2 text-[#B7B7B7] text-xs md:text-sm">
                             <MapPin className="w-5 h-5 pb-1" />
                             <span>

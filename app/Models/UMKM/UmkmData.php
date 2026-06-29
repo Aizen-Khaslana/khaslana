@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UmkmData extends Model
 {
+
     protected $table = 'umkm_datas';
     protected $fillable = [
         'umkm_id',
@@ -14,6 +15,7 @@ class UmkmData extends Model
         'nik',
         'image_hash',
         'file_path',
+        'is_verified',
     ];
 
     public function umkm() {

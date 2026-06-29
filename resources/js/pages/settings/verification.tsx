@@ -1,5 +1,31 @@
-export default function Verification() {
+import { Head } from "@inertiajs/react";
+
+import VerificationIndex from "@/components/khaslana/settings/verification/verification-index";
+import AppLayout from "@/layouts/app-layout";
+import SettingsLayout from "@/layouts/settings/layout";
+import { additionalVerification } from "@/routes";
+import type { BreadcrumbItem } from "@/types";
+
+export default function Verification(props: any) {
+
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: "Verifikasi UMKM",
+            href: additionalVerification().url,
+        },
+    ];
+
     return (
-        <div></div>
-    )
+        <AppLayout breadcrumbs={breadcrumbs}>
+
+            <Head title="Verifikasi UMKM" />
+
+            <SettingsLayout>
+
+                <VerificationIndex {...props} />
+
+            </SettingsLayout>
+
+        </AppLayout>
+    );
 }
