@@ -8,7 +8,6 @@ class Attribute extends Model
 {
     protected $table = 'attributes';
     protected $fillable = [
-        'product_id',
         'name',
     ];
 
