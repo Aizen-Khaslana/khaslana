@@ -58,34 +58,116 @@ export default function UmkmSection({
         return R * c;
     };
 
+    const getTargetLocation = (umkm: Umkm) => {
+        type UmkmLocationType =
+            NonNullable<Umkm["umkm_locations"]>[number];
+    
+        let locations: UmkmLocationType[] = [];
+    
+        if (Array.isArray(umkm.umkm_locations)) {
+            locations = umkm.umkm_locations;
+        } else if (
+            umkm.umkm_locations &&
+            typeof umkm.umkm_locations === "object"
+        ) {
+            locations = Object.values(
+                umkm.umkm_locations
+            ) as UmkmLocationType[];
+        }
+    
+        if (locations.length === 0) {
+            return undefined;
+        }
+    
+        if (umkm.type === "TETAP") {
+            return locations[0];
+        }
+    
+        return (
+            locations.find((loc) => loc.is_active) ??
+            locations[locations.length - 1]
+        );
+    };
+
+    // useEffect(() => {
+    //     navigator.geolocation.getCurrentPosition(
+    //         (position) => {
+    //             const userLat = position.coords.latitude;
+    //             const userLng = position.coords.longitude;
+
+    //             const updatedDistances: Record<number, string> = {};
+
+    //             umkms.forEach((umkm) => {
+    //                 const location = umkm.umkm_locations?.[0];
+
+    //                 if (
+    //                     location?.latitude &&
+    //                     location?.longitude
+    //                 ) {
+    //                     const distance = calculateDistance(
+    //                         userLat,
+    //                         userLng,
+    //                         Number(location.latitude),
+    //                         Number(location.longitude)
+    //                     );
+    //                     updatedDistances[umkm.id] = `${distance.toFixed(1)} km`;
+    //                 }
+    //             });
+    //             setDistances(updatedDistances);
+    //         },
+    //         (error) => {
+    //             console.error(error);
+    //         }
+    //     );
+    // }, [umkms]);
+
     useEffect(() => {
+        if (!navigator.geolocation) return;
+    
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const userLat = position.coords.latitude;
                 const userLng = position.coords.longitude;
-
-                const updatedDistances: Record<number, string> = {};
-
+    
+                const newDistances: Record<number, string> = {};
+    
                 umkms.forEach((umkm) => {
-                    const location = umkm.umkm_locations?.[0];
-
-                    if (
-                        location?.latitude &&
-                        location?.longitude
-                    ) {
-                        const distance = calculateDistance(
-                            userLat,
-                            userLng,
-                            Number(location.latitude),
-                            Number(location.longitude)
-                        );
-                        updatedDistances[umkm.id] = `${distance.toFixed(1)} km`;
+                    const targetLocation = getTargetLocation(umkm);
+    
+                    const latStr = targetLocation?.latitude;
+                    const lngStr = targetLocation?.longitude;
+    
+                    if (latStr != null && lngStr != null) {
+                        const latNum = Number(latStr);
+                        const lngNum = Number(lngStr);
+    
+                        if (!isNaN(latNum) && !isNaN(lngNum)) {
+                            const dist = calculateDistance(
+                                userLat,
+                                userLng,
+                                latNum,
+                                lngNum
+                            );
+    
+                            newDistances[umkm.id] =
+                                dist < 1
+                                    ? `${(dist * 1000).toFixed(0)} M`
+                                    : `${dist.toFixed(2)} KM`;
+                        } else {
+                            newDistances[umkm.id] = "Lokasi Tidak Valid";
+                        }
+                    } else {
+                        newDistances[umkm.id] = "Lokasi Tidak Tersedia";
                     }
                 });
-                setDistances(updatedDistances);
+    
+                setDistances(newDistances);
             },
-            (error) => {
-                console.error(error);
+            (err) => {
+                console.error("Gagal mendapatkan GPS katalog:", err);
+            },
+            {
+                enableHighAccuracy: true,
             }
         );
     }, [umkms]);
