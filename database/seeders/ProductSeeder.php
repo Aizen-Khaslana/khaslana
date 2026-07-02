@@ -22,7 +22,7 @@ class ProductSeeder extends Seeder
         $categories = Category::all();
         $umkms = Umkm::all();
 
-         $colorValues = Attribute::where('name', 'Warna')
+        $colorValues = Attribute::where('name', 'Warna')
             ->first()
             ->attributeValues;
 

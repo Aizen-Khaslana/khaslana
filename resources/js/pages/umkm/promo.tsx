@@ -12,6 +12,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import DeleteConfirmationDialog from '@/components/khaslana/delete-confirmation-dialog';
+import { showSuccessToast } from '@/lib/toast';
 import type { Promo } from '@/types/promo';
 import type { Product } from '@/types/product';
 
@@ -142,11 +143,17 @@ export default function PromoManagement({
 
         if (isEditing && currentId) {
             put(`/store-management/promo/${currentId}`, {
-                onSuccess: () => setIsModalOpen(false)
+                onSuccess: () => {
+                    setIsModalOpen(false)
+                    showSuccessToast('Selamat!', 'Promo berhasil di perbarui!')
+                }
             });
         } else {
             post('/store-management/promo', {
-                onSuccess: () => setIsModalOpen(false)
+                onSuccess: () => {
+                    setIsModalOpen(false)
+                    showSuccessToast('Selamat!', 'Promo berhasil dibuat!')
+                }
             });
         }
     };
@@ -423,7 +430,7 @@ export default function PromoManagement({
                                                 </label>
                                                 <input
                                                     type="date"
-                                                    min={today}
+                                                    min={data.start_date || today}
                                                     value={data.start_date}
                                                     onChange={handleStartDateChange}
                                                     style={{ colorScheme: 'dark' }}
@@ -451,9 +458,19 @@ export default function PromoManagement({
                                                 <Info className="text-zinc-500 size-5" />
                                                 <span className="text-sm text-zinc-400">Status Promo:</span>
                                             </div>
-                                            <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${data.status === 'BERLANGSUNG' ? 'bg-[#99ff33]/20 text-[#99ff33]' :
-                                                data.status === 'SEGERA HADIR' ? 'bg-blue-500/20 text-blue-400' : 'bg-red-500/20 text-red-400'
-                                                }`}>
+                                            <span
+                                                className={`
+                                                    text-xs font-bold
+                                                    px-3 py-1.5
+                                                    rounded-full
+                                                    ${data.status === 'BERLANGSUNG'
+                                                        ? 'bg-[#99ff33]/20 text-[#99ff33]'
+                                                        : data.status === 'SEGERA HADIR'
+                                                            ? 'bg-blue-500/20 text-blue-400'
+                                                            : 'bg-red-500/20 text-red-400'
+                                                    }
+                                                `}
+                                            >
                                                 {data.status}
                                             </span>
                                         </div>
