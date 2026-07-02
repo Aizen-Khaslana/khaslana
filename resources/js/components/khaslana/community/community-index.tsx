@@ -210,9 +210,10 @@ export default function CommunityIndex({
                                                     transition-all duration-300
                                                     hover:bg-[#99FF33]/10
                                                     active:scale-95
-                                                    ${post.is_liked ?
-                                                        'text-[#99FF33] bg-[#99FF33]/10 shadow-[0_0_15px_rgba(153,255,51,0.15)]'
-                                                    : 'text-[#adaaaa]'}
+                                                    ${post.is_liked
+                                                        ? 'text-[#99FF33] bg-[#99FF33]/10 shadow-[0_0_15px_rgba(153,255,51,0.15)]'
+                                                        : 'text-[#adaaaa]'
+                                                    }
                                                 `}
                                             >
                                                 <ThumbsUp
@@ -221,9 +222,10 @@ export default function CommunityIndex({
                                                         transition-all duration-300
                                                         group-hover:-translate-y-0.5
                                                         group-hover:scale-125
-                                                        ${ post.is_liked ?
-                                                            "fill-[#99FF33] scale-110"
-                                                        : ""}
+                                                        ${post.is_liked
+                                                            ? "fill-[#99FF33] scale-110"
+                                                            : ""
+                                                        }
                                                     `}
                                                 />
                                                 <span className="transition-all duration-300 group-hover:translate-x-0.5">

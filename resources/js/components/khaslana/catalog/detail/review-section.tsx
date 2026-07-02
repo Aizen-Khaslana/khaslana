@@ -5,6 +5,8 @@ import { useState } from "react";
 import ProfileIcon from "@/assets/icons/default-profile.png";
 import { useAuth } from "@/hooks/use-auth";
 import LoginRequiredDialog from '@/components/khaslana/login-required-dialog';
+import ConfirmationDialog from "@/components/khaslana/confirmation-dialog";
+import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Product } from "@/types/product";
 
 interface ProductDetailProps {
@@ -20,15 +22,28 @@ export default function ReviewSection({
     const isMyReview = (reviewUserId: number) => {
         return user && reviewUserId === user.id
     }
+    const hasReviewed = !!user && reviews.some(
+        (review) => review.user.id === user.id
+    );
+    const hasPurchased = !!user &&
+        product.order?.some(
+            (item) =>
+                item.user_id === user.id &&
+                item.status === "SELESAI"
+        );
 
-    const [isUploaded, setIsUploaded] = useState(false);
+    // const [isUploaded, setIsUploaded] = useState(false);
     const [reviewText, setReviewText] = useState('');
     const [rating, setRating] = useState<number>(5);
     const [showLoginDialog, setShowLoginDialog] = useState(false);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
+    const [expandedReviews, setExpandedReviews] = useState<Set<number>>(new Set());
+    const [clampedReviews, setClampedReviews] = useState<Set<number>>(new Set());
 
     const handleSubmitReview = () => {
         if (!reviewText.trim()) {
-            alert("Ulasan tidak boleh kosong!")
+            showErrorToast("Ulasan tidak boleh kosong!");
             return;
         }
 
@@ -37,14 +52,17 @@ export default function ReviewSection({
             rating: rating,
         }, {
             forceFormData: true,
+            preserveScroll: true,
+            preserveState: true,
             onSuccess: () => {
                 setReviewText("");
                 setRating(5);
-                setIsUploaded(true);
+                // setIsUploaded(true);
 
-                setTimeout(() => {
-                    setIsUploaded(false);
-                }, 3000);
+                // setTimeout(() => {
+                //     setIsUploaded(false);
+                // }, 3000);
+                showSuccessToast("Ulasan berhasil diunggah!");
             }
         })
     };
@@ -53,13 +71,29 @@ export default function ReviewSection({
         setReviewText('');
     }
 
-    const handleDeleteReview = (reviewId: number, productId: number) => {
-        if (confirm('Yakin ingin menghapus ulasan ini?')) {
-            router.delete(`/catalog/${productId}/review/${reviewId}`, {
-                preserveScroll: true
-            });
-        }
-    } 
+    const handleDeleteReview = (reviewId: number) => {
+        setSelectedReviewId(reviewId);
+        setShowDeleteDialog(true);
+    }
+
+    const confirmDeleteReview = () => {
+        if (!selectedReviewId) return;
+
+        router.delete(
+            `/catalog/${product.id}/review/${selectedReviewId}`,
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    showSuccessToast(
+                        "Ulasan berhasil dihapus."
+                    );
+                },
+            }
+        );
+
+        setShowDeleteDialog(false);
+        setSelectedReviewId(null);
+    };
 
     const handleLikeReview = (reviewId: number, productId: number) => {
         if (!user) {
@@ -76,7 +110,47 @@ export default function ReviewSection({
                 }
             })
         }
-    }
+    };
+
+    const toggleReview = (reviewId: number) => {
+        setExpandedReviews((prev) => {
+            const next = new Set(prev);
+
+            if (next.has(reviewId)) {
+                next.delete(reviewId);
+            } else {
+                next.add(reviewId);
+            }
+
+            return next;
+        });
+    };
+
+    const checkClamped = (
+        el: HTMLDivElement | null,
+        reviewId: number
+    ) => {
+        if (!el) return;
+
+        const isClamped = el.scrollHeight > el.clientHeight;
+
+        setClampedReviews((prev) => {
+            const alreadyClamped = prev.has(reviewId);
+
+            if (alreadyClamped === isClamped) {
+                return prev;
+            }
+
+            const next = new Set(prev);
+
+            if (isClamped) {
+                next.add(reviewId);
+            } else {
+                next.delete(reviewId);
+            }
+            return next;
+        });
+    };
 
     return (
         <div className="flex flex-col gap-4">
@@ -87,12 +161,12 @@ export default function ReviewSection({
 
             <div>
                 <div className="relative flex flex-col items-center w-full">        
-                    {isUploaded &&  (
+                    {/* {isUploaded &&  (
                         <div className="w-full bg-[#99FF33]/20 border border-[#99FF33] text-[#99FF33] p-4 rounded-[15px] text-sm font-medium mb-8">Ulasan berhasil diupload!</div>
-                    )}
+                    )} */}
         
                     {/* make a review */}
-                    {user && (
+                    {user && hasPurchased && !hasReviewed && (
                         <div className="flex flex-col justify-between w-full p-3 gap-4 rounded-[15px]">
                             <div className="rating flex justify-center gap-1 w-full">
                                 {[1, 2, 3, 4, 5].map((star) => (
@@ -110,11 +184,34 @@ export default function ReviewSection({
                                 ))}
                             </div>
 
-                            <div className="post-top flex items-center gap-5 w-full">
-                                <img src={ProfileIcon} alt="Profile" className="w-10 max-md:w-7" />
-                                <input type="text" placeholder="Bagikan ulasan Anda..." className="main-input flex flex-1 bg-transparent border-b border-white/30 w-full outline-0 text-white focus:border-[#99ff33] transition-all duration-200"
-                                value={reviewText} 
-                                onChange={(e) => setReviewText(e.target.value)}/>
+                            <div className="flex gap-5 w-full">
+                                <img
+                                    src={ProfileIcon}
+                                    alt="Profile"
+                                    className="w-10 h-10 max-md:w-7 max-md:h-7"
+                                />
+
+                                <div className="flex-1">
+                                    <textarea
+                                        placeholder="Bagikan ulasan Anda..."
+                                        rows={4}
+                                        maxLength={1000}
+                                        value={reviewText}
+                                        onChange={(e) => setReviewText(e.target.value)}
+                                        className="
+                                            w-full resize-none bg-transparent
+                                            border border-white/20 rounded-2xl
+                                            p-4 outline-none text-white
+                                            focus:border-[#99ff33]
+                                            transition-all duration-200
+                                            break-words
+                                        "
+                                    />
+
+                                    <div className="mt-2 text-sm text-[#888] text-right">
+                                        {reviewText.length}/1000
+                                    </div>
+                                </div>
                             </div>
 
                             <div
@@ -153,6 +250,16 @@ export default function ReviewSection({
                                     Kirim
                                 </button>
                             </div>
+                        </div>
+                    )}
+                    {user && hasReviewed && (
+                        <div className="w-full bg-[#222] p-4 rounded-[15px] text-muted-foreground mb-6">
+                            Anda sudah memberikan ulasan untuk produk ini.
+                        </div>
+                    )}
+                    {user && !hasPurchased && (
+                        <div className="w-full bg-[#222] p-4 rounded-[15px] text-muted-foreground mb-6">
+                            Anda hanya dapat memberikan ulasan setelah membeli produk ini.
                         </div>
                     )}
                 </div>
@@ -196,31 +303,90 @@ export default function ReviewSection({
                                     </div>
                                 </div>
 
-                                {review.comment}
+                                <div>
+                                    <div
+                                        ref={(el) => checkClamped(el, review.id)}
+                                        className={`
+                                            whitespace-pre-wrap
+                                            break-words
+                                            overflow-hidden
+                                            text-white
+                                            ${
+                                                expandedReviews.has(review.id)
+                                                    ? ''
+                                                    : 'line-clamp-2'
+                                            }
+                                        `}
+                                    >
+                                        {review.comment}
+                                    </div>
 
-                                <div className="flex justify-between">
+                                    {(clampedReviews.has(review.id) ||
+                                        expandedReviews.has(review.id)) && (
+                                        <button
+                                            onClick={() => toggleReview(review.id)}
+                                            className="
+                                                mt-2
+                                                text-[#99FF33]
+                                                text-sm
+                                                font-medium
+                                                hover:underline
+                                                cursor-pointer
+                                            "
+                                        >
+                                            {expandedReviews.has(review.id)
+                                                ? 'Tampilkan lebih sedikit'
+                                                : 'Selengkapnya'}
+                                        </button>
+                                    )}
+                                </div>
+
+                                <div className="flex justify-between items-center">
                                     <button
                                         type="button"
                                         onClick={() => handleLikeReview(review.id, product.id)}
                                         className={`
-                                            flex items-center
-                                            gap-2 text-sm
+                                            group
+                                            flex items-center gap-2
+                                            px-3 py-2
+                                            rounded-xl
+                                            text-sm font-medium
                                             cursor-pointer
-                                            transition-all duration-100
+                                            transition-all duration-300
+                                            hover:bg-[#99FF33]/10
+                                            active:scale-95
                                             ${review.is_liked
-                                                ? 'text-[#99ff33]'
-                                                : ''
+                                                ? 'text-[#99FF33] bg-[#99FF33]/10 shadow-[0_0_15px_rgba(153,255,51,0.15)]'
+                                                : 'text-[#adaaaa]'
                                             }
                                         `}
                                     >
-                                        <ThumbsUp className={`w-4 h-4`} /> 
+                                        <ThumbsUp
+                                            className={`
+                                                w-4 h-4
+                                                transition-all duration-300
+                                                group-hover:-translate-y-0.5
+                                                group-hover:scale-125
+                                                ${review.is_liked
+                                                    ? "fill-[#99FF33] scale-110"
+                                                    : ""
+                                                }
+                                            `}
+                                        />
                                         {review.review_likes.length}
                                     </button>
 
                                     {isMyReview(review.user.id) && (
                                         <button
-                                            onClick={() => handleDeleteReview(review.id, product.id)}
-                                            className='hover:text-[#99ff33] duration-200 transition-all cursor-pointer'
+                                            onClick={() => handleDeleteReview(review.id)}
+                                            className='
+                                                flex items-center justify-center
+                                                rounded-full aspect-square
+                                                h-9 w-9 p-2
+                                                hover:bg-white/20 hover:text-red-400
+                                                transition-all duraion-300
+                                                cursor-pointer
+                                            '
                                         >
                                             <Trash className="w-4"/>
                                         </button>
@@ -237,9 +403,22 @@ export default function ReviewSection({
                 </div>
             </div>
 
+            {/* dialogs */}
             <LoginRequiredDialog
                 open={showLoginDialog}
                 onClose={() => setShowLoginDialog(false)}
+            />
+
+            <ConfirmationDialog
+                open={showDeleteDialog}
+                title="Hapus Ulasan"
+                description="Apakah Anda yakin ingin menghapus ulasan ini?"
+                confirmText="Hapus"
+                onConfirm={confirmDeleteReview}
+                onCancel={() => {
+                    setShowDeleteDialog(false);
+                    setSelectedReviewId(null);
+                }}
             />
         </div>
     )
