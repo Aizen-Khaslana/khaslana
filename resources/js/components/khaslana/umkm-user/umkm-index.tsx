@@ -35,6 +35,37 @@ const calculateDistance = (
     return R * c;
 };
 
+const getTargetLocation = (umkm: Umkm) => {
+    type UmkmLocationType =
+        NonNullable<Umkm["umkm_locations"]>[number];
+
+    let locations: UmkmLocationType[] = [];
+
+    if (Array.isArray(umkm.umkm_locations)) {
+        locations = umkm.umkm_locations;
+    } else if (
+        umkm.umkm_locations &&
+        typeof umkm.umkm_locations === "object"
+    ) {
+        locations = Object.values(
+            umkm.umkm_locations
+        ) as UmkmLocationType[];
+    }
+
+    if (locations.length === 0) {
+        return undefined;
+    }
+
+    if (umkm.type === "TETAP") {
+        return locations[0];
+    }
+
+    return (
+        locations.find((loc) => loc.is_active) ??
+        locations[locations.length - 1]
+    );
+};
+
 export default function UmkmIndex({
     umkms,
 }: UmkmIndexProps) {
@@ -57,8 +88,7 @@ export default function UmkmIndex({
     const processedUmkms = useMemo(() => {
         let items = umkms.map((umkm) => {
             let calculatedKm: number | null = null;
-            const location = umkm.umkm_locations?.[0];
-
+            const location = getTargetLocation(umkm);
             if (userCoords && location?.latitude && location?.longitude) {
                 calculatedKm = calculateDistance(
                     userCoords.latitude,
