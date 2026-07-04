@@ -121,8 +121,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::controller(CatalogController::class)->group(function() {
+        Route::delete('/catalog/review/destroy/{review}', 'deleteReview')->name('catalog.deleteReview');
         Route::post('/catalog/{id}/review', 'storeReview')->name('catalog.storeReview');
-        Route::delete('/catalog/{product}/review/{review}', 'deleteReview')->name('catalog.deleteReview');
     });
 
     // verification routes

@@ -38,6 +38,7 @@ class CatalogController extends Controller
             'promo',
             'productImages',
             'productVariants.attributeValues.attribute',
+            'orderItems.order',
             'umkm',
             'umkm.city',
             'reviews' => function($query) {
@@ -84,7 +85,7 @@ class CatalogController extends Controller
         return redirect()->back();
     }
 
-    public function deleteReview(Request $request, Product $product, Review $review) {
+    public function deleteReview(Review $review) {
         if ($review->user_id !== Auth::id()) {
             return redirect()->back()->withErrors(['error' => 'Anda tidak memiliki akses untuk menghapus ulasan ini!']);
         }
