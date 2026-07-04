@@ -98,7 +98,7 @@ export function CreatePost() {
                     <img
                         src={user.profile_photo ?? ProfileIcon}
                         alt="Profile"
-                        className="w-12 aspect-square border border-white/10 rounded-full max-md:w-8"
+                        className="w-12 aspect-square border border-white/10 rounded-full max-md:w-8 object-cover"
                     />
                     <Textarea
                         placeholder="Bagikan strategi pertumbuhan Anda hari ini..."
