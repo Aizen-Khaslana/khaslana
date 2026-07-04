@@ -9,7 +9,7 @@ import DeleteConfirmationDialog from "@/components/khaslana/delete-confirmation-
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Product } from "@/types/product";
 import { Textarea } from "@/components/ui/textarea";
-import { deleteReview } from "@/routes/catalog";
+import { deleteReview, likeReview } from "@/routes/catalog";
 
 interface ProductDetailProps {
     product: Product;
@@ -33,8 +33,6 @@ export default function ReviewSection({
                 item.order?.user_id === user.id &&
                 item.order?.status === "SELESAI"
         );
-
-    console.log(product.order_items)
 
     // const [isUploaded, setIsUploaded] = useState(false);
     const [reviewText, setReviewText] = useState('');
@@ -99,18 +97,23 @@ export default function ReviewSection({
         setSelectedReviewId(null);
     };
 
-    const handleLikeReview = (reviewId: number, productId: number) => {
+    const handleLikeReview = (reviewId: number, is_liked: boolean) => {
         if (!user) {
             setShowLoginDialog(true);
             return;
         } else {
-            router.post(`/catalog/${productId}/review/${reviewId}/like`, {}, {
+            router.post(likeReview(reviewId), {}, {
                 preserveScroll: true,
                 onSuccess: () => {
-                    console.log("Toggle like ulasan sukses!");
+                    if (!is_liked) {
+                        showSuccessToast('Ulasan berhasil disukai!');
+                    } else {
+                        showSuccessToast('Disukai berhasil dibatalkan dari ulasan!');
+                    }
                 },
                 onError: (err) => {
                     console.error("Gagal melakukan like ulasan: ", err);
+                    showErrorToast('Ulasan gagal disukai');
                 }
             })
         }
@@ -290,7 +293,9 @@ export default function ReviewSection({
                                         />
                                         <div className="post-user flex flex-col">
                                             <h6 className="text-white font-medium text-lg">
-                                                {review.user.name || "Anggota Khaslana"}
+                                                {review.user.name} {isMyReview(review.user.id) && (
+                                                    <span className="text-xs text-muted-foreground">(Anda)</span>
+                                                )}
                                             </h6>
                                             <p className="text-[#888] text-sm">
                                                 {review.created_at ? new Date(review.created_at).toLocaleDateString('id-ID', {
@@ -345,7 +350,7 @@ export default function ReviewSection({
                                 <div className="flex justify-between items-center">
                                     <button
                                         type="button"
-                                        onClick={() => handleLikeReview(review.id, product.id)}
+                                        onClick={() => handleLikeReview(review.id, review.is_liked)}
                                         className={`
                                             group
                                             flex items-center gap-2

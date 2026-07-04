@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product\Product;
-use App\Models\UMKM\Umkm;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Review\Review;
 use Illuminate\Http\Request;
@@ -60,6 +59,11 @@ class CatalogController extends Controller
             'reviews.reviewLikes'
         ])->firstOrFail();
 
+        $product->reviews->each(function ($review) {
+            $review->is_liked = Auth::check()
+                && $review->reviewLikes->contains('user_id', Auth::id());
+        });
+
         return Inertia::render('user/catalog/detail', [
             'product' => $product,
             'pageType' => 'catalogDetail',
@@ -96,6 +100,19 @@ class CatalogController extends Controller
             return redirect()->back()->with('message', 'Ulasan berhasil dihapus!');
         } catch (Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Gagal menghapus ulasan: ' . $e->getMessage()]);
+        }
+    }
+
+    public function likeReview(Review $review) {
+        $userId = Auth::id();
+        $existingLike = $review->reviewLikes()->where('user_id', $userId)->first();
+
+        if ($existingLike) {
+            $existingLike->delete();
+        } else {
+            $review->reviewLikes()->create([
+                'user_id' => $userId,
+            ]);
         }
     }
 }

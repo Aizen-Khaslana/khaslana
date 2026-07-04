@@ -1,3 +1,4 @@
+import { Link } from "@inertiajs/react";
 import { ShieldCheck, Truck } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
@@ -7,6 +8,7 @@ import DefaultProduct from "@/assets/images/product/default-product.png";
 import VariantDialog from "@/components/khaslana/catalog/detail/variant-dialog";
 import LoginRequiredDialog from '@/components/khaslana/login-required-dialog';
 import type { Product } from "@/types/product";
+import { detail } from "@/routes/umkm";
 
 interface HeroSectionProps {
     product: Product;
@@ -65,7 +67,6 @@ export default function HeroSection({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                 {/* left section */}
                 <div className="relative">
-                    {/* --- UPDATE BADGE PROMO --- */}
                     {isPromoActive && (
                         <div
                             className="
@@ -125,7 +126,9 @@ export default function HeroSection({
                             </span>
                             <span className="text-gray-600">|</span>
                             <span className="text-gray-300 text-sm">
-                                {product.umkm?.store_name}
+                                <Link href={detail(product.umkm_id)}>
+                                    {product.umkm?.store_name}
+                                </Link>
                             </span>
                         </div>
                         
