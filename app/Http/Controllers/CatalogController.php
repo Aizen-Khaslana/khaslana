@@ -41,7 +41,19 @@ class CatalogController extends Controller
             'umkm',
             'umkm.city',
             'reviews' => function($query) {
-                $query->latest();
+                $userId = Auth::id();
+                $query->withCount('reviewLikes');
+
+                if (Auth::check()) {
+                    $query->orderByRaw(
+                        'CASE WHEN user_id = ? THEN 0 ELSE 1 END',
+                        [$userId]
+                    );
+                }
+                
+                $query
+                    ->orderByDesc('review_likes_count')
+                    ->latest();
             },
             'reviews.user',
             'reviews.reviewLikes'

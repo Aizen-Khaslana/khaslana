@@ -103,13 +103,42 @@ export default function UserStayPoint({ activeMerchants, initialSelectedId, hasF
         }
     }, [dataReady, activeMerchants, hasFiltered]);
 
-    // FETCH ROUTE
+    // // FETCH ROUTE
+    // const handleFetchRoute = useCallback(async (targetLat: number, targetLng: number) => {
+    //     if (!userLoc) return;
+
+    //     try {
+    //         const url = `https://router.project-osrm.org/route/v1/driving/${userLoc[1]},${userLoc[0]};${targetLng},${targetLat}?overview=full&geometries=geojson`;
+    //         const res = await axios.get(url);
+
+    //         if (res.data.routes?.length > 0) {
+    //             const coords = res.data.routes[0].geometry.coordinates.map(
+    //                 (c: [number, number]) => [c[1], c[0]] as [number, number]
+    //             );
+
+    //             setRoutePath([
+    //                 [userLoc[0], userLoc[1]],
+    //                 ...coords,
+    //                 [targetLat, targetLng]
+    //             ]);
+
+    //             setIsTracking(true);
+    //         }
+    //     } catch (error) {
+    //         console.error("Gagal menjahit rute OSRM:", error);
+    //     }
+    // }, [userLoc]);
+
+    // FETCH ROUTE 
     const handleFetchRoute = useCallback(async (targetLat: number, targetLng: number) => {
-        if (!userLoc) return;
+        if (!userLoc || !Array.isArray(userLoc) || userLoc[0] == null || userLoc[1] == null) {
+            showErrorToast("Sedang mencari lokasi GPS Anda... Mohon tunggu sebentar.");
+            return;
+        }
 
         try {
             const url = `https://router.project-osrm.org/route/v1/driving/${userLoc[1]},${userLoc[0]};${targetLng},${targetLat}?overview=full&geometries=geojson`;
-            const res = await axios.get(url);
+            const res = await axios.get(url, { timeout: 5000 }); // Batas waktu 5 detik
 
             if (res.data.routes?.length > 0) {
                 const coords = res.data.routes[0].geometry.coordinates.map(
@@ -126,6 +155,7 @@ export default function UserStayPoint({ activeMerchants, initialSelectedId, hasF
             }
         } catch (error) {
             console.error("Gagal menjahit rute OSRM:", error);
+            showErrorToast("Server navigasi sedang sibuk atau gangguan. Silakan coba lagi beberapa saat.");
         }
     }, [userLoc]);
 
