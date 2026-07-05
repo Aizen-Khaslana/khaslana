@@ -249,7 +249,7 @@ export default function VariantDialog({
     return (
         <div
             className="
-                fixed inset-0 z-50
+                fixed inset-0 z-999
                 bg-black/70 backdrop-blur-sm
                 flex items-center justify-center
                 p-4

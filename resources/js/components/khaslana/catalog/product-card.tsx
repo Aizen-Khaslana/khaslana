@@ -179,6 +179,7 @@ export function ProductCard({
 
             {selectedProduct && (
                 <VariantDialog
+                    key={`${selectedProduct.id}-add-cart`}
                     product={selectedProduct}
                     open={isDialogOpen}
                     onClose={() => setIsDialogOpen(false)}
