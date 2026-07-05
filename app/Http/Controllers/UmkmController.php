@@ -35,7 +35,6 @@ class UmkmController extends Controller
             'city',
             'district',
             'village',
-            'user',
             'user.profile',
             'umkmData',
             'umkmImages',
@@ -43,6 +42,7 @@ class UmkmController extends Controller
             'promos',
         )->firstOrFail();
         $reviews = Review::where('umkm_id', $umkm_id)->with(
+            'user.profile',
             'reviewLikes',
         )->get();
         $products = Product::where('umkm_id', $umkm_id)

@@ -12,6 +12,7 @@ export interface Product {
     description: string;
     is_archived: boolean;
     sold_count: number;
+    product_rating?: number | null;
     created_at: string;
     updated_at: string;
 

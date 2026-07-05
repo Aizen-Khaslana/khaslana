@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Models\Product\Product;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Review\Review;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Exception;
+
+use App\Models\Category;
+use App\Models\Product\Product;
+use App\Models\UMKM\Umkm;
+use App\Models\Review\Review;
 
 class CatalogController extends Controller
 {
@@ -21,6 +23,7 @@ class CatalogController extends Controller
             'umkm',
             'umkm.city',
         ])
+        ->withAvg('reviews as product_rating', 'rating')
         ->latest()
         ->paginate(12);
         $categories = Category::all();
@@ -57,7 +60,9 @@ class CatalogController extends Controller
             },
             'reviews.user',
             'reviews.reviewLikes'
-        ])->firstOrFail();
+        ])
+        ->withAvg('reviews as product_rating', 'rating')
+        ->firstOrFail();
 
         $product->reviews->each(function ($review) {
             $review->is_liked = Auth::check()
@@ -78,13 +83,15 @@ class CatalogController extends Controller
 
         $product = Product::findOrFail($id);
 
-        Review::create([
+        $review = Review::create([
             'user_id' => Auth::id(),
             'product_id' => $product->id,
             'umkm_id' => $product->umkm_id,
             'rating' => $request->rating,
             'comment' => $request->comment,
         ]);
+
+        $this->updateUmkmAverageRating($review->umkm_id);
 
         return redirect()->back();
     }
@@ -114,5 +121,14 @@ class CatalogController extends Controller
                 'user_id' => $userId,
             ]);
         }
+    }
+
+    private function updateUmkmAverageRating(int $umkmId): void {
+        $average = Review::where('umkm_id', $umkmId)
+            ->avg('rating') ?? 0;
+
+        Umkm::where('id', $umkmId)->update([
+            'average_rating' => round($average, 1),
+        ]);
     }
 }

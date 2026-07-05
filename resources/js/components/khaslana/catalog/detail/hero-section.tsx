@@ -21,7 +21,6 @@ export default function HeroSection({
     const originalPrice = variant?.price ?? 0;
     const stock = variant?.stock ?? 0;
     const image = product.product_images?.[0]?.image;
-    const rating = product.umkm?.average_rating ?? 0;
     const formatPrice = (value: number) => new Intl.NumberFormat("id-ID").format(value);
     
     const [openVariant, setOpenVariant] = useState(false);
@@ -122,7 +121,7 @@ export default function HeroSection({
                                 {"★★★★★"}
                             </div>
                             <span className="text-gray-300 text-sm">
-                                {rating.toFixed(1)} Rating
+                                {product.product_rating ?? 0} Rating
                             </span>
                             <span className="text-gray-600">|</span>
                             <span className="text-gray-300 text-sm">
