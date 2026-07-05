@@ -52,7 +52,11 @@ class UmkmController extends Controller
                 'productVariants.attributeValues.attribute',
                 'promo',
                 'category',
-            )->take(4)
+                'reviews.reviewLikes',
+            )
+            ->withAvg('reviews as product_rating', 'rating')
+            ->orderByDesc('product_rating')
+            ->take(4)
             ->get();
 
         $latestLocation = $umkm->umkmLocations->sortByDesc('id')->first();
