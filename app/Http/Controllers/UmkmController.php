@@ -124,9 +124,6 @@ class UmkmController extends Controller
     /**
      * Live Tracking untuk UMKM KELILING
      */
-    /**
-     * Live Tracking untuk UMKM KELILING
-     */
     public function tracking(Request $request, $umkm_id = null)
     {
         $userLat = $request->lat;
