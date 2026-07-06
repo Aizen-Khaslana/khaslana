@@ -403,7 +403,7 @@ export default function ReviewSection({
                     ) : (
                         <div className="flex flex-col w-full items-center justify-center text-[#adaaaa]">
                             <MessageCircleX className='h-20 w-20 text-center text-[#99FF33] mb-4' />
-                            Belum ada ulasan terkait produk ini.
+                            Belum ada ulasan terkait produk ini. Jadilah yg pertama mengulas!
                         </div>
                     )}
                 </div>

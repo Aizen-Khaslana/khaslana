@@ -101,7 +101,7 @@ export default function HeroSection({
 
                 {/* right section */}
                 <div className="flex flex-col justify-between">
-                    <div className="mt-4">
+                    <div className="mt-2">
                         <p
                             className="
                                 text-[#99FF33]
@@ -113,7 +113,7 @@ export default function HeroSection({
                         >
                             {product.category?.name}
                         </p>
-                        <h1 className="text-white text-5xl md:text-6xl font-bold leading-tight">
+                        <h1 className="text-white text-5xl md:text-6xl font-bold leading-tight break-words">
                             {product.name}
                         </h1>
                         <div className="flex items-center gap-3 mt-1 md:mt-3">
@@ -194,7 +194,7 @@ export default function HeroSection({
                                 </div>
                             )}
                         </div>
-                        <p className="mt-4 text-gray-400 text-base leading-8 line-clamp-6">
+                        <p className="mt-4 text-gray-400 text-base leading-8 line-clamp-6 break-words">
                             {product.description}
                         </p>
                     </div>

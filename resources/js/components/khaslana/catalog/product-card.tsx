@@ -136,7 +136,7 @@ export function ProductCard({
                                 </div>
 
                                 <div className="flex flex-col flex-1 p-5">
-                                    <h4 className="text-white text-lg font-bold line-clamp-1 mb-2">
+                                    <h4 className="text-white text-lg font-bold break-words line-clamp-1 mb-2">
                                         {product.name}
                                     </h4>
 
