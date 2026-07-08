@@ -20,6 +20,7 @@ class CartController extends Controller
 
         $cart = Cart::with([
             'cartItems.variant.product.umkm',
+            'cartItems.variant.product.promo',
             'cartItems.variant.product.productImages',
             'cartItems.variant.attributeValues.attribute'
         ])->where('user_id', $userId)->first();
